@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useContest } from "@/context/ContestContext";
-import { Button } from "@/components/ui/button";
-import { Camera, Plus, Images } from "lucide-react";
 
 const Index = () => {
   const { currentContest } = useContest();
@@ -10,81 +7,42 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="brutal-border border-t-0 border-x-0 bg-pastel-pink p-6">
-        <div className="container mx-auto flex items-center justify-between">
-          <h1 className="font-mono text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
-            <span className="bg-primary text-primary-foreground brutal-border p-2 inline-flex">
-              <Camera className="w-6 h-6" />
-            </span>
-            Photo de Famille
-          </h1>
+        <div className="container mx-auto flex items-center gap-3">
+          <span className="bg-foreground text-background brutal-border p-2 text-xl">📷</span>
+          <h1 className="font-mono text-2xl md:text-3xl font-bold">Photo de Famille</h1>
         </div>
       </header>
 
-      {/* Main */}
       <main className="container mx-auto px-4 py-12">
         {currentContest ? (
-          /* Active contest */
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="bg-pastel-mint brutal-border brutal-shadow-lg p-8 text-center">
-              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                Concours en cours
-              </p>
-              <h2 className="font-mono text-3xl font-bold text-foreground mb-2">
-                {currentContest.name}
-              </h2>
-              <p className="font-display text-lg text-foreground mb-1">
-                Thème : <strong>{currentContest.theme}</strong>
-              </p>
-              <p className="font-mono text-sm text-muted-foreground">
-                {currentContest.photos.length} photo(s) soumise(s)
-              </p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-2">Concours en cours</p>
+              <h2 className="font-mono text-3xl font-bold mb-2">{currentContest.name}</h2>
+              <p className="text-lg mb-1">Thème : <strong>{currentContest.theme}</strong></p>
+              <p className="font-mono text-sm text-muted-foreground">{currentContest.photos.length} photo(s) soumise(s)</p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                variant="butter"
-                size="lg"
-                onClick={() => navigate("/submit")}
-                className="gap-2"
-              >
-                <Plus className="w-5 h-5" />
-                Soumettre une photo
-              </Button>
-              <Button
-                variant="lavender"
-                size="lg"
-                onClick={() => navigate("/gallery")}
-                className="gap-2"
-              >
-                <Images className="w-5 h-5" />
-                Voir la galerie
-              </Button>
+              <button onClick={() => navigate("/submit")} className="brutal-btn bg-pastel-butter">
+                ＋ Soumettre une photo
+              </button>
+              <button onClick={() => navigate("/gallery")} className="brutal-btn bg-pastel-lavender">
+                🖼️ Voir la galerie
+              </button>
             </div>
 
-            {/* Preview of latest photos */}
             {currentContest.photos.length > 0 && (
               <div className="bg-card brutal-border brutal-shadow p-6">
-                <h3 className="font-mono text-lg font-bold mb-4">
-                  Dernières soumissions
-                </h3>
+                <h3 className="font-mono text-lg font-bold mb-4">Dernières soumissions</h3>
                 <div className="flex gap-4 overflow-x-auto pb-2">
                   {currentContest.photos.slice(-3).map((photo) => (
-                    <div
-                      key={photo.id}
-                      className="flex-shrink-0 w-32 bg-card brutal-border p-2 pb-6"
-                    >
+                    <div key={photo.id} className="flex-shrink-0 w-32 bg-card brutal-border p-2 pb-6">
                       <div className="w-full h-28 brutal-border overflow-hidden bg-muted">
-                        <img
-                          src={photo.imageUrl}
-                          alt={photo.title}
-                          className="w-full h-full object-cover"
-                        />
+                        <img src={photo.imageUrl} alt={photo.title} className="w-full h-full object-cover" />
                       </div>
-                      <p className="mt-2 text-xs font-mono truncate text-center">
-                        {photo.title}
-                      </p>
+                      <p className="mt-2 text-xs font-mono truncate text-center">{photo.title}</p>
                     </div>
                   ))}
                 </div>
@@ -92,36 +50,21 @@ const Index = () => {
             )}
           </div>
         ) : (
-          /* No contest - Creation prompt */
           <div className="max-w-xl mx-auto text-center space-y-8">
             <div className="bg-pastel-lavender brutal-border brutal-shadow-lg p-10">
               <div className="text-6xl mb-4">📷</div>
-              <h2 className="font-mono text-3xl font-bold text-foreground mb-3">
-                Pas de concours en cours
-              </h2>
-              <p className="font-display text-lg text-foreground">
-                Créez un nouveau concours photo pour commencer l'aventure en famille !
-              </p>
+              <h2 className="font-mono text-3xl font-bold mb-3">Pas de concours en cours</h2>
+              <p className="text-lg">Créez un nouveau concours photo pour commencer l'aventure en famille !</p>
             </div>
-
-            <Button
-              variant="mint"
-              size="lg"
-              onClick={() => navigate("/create")}
-              className="gap-2"
-            >
-              <Plus className="w-5 h-5" />
-              Créer un concours
-            </Button>
+            <button onClick={() => navigate("/create")} className="brutal-btn bg-pastel-mint">
+              ＋ Créer un concours
+            </button>
           </div>
         )}
       </main>
 
-      {/* Footer */}
       <footer className="brutal-border border-b-0 border-x-0 bg-pastel-peach p-4 mt-12">
-        <p className="text-center font-mono text-sm text-foreground">
-          Photo de Famille © 2026 — Fait avec 💛
-        </p>
+        <p className="text-center font-mono text-sm">Photo de Famille © 2026 — Fait avec 💛</p>
       </footer>
     </div>
   );
