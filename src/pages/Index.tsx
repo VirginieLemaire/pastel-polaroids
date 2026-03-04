@@ -6,7 +6,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <header className="brutal-border border-t-0 border-x-0 bg-pastel-pink p-6">
         <div className="container mx-auto flex items-center gap-3">
           <span className="bg-foreground text-background brutal-border p-2 text-xl">📷</span>
@@ -14,7 +14,7 @@ const Index = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="container mx-auto px-4 py-12 flex-1 flex items-center justify-center">
         {currentContest ? (
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="bg-pastel-mint brutal-border brutal-shadow-lg p-8 text-center">
