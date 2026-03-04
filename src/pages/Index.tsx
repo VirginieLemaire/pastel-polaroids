@@ -9,7 +9,7 @@ const Index = () => {
     <div className="min-h-screen bg-background flex flex-col">
       <header className="brutal-border border-t-0 border-x-0 bg-pastel-pink p-6">
         <div className="container mx-auto flex items-center gap-3">
-          <span className="bg-foreground text-background brutal-border p-2 text-xl">📷</span>
+          <span className="bg-foreground text-background p-2 text-xl">📷</span>
           <h1 className="font-mono text-2xl md:text-3xl font-bold">Photo de Famille</h1>
         </div>
       </header>
