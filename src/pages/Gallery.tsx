@@ -18,7 +18,7 @@ const Gallery = () => {
             <button onClick={() => navigate("/")} className="font-mono text-xl">←</button>
             <div>
               <h1 className="font-mono text-2xl font-bold">{currentContest.name}</h1>
-              <p className="text-sm">Thème : {currentContest.theme}</p>
+              <p className="text-sm">{currentContest.photos.length} photo(s)</p>
             </div>
           </div>
           <button onClick={() => navigate("/submit")} className="brutal-btn bg-pastel-butter text-sm">
