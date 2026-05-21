@@ -30,6 +30,12 @@ const Home = () => {
             <BrutalButton color="lavender" size="sm">Petit</BrutalButton>
             <BrutalButton color="butter" size="lg">Grand</BrutalButton>
           </div>
+          <div className="flex flex-wrap gap-4 items-center pt-2">
+            <BrutalButton color="mint" shape="round" size="sm" aria-label="Ajouter">＋</BrutalButton>
+            <BrutalButton color="pink" shape="round" size="md" aria-label="Ajouter">＋</BrutalButton>
+            <BrutalButton color="lavender" shape="round" size="lg" aria-label="Ajouter">＋</BrutalButton>
+            <BrutalButton color="butter" shape="round" size="md" aria-label="Fermer">×</BrutalButton>
+          </div>
         </section>
 
         <section className="space-y-4">
