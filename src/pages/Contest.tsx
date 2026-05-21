@@ -16,7 +16,17 @@ const Contest = () => {
         </Link>
         {contest ? (
           <BrutalCard color="mint" large>
+            {contest.coverImage && (
+              <div
+                className="w-full h-48 brutal-border bg-cover bg-center mb-4"
+                style={{ backgroundImage: `url(${contest.coverImage})` }}
+                aria-label="Illustration du thème"
+              />
+            )}
             <h1 className="font-mono text-2xl font-bold mb-2">{contest.name}</h1>
+            {contest.description && (
+              <p className="font-mono text-sm mb-3 whitespace-pre-wrap">{contest.description}</p>
+            )}
             <p className="font-mono text-sm">
               Soumission : {contest.submissionDays}j — Vote : {contest.voteDays}j
             </p>

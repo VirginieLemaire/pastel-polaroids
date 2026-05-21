@@ -3,15 +3,25 @@ import { createContext, ReactNode, useCallback, useContext, useMemo, useState } 
 export interface Contest {
   id: string;
   name: string;
+  description?: string;
+  coverImage?: string;
   createdAt: string;
   submissionDays: number;
   voteDays: number;
   photos: unknown[];
 }
 
+interface CreateContestInput {
+  name: string;
+  description?: string;
+  coverImage?: string;
+  submissionDays: number;
+  voteDays: number;
+}
+
 interface ContestContextValue {
   contests: Contest[];
-  createContest: (input: { name: string; submissionDays: number; voteDays: number }) => Contest;
+  createContest: (input: CreateContestInput) => Contest;
   getContest: (id: string) => Contest | undefined;
 }
 
@@ -24,6 +34,8 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
     const contest: Contest = {
       id: crypto.randomUUID(),
       name: input.name.trim(),
+      description: input.description?.trim() || undefined,
+      coverImage: input.coverImage,
       createdAt: new Date().toISOString(),
       submissionDays: input.submissionDays,
       voteDays: input.voteDays,
