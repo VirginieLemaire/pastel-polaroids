@@ -98,6 +98,7 @@ Objectif : un projet vierge qui compile, avec la charte couleurs et les utilitai
 ### Étape 8 — Polish
 
 - États vides, transitions de modale, responsive desktop, micro-animations, passe accessibilité.
+- Compression et recadrage des images uploadées (illustration de thème, photos soumises).
 
 ---
 
