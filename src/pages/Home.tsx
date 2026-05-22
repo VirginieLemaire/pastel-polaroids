@@ -1,46 +1,154 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BrutalButton from "@/components/BrutalButton";
+import BrutalCard from "@/components/BrutalCard";
 import Modal from "@/components/Modal";
 import CreateContestForm from "@/components/CreateContestForm";
+import StatusBadge from "@/components/StatusBadge";
 import { useContests } from "@/context/useContests";
-import type { CreateContestInput } from "@/context/ContestContext";
+import type { CreateContestInput, Contest } from "@/context/ContestContext";
+import { getContestStatus } from "@/lib/contestStatus";
+
+const pickCurrent = (contests: Contest[]): Contest => {
+  const sorted = [...contests].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  const active = sorted.find((c) => getContestStatus(c) !== "closed");
+  return active ?? sorted[0];
+};
 
 const Home = () => {
-  const [open, setOpen] = useState(false);
-  const { createContest } = useContests();
+  const [createOpen, setCreateOpen] = useState(false);
+  const [othersOpen, setOthersOpen] = useState(false);
+  const { contests, createContest } = useContests();
   const navigate = useNavigate();
+
+  const current = useMemo(
+    () => (contests.length > 0 ? pickCurrent(contests) : null),
+    [contests]
+  );
+  const others = useMemo(
+    () =>
+      current
+        ? contests
+            .filter((c) => c.id !== current.id)
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            )
+        : [],
+    [contests, current]
+  );
 
   const handleCreate = (data: CreateContestInput) => {
     const contest = createContest(data);
-    setOpen(false);
+    setCreateOpen(false);
     navigate(`/contest/${contest.id}`);
   };
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16 flex flex-col">
-      <header className="text-center space-y-2 mb-16">
+    <main className="min-h-screen bg-background px-6 py-12 flex flex-col">
+      <header className="text-center space-y-2 mb-10">
         <h1 className="font-mono text-4xl md:text-5xl font-bold">Photo de Famille</h1>
         <p className="font-mono text-sm text-muted-foreground">
           Concours photo en famille, un thème à la fois.
         </p>
       </header>
 
-      <section className="flex-1 flex flex-col items-center justify-center gap-6">
-        <BrutalButton
-          color="mint"
-          shape="round"
-          size="lg"
-          onClick={() => setOpen(true)}
-          aria-label="Créer un nouveau thème"
-        >
-          ＋
-        </BrutalButton>
-        <p className="font-mono font-bold text-lg">Nouveau thème</p>
-      </section>
+      {current ? (
+        <section className="flex-1 flex flex-col items-center gap-6 w-full max-w-md mx-auto">
+          <button
+            type="button"
+            onClick={() => navigate(`/contest/${current.id}`)}
+            className="w-full text-left"
+            aria-label={`Ouvrir le thème ${current.name}`}
+          >
+            <BrutalCard color="butter" large className="space-y-3">
+              <div
+                className="w-full h-40 brutal-border bg-cover bg-center bg-pastel-sky"
+                style={
+                  current.coverImage
+                    ? { backgroundImage: `url(${current.coverImage})` }
+                    : undefined
+                }
+                aria-hidden="true"
+              />
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="font-mono text-xl font-bold leading-tight">
+                  {current.name}
+                </h2>
+                <StatusBadge status={getContestStatus(current)} />
+              </div>
+            </BrutalCard>
+          </button>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="Créer un thème">
-        <CreateContestForm onSubmit={handleCreate} onCancel={() => setOpen(false)} />
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <BrutalButton
+              color="mint"
+              shape="round"
+              size="md"
+              onClick={() => setCreateOpen(true)}
+              aria-label="Créer un nouveau thème"
+            >
+              ＋
+            </BrutalButton>
+            {others.length > 0 && (
+              <BrutalButton color="sky" size="md" onClick={() => setOthersOpen(true)}>
+                Autres thèmes ({others.length})
+              </BrutalButton>
+            )}
+          </div>
+        </section>
+      ) : (
+        <section className="flex-1 flex flex-col items-center justify-center gap-6">
+          <BrutalButton
+            color="mint"
+            shape="round"
+            size="lg"
+            onClick={() => setCreateOpen(true)}
+            aria-label="Créer un nouveau thème"
+          >
+            ＋
+          </BrutalButton>
+          <p className="font-mono font-bold text-lg">Nouveau thème</p>
+        </section>
+      )}
+
+      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Créer un thème">
+        <CreateContestForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
+      </Modal>
+
+      <Modal open={othersOpen} onClose={() => setOthersOpen(false)} title="Autres thèmes">
+        <ul className="space-y-3">
+          {others.map((c) => (
+            <li key={c.id}>
+              <button
+                type="button"
+                onClick={() => {
+                  setOthersOpen(false);
+                  navigate(`/contest/${c.id}`);
+                }}
+                className="w-full text-left"
+              >
+                <BrutalCard color="card" className="flex items-center gap-3">
+                  <div
+                    className="w-14 h-14 brutal-border bg-cover bg-center bg-pastel-sky shrink-0"
+                    style={
+                      c.coverImage
+                        ? { backgroundImage: `url(${c.coverImage})` }
+                        : undefined
+                    }
+                    aria-hidden="true"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-mono font-bold truncate">{c.name}</p>
+                    <StatusBadge status={getContestStatus(c)} />
+                  </div>
+                </BrutalCard>
+              </button>
+            </li>
+          ))}
+        </ul>
       </Modal>
     </main>
   );
