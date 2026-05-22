@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useCallback, useMemo, useState } from "react";
 
 export interface Contest {
   id: string;
@@ -11,7 +11,7 @@ export interface Contest {
   photos: unknown[];
 }
 
-interface CreateContestInput {
+export interface CreateContestInput {
   name: string;
   description?: string;
   coverImage?: string;
@@ -19,13 +19,13 @@ interface CreateContestInput {
   voteDays: number;
 }
 
-interface ContestContextValue {
+export interface ContestContextValue {
   contests: Contest[];
   createContest: (input: CreateContestInput) => Contest;
   getContest: (id: string) => Contest | undefined;
 }
 
-const ContestContext = createContext<ContestContextValue | null>(null);
+export const ContestContext = createContext<ContestContextValue | null>(null);
 
 export const ContestProvider = ({ children }: { children: ReactNode }) => {
   const [contests, setContests] = useState<Contest[]>([]);
@@ -56,10 +56,4 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
   );
 
   return <ContestContext.Provider value={value}>{children}</ContestContext.Provider>;
-};
-
-export const useContests = () => {
-  const ctx = useContext(ContestContext);
-  if (!ctx) throw new Error("useContests must be used within ContestProvider");
-  return ctx;
 };
