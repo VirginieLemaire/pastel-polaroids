@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import BrutalButton from "@/components/BrutalButton";
 import Modal from "@/components/Modal";
 import CreateContestForm from "@/components/CreateContestForm";
-import { useContests } from "@/context/ContestContext";
+import { useContests } from "@/context/useContests";
+import type { CreateContestInput } from "@/context/ContestContext";
 
 const Home = () => {
   const [open, setOpen] = useState(false);
   const { createContest } = useContests();
   const navigate = useNavigate();
 
-  const handleCreate = (data: { name: string; submissionDays: number; voteDays: number }) => {
+  const handleCreate = (data: CreateContestInput) => {
     const contest = createContest(data);
     setOpen(false);
     navigate(`/contest/${contest.id}`);

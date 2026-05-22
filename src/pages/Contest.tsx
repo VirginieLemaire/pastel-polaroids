@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { useContests } from "@/context/ContestContext";
+import { useContests } from "@/context/useContests";
 import BrutalCard from "@/components/BrutalCard";
 import BrutalButton from "@/components/BrutalButton";
 
