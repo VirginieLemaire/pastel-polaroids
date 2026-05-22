@@ -132,10 +132,10 @@ const CreateContestForm = ({ onSubmit, onCancel }: CreateContestFormProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
+      <div className="flex flex-wrap gap-4">
+        <div className="flex-1 min-w-[8rem]">
           <label htmlFor="submission-days" className="block font-mono text-sm font-bold mb-1">
-            Soumission (jours)
+            Soumission <span className="font-normal text-muted-foreground">(j)</span>
           </label>
           <input
             id="submission-days"
@@ -143,12 +143,12 @@ const CreateContestForm = ({ onSubmit, onCancel }: CreateContestFormProps) => {
             min={1}
             value={submissionDays}
             onChange={(e) => setSubmissionDays(Number(e.target.value))}
-            className="brutal-input"
+            className="brutal-input w-20"
           />
         </div>
-        <div>
+        <div className="flex-1 min-w-[8rem]">
           <label htmlFor="vote-days" className="block font-mono text-sm font-bold mb-1">
-            Vote (jours)
+            Vote <span className="font-normal text-muted-foreground">(j)</span>
           </label>
           <input
             id="vote-days"
@@ -156,7 +156,7 @@ const CreateContestForm = ({ onSubmit, onCancel }: CreateContestFormProps) => {
             min={1}
             value={voteDays}
             onChange={(e) => setVoteDays(Number(e.target.value))}
-            className="brutal-input"
+            className="brutal-input w-20"
           />
         </div>
       </div>
