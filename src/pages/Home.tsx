@@ -83,7 +83,7 @@ const Home = () => {
           </button>
 
           {others.length > 0 && (
-            <div className="flex items-center justify-center pt-2">
+            <div className="mt-auto flex items-center justify-center pt-8 pb-4">
               <BrutalButton color="sky" size="md" onClick={() => setOthersOpen(true)}>
                 Autres thèmes ({others.length})
               </BrutalButton>
