@@ -1,6 +1,5 @@
 import type { Contest } from "@/context/ContestContext";
-
-const DAY = 24 * 60 * 60 * 1000;
+import { allClosed, noContests, oneActiveRestClosed, oneActiveSubmissionOnly, oneActiveVoteOnly } from "./mockDatas";
 
 export interface MockScenario {
   id: string;
@@ -14,107 +13,35 @@ export const MOCK_SCENARIOS: MockScenario[] = [
     id: "empty",
     label: "Aucun thème",
     description: "État initial, aucun concours.",
-    contests: [],
+    contests: noContests,
   },
   {
-    id: "single-active",
-    label: "1 thème actif",
+    id: "one-active-submission",
+    label: "1 thème actif en soumission",
     description: "Un seul concours en phase de soumission.",
-    contests: [
-      {
-        id: "mock-single",
-        name: "Vacances d'été",
-        description: "Les meilleurs souvenirs de l'été en famille.",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 1 * DAY).toISOString(),
-        submissionDays: 7,
-        voteDays: 3,
-        photos: [],
-      },
-    ],
+    contests: oneActiveSubmissionOnly,
   },
   {
-    id: "multiple",
-    label: "Plusieurs thèmes",
-    description: "Un thème actif + anciens thèmes fermés.",
-    contests: [
-      {
-        id: "mock-1",
-        name: "Vacances d'été",
-        description: "Les meilleurs souvenirs de l'été en famille.",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 1 * DAY).toISOString(),
-        submissionDays: 7,
-        voteDays: 3,
-        photos: [],
-      },
-      {
-        id: "mock-2",
-        name: "Noël 2025",
-        description: "Photos de Noël en famille.",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 30 * DAY).toISOString(),
-        submissionDays: 5,
-        voteDays: 2,
-        photos: [],
-      },
-      {
-        id: "mock-3",
-        name: "Anniversaire de Mamie",
-        description: "Souvenirs des 80 ans de Mamie.",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 60 * DAY).toISOString(),
-        submissionDays: 4,
-        voteDays: 3,
-        photos: [],
-      },
-    ],
+    id: "one-active-vote",
+    label: "1 thème actif en vote",
+    description: "Un seul concours en phase de vote.",
+    contests: oneActiveVoteOnly,
   },
   {
-    id: "voting",
-    label: "Thème en vote",
-    description: "Soumission terminée, vote en cours.",
-    contests: [
-      {
-        id: "mock-voting",
-        name: "Sortie au parc",
-        description: "Phase de vote en cours.",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 8 * DAY).toISOString(),
-        submissionDays: 7,
-        voteDays: 3,
-        photos: [],
-      },
-    ],
+    id: "one-active-rest-closed",
+    label: "1 thème actif, les autres fermés",
+    description: "Un concours en cours, au moins 1 autre existant.",
+    contests: oneActiveRestClosed,
   },
   {
     id: "all-closed",
     label: "Tout fermé",
-    description: "Tous les concours sont terminés.",
-    contests: [
-      {
-        id: "closed-1",
-        name: "Pâques 2024",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 200 * DAY).toISOString(),
-        submissionDays: 5,
-        voteDays: 2,
-        photos: [],
-      },
-      {
-        id: "closed-2",
-        name: "Halloween 2024",
-        coverImage: undefined,
-        createdAt: new Date(Date.now() - 150 * DAY).toISOString(),
-        submissionDays: 4,
-        voteDays: 2,
-        photos: [],
-      },
-    ],
+    description: "Tous les concours sont terminés, donc aucun en cours.",
+    contests: allClosed,
   },
 ];
 
-export const DEFAULT_SCENARIO_ID = "multiple";
+export const DEFAULT_SCENARIO_ID = "one-active-rest-closed";
 const STORAGE_KEY = "dev:mockScenario";
 
 export const getStoredScenarioId = (): string => {
