@@ -18,10 +18,11 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const getContestStatus = (contest: Contest, now: Date = new Date()): ContestStatus => {
   const start = new Date(contest.createdAt).getTime();
-  const submissionEnd = start + contest.submissionDays * DAY_MS;
-  const voteEnd = submissionEnd + contest.voteDays * DAY_MS;
-  const t = now.getTime();
-  if (t < submissionEnd) return "submission";
-  if (t < voteEnd) return "vote";
+  const voteBegins = start + contest.submissionDays * DAY_MS;
+  const voteEnd = voteBegins + contest.voteDays * DAY_MS;
+  const currentDate = Number(now.getTime());
+  
+  if (currentDate < voteBegins) return "submission";
+  if (currentDate <= voteEnd) return "vote";
   return "closed";
 };
