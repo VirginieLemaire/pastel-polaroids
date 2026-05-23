@@ -5,6 +5,7 @@ import BrutalCard from "@/components/BrutalCard";
 import Modal from "@/components/Modal";
 import CreateContestForm from "@/components/CreateContestForm";
 import StatusBadge from "@/components/StatusBadge";
+import PolaroidCard from "@/components/PolaroidCard";
 import { useContests } from "@/context/useContests";
 import type { CreateContestInput, Contest } from "@/context/ContestContext";
 import { getContestStatus } from "@/lib/contestStatus";
@@ -58,30 +59,15 @@ const Home = () => {
       {current ? (
         <section className="flex-1 flex flex-col w-full max-w-md mx-auto">
           <div className="flex-1 flex items-center justify-center">
-            <button
-              type="button"
-              onClick={() => navigate(`/contest/${current.id}`)}
-              className="w-full text-left"
-              aria-label={`Ouvrir le thème ${current.name}`}
-            >
-              <BrutalCard color="butter" large className="space-y-3">
-                <div
-                  className="w-full h-40 brutal-border bg-cover bg-center bg-pastel-sky"
-                  style={
-                    current.coverImage
-                      ? { backgroundImage: `url(${current.coverImage})` }
-                      : undefined
-                  }
-                  aria-hidden="true"
-                />
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="font-mono text-xl font-bold leading-tight">
-                    {current.name}
-                  </h2>
-                  <StatusBadge status={getContestStatus(current)} />
-                </div>
-              </BrutalCard>
-            </button>
+            <div className="flex flex-col items-center gap-4">
+              <PolaroidCard
+                imageUrl={current.coverImage}
+                title={current.name}
+                rotation={-2}
+                onClick={() => navigate(`/contest/${current.id}`)}
+              />
+              <StatusBadge status={getContestStatus(current)} />
+            </div>
           </div>
 
           {others.length > 0 && (
