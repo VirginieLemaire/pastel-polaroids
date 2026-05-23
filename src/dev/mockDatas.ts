@@ -1,4 +1,4 @@
-import { Contest } from '../context/ContestContext';
+import { Contest } from '@/context/ContestContext';
 
 const DAY = 24 * 60 * 60 * 1000;
 
