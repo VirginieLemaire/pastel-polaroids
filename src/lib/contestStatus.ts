@@ -5,7 +5,7 @@ export type ContestStatus = "submission" | "vote" | "closed";
 export const STATUS_LABEL: Record<ContestStatus, string> = {
   submission: "Soumission",
   vote: "Vote",
-  closed: "Clôturé",
+  closed: "Clos",
 };
 
 export const STATUS_COLOR: Record<ContestStatus, string> = {
