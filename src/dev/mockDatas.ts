@@ -23,7 +23,7 @@ export const oneActiveVoteOnly: Contest[] = [
     name: "Vacances d'été",
     description: "Les meilleurs souvenirs de l'été en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 16 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 7 * DAY).toISOString(),
     submissionDays: 7,
     voteDays: 3,
     photos: [],
