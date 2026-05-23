@@ -1,4 +1,8 @@
-import { createContext, ReactNode, useCallback, useMemo, useState } from "react";
+import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/dev/mockScenarios";
 
 export interface Contest {
   id: string;
@@ -27,43 +31,22 @@ export interface ContestContextValue {
 
 export const ContestContext = createContext<ContestContextValue | null>(null);
 
-const DAY = 24 * 60 * 60 * 1000;
-
-const MOCK_CONTESTS: Contest[] = [
-  {
-    id: "mock-1",
-    name: "Vacances d'été",
-    description: "Les meilleurs souvenirs de l'été en famille.",
-    coverImage: undefined,
-    createdAt: new Date(Date.now() - 1 * DAY).toISOString(),
-    submissionDays: 7,
-    voteDays: 3,
-    photos: [],
-  },
-  {
-    id: "mock-2",
-    name: "Noël 2025",
-    description: "Photos de Noël en famille.",
-    coverImage: undefined,
-    createdAt: new Date(Date.now() - 30 * DAY).toISOString(),
-    submissionDays: 5,
-    voteDays: 2,
-    photos: [],
-  },
-  {
-    id: "mock-3",
-    name: "Anniversaire de Mamie",
-    description: "Souvenirs des 80 ans de Mamie.",
-    coverImage: undefined,
-    createdAt: new Date(Date.now() - 60 * DAY).toISOString(),
-    submissionDays: 4,
-    voteDays: 3,
-    photos: [],
-  },
-];
+const DEV_SCENARIO_EVENT = "dev:scenario-change";
 
 export const ContestProvider = ({ children }: { children: ReactNode }) => {
-  const [contests, setContests] = useState<Contest[]>(MOCK_CONTESTS);
+  const [contests, setContests] = useState<Contest[]>(
+    () => getScenarioById(getStoredScenarioId()).contests
+  );
+
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      setContests(getScenarioById(id).contests);
+    };
+    window.addEventListener(DEV_SCENARIO_EVENT, handler);
+    return () => window.removeEventListener(DEV_SCENARIO_EVENT, handler);
+  }, []);
 
   const createContest: ContestContextValue["createContest"] = useCallback((input) => {
     const contest: Contest = {
@@ -92,3 +75,5 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
 
   return <ContestContext.Provider value={value}>{children}</ContestContext.Provider>;
 };
+
+export const DEV_SCENARIO_CHANGE_EVENT = DEV_SCENARIO_EVENT;
