@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Menu, X, Check } from "lucide-react";
+
 import {
   MOCK_SCENARIOS,
   getStoredScenarioId,
@@ -38,7 +38,7 @@ const DevMenu = () => {
         aria-label="Menu développeur"
         className="brutal-btn bg-pastel-butter w-11 h-11 rounded-full p-0 inline-flex items-center justify-center"
       >
-        {open ? <X size={20} /> : <Menu size={20} />}
+        <span className="text-xl leading-none">{open ? "✕" : "≡"}</span>
       </button>
 
       {open && (
@@ -58,8 +58,8 @@ const DevMenu = () => {
                       active ? "bg-pastel-mint" : "bg-background hover:bg-pastel-sky"
                     }`}
                   >
-                    <span className="mt-0.5 w-4 shrink-0">
-                      {active && <Check size={14} />}
+                    <span className="mt-0.5 w-4 shrink-0 text-center">
+                      {active ? "✓" : ""}
                     </span>
                     <span className="flex-1">
                       <span className="block font-bold">{s.label}</span>
