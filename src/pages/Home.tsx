@@ -65,9 +65,9 @@ const Home = () => {
         </p>
       </header>
 
-      {currentContest ? (
-        <section className="flex-1 flex flex-col w-full max-w-md mx-auto">
-          <div className="flex-1 flex items-center justify-center">
+      <section className="flex-1 flex justify-center flex-col w-full max-w-md mx-auto">
+        {currentContest ? 
+          (
             <div className="flex flex-col items-center gap-4">
               <PolaroidCard
                 imageUrl={currentContest.coverImage}
@@ -77,36 +77,36 @@ const Home = () => {
               />
               <StatusBadge status={getContestStatus(currentContest)} />
             </div>
-          </div>
 
-          {others.length > 0 && (
-            <div className="flex items-center justify-center pt-8 pb-4">
-              <BrutalButton color="sky" size="md" onClick={() => setOthersOpen(true)}>
-                Autres thèmes ({others.length})
+          ) : 
+          (
+            <section className="flex-1 flex flex-col items-center justify-center gap-6">
+              <BrutalButton
+                color="mint"
+                shape="round"
+                size="lg"
+                onClick={() => setCreateOpen(true)}
+                aria-label="Créer un nouveau thème"
+              >
+                ＋
               </BrutalButton>
-            </div>
-          )}
-        </section>
-
-      ) : (
-        <section className="flex-1 flex flex-col items-center justify-center gap-6">
-          <BrutalButton
-            color="mint"
-            shape="round"
-            size="lg"
-            onClick={() => setCreateOpen(true)}
-            aria-label="Créer un nouveau thème"
-          >
-            ＋
-          </BrutalButton>
-          <p className="font-mono font-bold text-lg">Nouveau thème</p>
-        </section>
-      )}
+              <p className="font-mono font-bold text-lg">Nouveau thème</p>
+            </section>
+          )
+        }
+        {others.length > 0 && (
+          <div className="flex items-center justify-center pt-8 pb-4">
+            <BrutalButton color="sky" size="md" onClick={() => setOthersOpen(true)}>
+              Anciens thèmes ({others.length})
+            </BrutalButton>
+          </div>
+        )}
+      </section>
 
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Créer un thème">
         <CreateContestForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
-      <Modal open={othersOpen} onClose={() => setOthersOpen(false)} title="Autres thèmes">
+      <Modal open={othersOpen} onClose={() => setOthersOpen(false)} title="Anciens thèmes">
         <ul className="space-y-3">
           {others.map((c) => (
             <li key={c.id}>
