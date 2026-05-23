@@ -10,12 +10,9 @@ import { useContests } from "@/context/useContests";
 import type { CreateContestInput, Contest } from "@/context/ContestContext";
 import { getContestStatus } from "@/lib/contestStatus";
 
-const pickCurrent = (contests: Contest[]): Contest => {
-  const sorted = [...contests].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
-  const active = sorted.find((c) => getContestStatus(c) !== "closed");
-  return active ?? sorted[0];
+const pickOpenContest = (contests: Contest[]): Contest => {
+  const openContest = contests.find((c) => getContestStatus(c) !== "closed")
+  return openContest ? openContest : null;
 };
 
 const Home = () => {
@@ -23,22 +20,34 @@ const Home = () => {
   const [othersOpen, setOthersOpen] = useState(false);
   const { contests, createContest } = useContests();
   const navigate = useNavigate();
-
-  const current = useMemo(
-    () => (contests.length > 0 ? pickCurrent(contests) : null),
+  
+  const currentContest = useMemo(
+    () => (contests.length > 0 ? pickOpenContest(contests) : null),
     [contests]
   );
+
   const others = useMemo(
-    () =>
-      current
-        ? contests
-            .filter((c) => c.id !== current.id)
-            .sort(
-              (a, b) =>
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-            )
-        : [],
-    [contests, current]
+    () => {
+      if (currentContest) {
+        return contests.length > 0
+          ? contests
+              .filter((c) => c.id !== currentContest.id)
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+              )
+          : []
+      } else {
+        return contests.length > 0
+          ? contests
+              .sort(
+                (a, b) =>
+                  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+              )
+          : []      
+      }
+    }, 
+    [contests, currentContest]
   );
 
   const handleCreate = (data: CreateContestInput) => {
@@ -56,17 +65,17 @@ const Home = () => {
         </p>
       </header>
 
-      {current ? (
+      {currentContest ? (
         <section className="flex-1 flex flex-col w-full max-w-md mx-auto">
           <div className="flex-1 flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
               <PolaroidCard
-                imageUrl={current.coverImage}
-                title={current.name}
+                imageUrl={currentContest.coverImage}
+                title={currentContest.name}
                 rotation={-2}
-                onClick={() => navigate(`/contest/${current.id}`)}
+                onClick={() => navigate(`/contest/${currentContest.id}`)}
               />
-              <StatusBadge status={getContestStatus(current)} />
+              <StatusBadge status={getContestStatus(currentContest)} />
             </div>
           </div>
 
@@ -97,7 +106,6 @@ const Home = () => {
       <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Créer un thème">
         <CreateContestForm onSubmit={handleCreate} onCancel={() => setCreateOpen(false)} />
       </Modal>
-
       <Modal open={othersOpen} onClose={() => setOthersOpen(false)} title="Autres thèmes">
         <ul className="space-y-3">
           {others.map((c) => (
