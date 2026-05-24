@@ -5,7 +5,7 @@ import {
   getStoredScenarioId,
   setStoredScenarioId,
 } from "./mockScenarios";
-import { DEV_SCENARIO_CHANGE_EVENT } from "@/context/ContestContext";
+import { DEV_SCENARIO_CHANGE_EVENT } from "@/features/contests";
 
 const DevMenu = () => {
   const [open, setOpen] = useState(false);

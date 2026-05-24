@@ -6,8 +6,8 @@ import Modal from "@/components/Modal";
 import CreateContestForm from "@/components/CreateContestForm";
 import StatusBadge from "@/components/StatusBadge";
 import PolaroidCard from "@/components/PolaroidCard";
-import { useContests } from "@/context/useContests";
-import type { CreateContestInput, Contest } from "@/context/ContestContext";
+import { useContests } from "@/features/contests";
+import type { CreateContestInput, Contest } from "@/features/contests";
 import { getContestStatus } from "@/lib/contestStatus";
 
 const pickOpenContest = (contests: Contest[]): Contest => {

@@ -1,4 +1,4 @@
-import type { Contest } from "@/context/ContestContext";
+import type { Contest } from "@/features/contests";
 
 export type ContestStatus = "submission" | "vote" | "closed";
 
