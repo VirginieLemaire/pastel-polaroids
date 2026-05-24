@@ -1,5 +1,11 @@
-import type { Contest } from "@/context/ContestContext";
-import { allClosed, noContests, oneActiveRestClosed, oneActiveSubmissionOnly, oneActiveVoteOnly } from "./mockDatas";
+import type { Contest } from "@/features/contests";
+import {
+  allClosed,
+  noContests,
+  oneActiveRestClosed,
+  oneActiveSubmissionOnly,
+  oneActiveVoteOnly,
+} from "@/features/contests/mocks/contests.mocks";
 
 export interface MockScenario {
   id: string;
