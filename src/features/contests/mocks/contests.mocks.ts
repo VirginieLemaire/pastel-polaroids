@@ -1,5 +1,4 @@
-import { DAY, type Contest } from "@/features/contests";
-
+import { DAY_MS, type Contest } from "@/features/contests";
 
 export const noContests: Contest[] = [];
 
@@ -9,7 +8,7 @@ export const oneActiveSubmissionOnly: Contest[] = [
     name: "Vacances d'été",
     description: "Les meilleurs souvenirs de l'été en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 1 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 1 * DAY_MS).toISOString(),
     submissionDays: 7,
     voteDays: 3,
     authorId: "user-1",
@@ -23,7 +22,7 @@ export const oneActiveVoteOnly: Contest[] = [
     name: "Vacances d'été",
     description: "Les meilleurs souvenirs de l'été en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 7 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 7 * DAY_MS).toISOString(),
     submissionDays: 7,
     voteDays: 3,
     authorId: "user-1",
@@ -37,7 +36,7 @@ export const oneActiveRestClosed: Contest[] = [
     name: "Vacances d'été",
     description: "Les meilleurs souvenirs de l'été en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 1 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 1 * DAY_MS).toISOString(),
     submissionDays: 7,
     voteDays: 3,
     authorId: "user-1",
@@ -48,7 +47,7 @@ export const oneActiveRestClosed: Contest[] = [
     name: "Noël 2025",
     description: "Photos de Noël en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 30 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 30 * DAY_MS).toISOString(),
     submissionDays: 5,
     voteDays: 2,
     authorId: "user-other",
@@ -59,7 +58,7 @@ export const oneActiveRestClosed: Contest[] = [
     name: "Anniversaire de Mamie",
     description: "Souvenirs des 80 ans de Mamie.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 60 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 60 * DAY_MS).toISOString(),
     submissionDays: 4,
     voteDays: 3,
     authorId: "user-1",
@@ -73,7 +72,7 @@ export const allClosed: Contest[] = [
     name: "Vacances d'été",
     description: "Les meilleurs souvenirs de l'été en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 30 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 30 * DAY_MS).toISOString(),
     submissionDays: 7,
     voteDays: 3,
     authorId: "user-1",
@@ -84,7 +83,7 @@ export const allClosed: Contest[] = [
     name: "Noël 2025",
     description: "Photos de Noël en famille.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 50 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 50 * DAY_MS).toISOString(),
     submissionDays: 5,
     voteDays: 2,
     authorId: "user-other",
@@ -95,7 +94,7 @@ export const allClosed: Contest[] = [
     name: "Anniversaire de Mamie",
     description: "Souvenirs des 80 ans de Mamie.",
     coverImage: undefined,
-    createdAt: new Date(Date.now() - 70 * DAY).toISOString(),
+    createdAt: new Date(Date.now() - 70 * DAY_MS).toISOString(),
     submissionDays: 4,
     voteDays: 3,
     authorId: "user-1",

@@ -1,5 +1,5 @@
 import { PastelColor } from "@/components/types";
-import type { Contest } from "@/features/contests";
+import { DAY_MS, type Contest } from "@/features/contests";
 
 export type ContestStatus = "submission" | "vote" | "closed";
 
@@ -14,8 +14,6 @@ export const STATUS_COLOR: Record<ContestStatus, PastelColor> = {
   vote: "butter",
   closed: "lavender",
 };
-
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const getContestStatus = (contest: Contest, now: Date = new Date()): ContestStatus => {
   const start = new Date(contest.createdAt).getTime();
