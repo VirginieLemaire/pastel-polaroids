@@ -1,8 +1,7 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
+import { PastelColor, Shape, Size } from "./types";
 
-type PastelColor = "pink" | "lavender" | "mint" | "butter" | "sky" | "peach";
-type Shape = "rect" | "round";
-type Size = "sm" | "md" | "lg";
+
 
 interface BrutalButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: PastelColor;

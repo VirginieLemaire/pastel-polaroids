@@ -1,3 +1,4 @@
+import { PastelColor } from "@/components/types";
 import type { Contest } from "@/features/contests";
 
 export type ContestStatus = "submission" | "vote" | "closed";
@@ -8,10 +9,10 @@ export const STATUS_LABEL: Record<ContestStatus, string> = {
   closed: "Clos",
 };
 
-export const STATUS_COLOR: Record<ContestStatus, string> = {
-  submission: "bg-pastel-mint",
-  vote: "bg-pastel-butter",
-  closed: "bg-pastel-lavender",
+export const STATUS_COLOR: Record<ContestStatus, PastelColor> = {
+  submission: "mint",
+  vote: "butter",
+  closed: "lavender",
 };
 
 const DAY_MS = 24 * 60 * 60 * 1000;

@@ -3,24 +3,15 @@ import { ArrowLeft, Pencil } from "lucide-react";
 import BrutalCard from "@/components/BrutalCard";
 import BrutalButton from "@/components/BrutalButton";
 import StatusBadge from "@/components/StatusBadge";
-import { useContests, canEditContest } from "@/features/contests";
+import { useContests, canEditContest, STATUS_LABEL, STATUS_COLOR } from "@/features/contests";
 import { useCurrentUser } from "@/features/user";
 import { getContestStatus, type ContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 
-const CTA_BY_STATUS: Record<
-  ContestStatus,
-  { label: string; color: "mint" | "butter" | "lavender" }
-> = {
-  submission: { label: "Soumettre une photo", color: "mint" },
-  vote: { label: "Voter", color: "butter" },
-  closed: { label: "Voir le palmarès", color: "lavender" },
-};
-
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-const Contest = () => {
+export default function Contest() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const { getContest } = useContests();
@@ -46,7 +37,6 @@ const Contest = () => {
   }
 
   const status = getContestStatus(contest);
-  const cta = CTA_BY_STATUS[status];
   const isAuthor = canEditContest(contest, currentUser.id);
   // Pour l'instant, l'auteur du thème = currentUser quand isAuthor (sinon nom générique).
   // Le switcher multi-users introduira un lookup propre.
@@ -121,12 +111,12 @@ const Contest = () => {
 
         {/* CTA */}
         <BrutalButton
-          color={cta.color}
+          color={STATUS_COLOR[status]}
           size="lg"
           className="w-full"
           onClick={() => navigate(`/contest/${contest.id}/photos`)}
         >
-          {cta.label}
+          {STATUS_LABEL[status]}
         </BrutalButton>
 
         {/* Édition (auteur uniquement) */}
@@ -146,5 +136,3 @@ const Contest = () => {
     </main>
   );
 };
-
-export default Contest;
