@@ -1,114 +1,155 @@
-## Reset du projet et nouveau backlog
+## Refactor archi par feature + Étape 5
 
-On repart d'une base propre. Plus question d'adapter l'existant : on supprime tout le code applicatif, on garde uniquement la stack technique minimale, la charte couleurs et l'esprit néo-brutaliste. Le polaroïd cible est celui de la référence fournie (cadre épais, zone photo hachurée, marge basse blanche).
-
----
-
-### Étape 1 — Nettoyage (à valider avant la suite)
-
-Objectif : un projet vierge qui compile, avec la charte couleurs et les utilitaires brutalistes prêts à l'emploi, mais zéro feature métier.
-
-**Fichiers supprimés**
-- `src/pages/Index.tsx`, `SubmitPhoto.tsx`, `Gallery.tsx`, `NotFound.tsx`
-- `src/components/PolaroidCard.tsx`, `Modal.tsx`, `CreateContestForm.tsx`
-- `src/context/ContestContext.tsx` (dossier `context/` supprimé)
-- `.lovable/plan.md` (remplacé par la nouvelle version ci-dessous)
-- `src/test/example.test.ts` (on garde `setup.ts` et `vitest.config.ts` pour réintroduire des tests plus tard)
-
-**Fichiers réécrits / réduits**
-- `src/App.tsx` : une seule route `/` rendant un composant `Home` quasi vide.
-- `src/pages/Home.tsx` : nouveau, placeholder minimal.
-- `src/index.css` : fonts Space Grotesk / Space Mono, reset, variables CSS pour les 7 couleurs (HSL), utilitaires `.brutal-border`, `.brutal-shadow`, `.brutal-btn`, `.brutal-input`. Suppression des classes `.polaroid*` (refaites à l'étape 6).
-- `tailwind.config.ts` : retrait de toute la config shadcn (sidebar, popover, primary/secondary, radius, accordion, plugin `tailwindcss-animate`). On garde container, fonts, couleurs sémantiques (`background`, `foreground`, `border`, `muted`) et palette `pastel`.
-- `package.json` : retrait de `@tailwindcss/typography` (inutilisé).
-- `index.html` : titre + meta « Concours photo de famille ».
-
-**Charte couleurs (variables CSS, HSL)**
-- `--background` (beige) : `#fffaeb`
-- `--pastel-pink` : `#f0c2d1`
-- `--pastel-lavender` (violet) : `#d2c6ec`
-- `--pastel-mint` (vert) : `#b3e6d5`
-- `--pastel-butter` (jaune) : `#f7e8ba`
-- `--pastel-sky` (bleu) : `#c2e0f0`
-- `--pastel-peach` (beige foncé) : `#f7cfba`
-- `--foreground` : noir quasi pur
-
-**Critère de validation étape 1**
-- Page beige avec juste le titre, sans erreur console.
-- `package.json` réduit au strict nécessaire.
-- Classes `bg-pastel-*` et `brutal-*` utilisables.
+Deux blocs séquentiels : (A) refactor archi, (B) page détail thème.
 
 ---
 
-### Étape 2 — Composants de base (design system)
+## A. Refactor — création de la feature `contests`
 
-- `BrutalButton` (variantes pastel, taille, icône)
-- `BrutalCard` (bordure épaisse + ombre décalée)
-- `Modal` accessible (`createPortal`, `Escape`, focus trap, overlay click, `aria-modal`)
-- `PolaroidCard` refait d'après la référence : cadre blanc épais bordure noire, ombre décalée, zone image avec motif hachuré en placeholder, marge basse plus large. Props : `imageUrl?`, `title`, `rotation`. Pas de flip à ce stade.
-- Page démo `/` affichant un échantillon de chaque composant.
+### A.1 Nouvelle arborescence
 
----
+```text
+src/
+  features/
+    contests/
+      types.ts                  ← Contest, CreateContestInput, ContestContextValue
+      ContestContext.tsx        ← Provider seul
+      useContests.ts            ← hook
+      mocks/
+        contests.mocks.ts       ← ex src/dev/mockDatas.ts (renommé)
+      index.ts                  ← barrel: re-export Contest, CreateContestInput,
+                                   ContestProvider, useContests, DEV_SCENARIO_CHANGE_EVENT
+  context/                       ← supprimé (vide)
+  dev/
+    mockDatas.ts                 ← supprimé
+    mockScenarios.ts             ← import mis à jour vers @/features/contests/mocks/contests.mocks
+    DevMenu.tsx                  ← import mis à jour vers @/features/contests
+```
 
-### Étape 3 — Home + création de thème (ex-étape 1A)
+### A.2 Détail des déplacements
 
-- Home cas A : logo, sous-titre, gros bouton `+` central, label « Nouveau thème ».
-- Modale + formulaire (nom, soumission 15j défaut, vote 3j défaut).
-- `ContestContext` en mémoire : `{ id, name, createdAt, submissionDays, voteDays, photos: [] }`.
-- Après validation : fermeture modale + redirection placeholder vers `/contest/:id`.
+- **`src/context/ContestContext.tsx`** → split en deux :
+  - `src/features/contests/types.ts` : interfaces `Contest`, `CreateContestInput`, `ContestContextValue`.
+  - `src/features/contests/ContestContext.tsx` : `createContext`, `ContestProvider`, ré-export de `DEV_SCENARIO_CHANGE_EVENT`. Import des types depuis `./types`, import des mocks depuis `./mocks/contests.mocks`.
+- **`src/context/useContests.ts`** → `src/features/contests/useContests.ts` (inchangé hormis l'import du Context).
+- **`src/dev/mockDatas.ts`** → `src/features/contests/mocks/contests.mocks.ts` (contenu identique, juste l'import `Contest` qui passe en `@/features/contests`).
+- **`src/features/contests/index.ts`** (barrel) :
+  ```ts
+  export type { Contest, CreateContestInput, ContestContextValue } from "./types";
+  export { ContestProvider, DEV_SCENARIO_CHANGE_EVENT } from "./ContestContext";
+  export { useContests } from "./useContests";
+  ```
 
----
+### A.3 Mise à jour des imports (consommateurs)
 
-### Étape 4 — Home cas B (un concours en cours)
+Tous les `@/context/useContests` et `@/context/ContestContext` deviennent `@/features/contests`.
+Fichiers à patcher : `App.tsx` (ou `main.tsx` selon montage du Provider), `pages/Home.tsx`, `pages/Contest.tsx`, `components/CreateContestForm.tsx`, `components/StatusBadge.tsx` si concerné, `lib/contestStatus.ts`, `dev/mockScenarios.ts`, `dev/DevMenu.tsx`.
 
-- Carte du concours en cours (cover placeholder, nom, badge de statut).
-- Bouton « Autres thèmes » si ≥1 autre concours.
-- Clic carte → page détail thème.
+### A.4 Suppressions
 
----
+- `src/context/ContestContext.tsx`, `src/context/useContests.ts`, dossier `src/context/`.
+- `src/dev/mockDatas.ts`.
 
-### Étape 5 — Page détail d'un thème
+### A.5 Critère de validation refactor
 
-- Image de couverture + avatar créateur via **DiceBear** (`@dicebear/core` + collection à choisir, seed = identifiant utilisateur fictif).
-- Carte post-it : description, statut, dates clés, compteur de photos.
-- Boutons contextuels selon statut (Soumettre / Voter / Voir le palmarès).
-- Bouton « Éditer le thème » visible uniquement pour le créateur.
-- Barre de navigation basse fixe.
-
----
-
-### Étape 6 — Page photos d'un thème
-
-- Grille de `PolaroidCard`.
-- Interactions selon statut :
-  - Soumission : seules ses propres photos éditables/supprimables.
-  - Vote : toutes les photos, étoiles.
-  - Clôturé : note moyenne, couronne sur la/les gagnante(s).
-- Modale plein écran au clic sur une photo.
-
----
-
-### Étape 7 — Galerie « toutes les photos »
-
-- Mosaïque tous concours confondus, tag thème sur chaque photo.
-- Filtres multi-sélection : par thème (chips) + « gagnantes uniquement », combinables.
+- Build OK, app identique en preview (Home + Contest fonctionnent, DevMenu switch toujours les scénarios).
+- Plus aucun import qui pointe vers `@/context/*` ou `@/dev/mockDatas`.
 
 ---
 
-### Étape 8 — Polish
+## B. Étape 5 — Page détail d'un thème
 
-- États vides, transitions de modale, responsive desktop, micro-animations, passe accessibilité.
-- Compression et recadrage des images uploadées (illustration de thème, photos soumises).
+(Inchangé par rapport à ce qu'on avait cadré, mais désormais aligné sur l'archi feature.)
+
+### B.1 Feature `user` (user mock unique)
+
+```text
+src/features/user/
+  types.ts          ← interface User { id, name, email, avatarSeed }
+  mockUser.ts       ← CURRENT_USER constant (id "user-1", name "Camille")
+  UserContext.tsx   ← Provider exposant { currentUser }
+  useCurrentUser.ts ← hook
+  index.ts          ← barrel
+```
+
+Monté dans `App.tsx` autour de `ContestProvider`.
+
+### B.2 Compat Airtable sur `Contest`
+
+- Ajouter `authorId: string` à l'interface (`features/contests/types.ts`).
+- Tous les mocks de `contests.mocks.ts` reçoivent `authorId: "user-1"`, sauf **« Noël 2025 »** qui reçoit `authorId: "user-other"` (test du masquage du bouton Éditer).
+- `createContest` injecte automatiquement `authorId: currentUser.id`. → le Provider lit `useCurrentUser()`.
+
+Aucun champ `status` introduit — calcul dynamique conservé.
+
+### B.3 Avatar DiceBear
+
+- **Demande de confirmation install** avant tout : `@dicebear/core` + `@dicebear/collection` (collection `thumbs` proposée, neutre et légère). Si refus, fallback initiales sur un disque pastel.
+- Helper `src/shared/avatar.ts` : `getAvatarDataUri(seed: string): string` (SVG inline, zéro requête réseau).
+
+### B.4 Permissions
+
+`src/features/contests/permissions.ts` :
+```ts
+export const canEditContest = (contest: Contest, userId: string) =>
+  contest.authorId === userId;
+```
+(`canEditPhoto`, `canUserSubmit` viendront avec la feature `photos`.)
+
+### B.5 Page `Contest.tsx` redesignée
+
+Layout mobile-first :
+
+```text
+[ ← Retour ]
+[ Cover pleine largeur, brutal-border, ratio 4/3, placeholder hachuré si absente ]
+[ Avatar (DiceBear, 40px) │ "Créé par <Nom>" │ <StatusBadge> ]
+[ BrutalCard (color butter, rotation -1deg) :
+    <h1> nom </h1>
+    <p>  description si présente </p>
+    Soumission : Xj  •  Vote : Yj
+    Créé le …  ·  Phase actuelle se termine le …
+    0 photo soumise pour l'instant
+]
+[ CTA pleine largeur selon statut :
+    submission → "Soumettre une photo"  (mint)
+    vote       → "Voter"                 (butter)
+    closed     → "Voir le palmarès"     (lavender)
+  → tous routent vers /contest/:id/photos (lien mort jusqu'à l'étape 6)
+]
+[ Si canEditContest : bouton "Éditer le thème" (sky, sm) → console.log + toast placeholder ]
+```
+
+### B.6 Barre de navigation basse
+
+`src/components/BottomNav.tsx` : fixed bottom, 2 entrées (`Accueil`, `Galerie`). Montée dans `App.tsx`, visible sur toutes les routes. Galerie = lien mort.
+
+### B.7 Accessibilité / éco-conception
+
+- `<img>` cover : `width`/`height`, `loading="lazy"`, `alt` = nom du thème.
+- Avatar SVG inline, `width`/`height` fixes, `alt=""` (décoratif, nom rendu à côté).
+- `<h1>` unique. Bouton Retour = vrai `<Link>`.
+- Contrastes pastel/foreground OK.
+
+### B.8 Hors-scope (rappels)
+
+- Pas d'édition réelle du thème (modale plus tard).
+- Pas de page photos (étape 6).
+- Pas de switcher multi-users (étape ultérieure).
+
+### B.9 Critère de validation étape 5
+
+- Scénario `one-active-rest-closed`, `/contest/mock-1` : cover placeholder, avatar Camille, badge « Soumission », post-it, CTA « Soumettre une photo », bouton « Éditer le thème » visible.
+- `/contest/mock-2` (Noël, `authorId: "user-other"`) : bouton « Éditer » absent.
+- Switch DevMenu → badge change, aucune trace de champ `status` dans le code.
+- Build OK, aucune erreur console.
 
 ---
 
-### Étape 9 — Automatisations
+## Fichiers touchés (récap)
 
-- Transitions automatiques de statut selon `createdAt + submissionDays`, puis `+ voteDays`.
-- Désignation automatique des gagnantes à la clôture (règle à confirmer : meilleure moyenne ? seuil min de votes ? gestion ex-aequo ?).
-- **Recalcul uniquement via un cron quotidien à minuit** (pas de recalcul au mount). Implique un backend planifié — choix techno à faire le moment venu (Lovable Cloud + edge function programmée, ou équivalent).
-- Préparer la structure pour de futures notifications.
+**Créés** : `src/features/contests/{types.ts, ContestContext.tsx, useContests.ts, permissions.ts, index.ts}`, `src/features/contests/mocks/contests.mocks.ts`, `src/features/user/{types.ts, mockUser.ts, UserContext.tsx, useCurrentUser.ts, index.ts}`, `src/shared/avatar.ts`, `src/components/BottomNav.tsx`.
 
----
+**Modifiés** : `src/App.tsx`, `src/pages/Home.tsx`, `src/pages/Contest.tsx`, `src/components/CreateContestForm.tsx`, `src/components/StatusBadge.tsx` (si import concerné), `src/lib/contestStatus.ts`, `src/dev/mockScenarios.ts`, `src/dev/DevMenu.tsx`, `package.json` (DiceBear, après confirmation).
 
-On démarre par **l'étape 1** et on ne touche à rien d'autre tant qu'elle n'est pas validée en preview.
+**Supprimés** : `src/context/` (dossier entier), `src/dev/mockDatas.ts`.
