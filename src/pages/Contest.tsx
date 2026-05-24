@@ -11,6 +11,12 @@ import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
+const statusCorrespondingActionText = {
+  submission: "Soumettre une photo",
+  vote: "Voter",
+  closed: "Voir les photos"
+};
+
 export default function Contest() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
@@ -116,7 +122,7 @@ export default function Contest() {
           className="w-full"
           onClick={() => navigate(`/contest/${contest.id}/photos`)}
         >
-          {STATUS_LABEL[status]}
+          {statusCorrespondingActionText[status]}
         </BrutalButton>
 
         {/* Édition (auteur uniquement) */}
