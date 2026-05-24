@@ -1,4 +1,4 @@
-import { ContestStatus, STATUS_COLOR, STATUS_LABEL } from "@/lib/contestStatus";
+import { ContestStatus, STATUS_COLOR, STATUS_LABEL } from "@/features/contests/contestStatus";
 
 const StatusBadge = ({ status }: { status: ContestStatus }) => (
   <span

@@ -5,8 +5,8 @@ import BrutalButton from "@/components/BrutalButton";
 import StatusBadge from "@/components/StatusBadge";
 import { useContests, canEditContest } from "@/features/contests";
 import { useCurrentUser } from "@/features/user";
-import { getContestStatus, type ContestStatus } from "@/lib/contestStatus";
-import { getAvatarDataUri } from "@/shared/avatar";
+import { getContestStatus, type ContestStatus } from "@/features/contests/contestStatus";
+import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 
 const CTA_BY_STATUS: Record<
   ContestStatus,
