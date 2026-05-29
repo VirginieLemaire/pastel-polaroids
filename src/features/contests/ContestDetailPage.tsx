@@ -17,7 +17,7 @@ const statusCorrespondingActionText = {
   closed: "Voir les photos"
 };
 
-export default function Contest() {
+export default function ContestDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
   const { getContest } = useContests();

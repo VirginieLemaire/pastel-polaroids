@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./features/user";
 import { ContestProvider } from "./features/contests";
-import Home from "./pages/Home";
-import Contest from "./pages/Contest";
+import HomePage from "./features/home/HomePage";
+import ContestDetailPage from "./features/contests/ContestDetailPage";
 import DevMenu from "./dev/DevMenu";
 import BottomNav from "./shared/ui/components/BottomNav";
 
@@ -13,8 +13,8 @@ const App = () => (
         <DevMenu />
         <div className="pb-16">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/contest/:id" element={<Contest />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/contest/:id" element={<ContestDetailPage />} />
           </Routes>
         </div>
         <BottomNav />

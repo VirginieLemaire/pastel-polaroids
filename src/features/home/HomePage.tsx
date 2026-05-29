@@ -15,7 +15,7 @@ const pickOpenContest = (contests: Contest[]): Contest => {
   return openContest ? openContest : null;
 };
 
-const Home = () => {
+export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
   const { contests, createContest } = useContests();
@@ -141,5 +141,3 @@ const Home = () => {
     </main>
   );
 };
-
-export default Home;
