@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
@@ -61,32 +61,33 @@ export default function ContestDetailPage() {
         >
           <ArrowLeft size={16} aria-hidden="true" /> Retour
         </Link>
-
-        {/* Cover */}
-        {contest.coverImage ? (
-          <CoverImage
-            src={contest.coverImage}
-            alt={contest.name}
-            priority={true} // priority load cause immediatly visible
-            className="brutal-shadow"
-          />
-        ) : (
-          <ImagePlaceHolder className="brutal-shadow bg-pastel-sky/40"/>
-        )}
-
-        {/* Author + status */}
-        <div className="flex items-center gap-3">
-          <img
-            src={getAvatarDataUri(authorSeed)}
-            alt=""
-            width={40}
-            height={40}
-            className="w-10 h-10 brutal-border bg-background shrink-0"
-          />
-          <p className="font-mono text-sm flex-1 min-w-0 truncate">
-            Créé par <span className="font-bold">{authorName}</span>
-          </p>
-          <StatusBadge status={status} />
+        {/* Head part */}
+        <div className="flex flex-wrap md:flex-nowrap gap-2">
+          {/* Cover */}
+          {contest.coverImage ? (
+            <CoverImage
+              src={contest.coverImage}
+              alt={contest.name}
+              priority={true} // priority load cause immediatly visible
+              className="brutal-shadow md:w-2/3"
+            />
+          ) : (
+            <ImagePlaceHolder className="brutal-shadow bg-pastel-sky/40 md:w-2/3"/>
+          )}
+          {/* Author + status */}
+          <div className="w-full flex items-center gap-3 md:flex-col md:flex-wrap md:align-items-center md:self-end md:w-1/3">
+            <img
+              src={getAvatarDataUri(authorSeed)}
+              alt=""
+              width={40}
+              height={40}
+              className="w-10 h-10 brutal-border brutal-shadow bg-background shrink-0 md:w-20 md:h-20"
+            />
+            <p className="font-mono text-sm flex-1 min-w-0 truncate md:flex md:flex-col">
+              Créé par <span className="font-bold">{authorName}</span>
+            </p>
+            <StatusBadge status={status} />
+          </div>
         </div>
 
         {/* Post-it */}
@@ -120,14 +121,22 @@ export default function ContestDetailPage() {
 
         {/* Édition (auteur uniquement) */}
         {isAuthor && (
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
             <BrutalButton
               color="sky"
               size="sm"
               icon={<Pencil size={14} aria-hidden="true" />}
               onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
             >
-              Éditer le thème
+              Éditer
+            </BrutalButton>
+            <BrutalButton
+              color="pink"
+              size="sm"
+              icon={<Trash2 size={14} aria-hidden="true" />}
+              onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
+            >
+              Supprimer
             </BrutalButton>
           </div>
         )}
