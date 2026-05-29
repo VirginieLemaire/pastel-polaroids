@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
 import { PastelColor, Shape, Size } from "./types";
+import { colorClass } from "@/shared/ui";
 
 
 
@@ -10,15 +11,6 @@ interface BrutalButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon?: ReactNode;
   children?: ReactNode;
 }
-
-const colorClass: Record<PastelColor, string> = {
-  pink: "bg-pastel-pink",
-  lavender: "bg-pastel-lavender",
-  mint: "bg-pastel-mint",
-  butter: "bg-pastel-butter",
-  sky: "bg-pastel-sky",
-  peach: "bg-pastel-peach",
-};
 
 const rectSize: Record<Size, string> = {
   sm: "px-3 py-1.5 text-sm",

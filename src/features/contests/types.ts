@@ -23,3 +23,5 @@ export interface ContestContextValue {
   createContest: (input: CreateContestInput) => Contest;
   getContest: (id: string) => Contest | undefined;
 }
+
+export type ContestStatus = "submission" | "vote" | "closed";
