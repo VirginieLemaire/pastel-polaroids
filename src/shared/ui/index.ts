@@ -1,1 +1,1 @@
-import { STATUS_COLOR_LABEL } from "./CTAByStatus";
+export { colorClass } from "./uiConstants";

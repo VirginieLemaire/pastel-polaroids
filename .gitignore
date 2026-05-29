@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Avoid lock files as Lovable seems to use other package manager
+*lock*

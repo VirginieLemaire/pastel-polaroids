@@ -1,7 +1,5 @@
 import { PastelColor } from "@/components/types";
-import { DAY_MS, type Contest } from "@/features/contests";
-
-export type ContestStatus = "submission" | "vote" | "closed";
+import { ContestStatus, DAY_MS, type Contest } from "@/features/contests";
 
 export const STATUS_LABEL: Record<ContestStatus, string> = {
   submission: "Soumission",
