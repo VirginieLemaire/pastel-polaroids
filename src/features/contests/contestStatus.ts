@@ -9,7 +9,7 @@ export const STATUS_LABEL: Record<ContestStatus, string> = {
 
 export const STATUS_COLOR: Record<ContestStatus, PastelColor> = {
   submission: "mint",
-  vote: "butter",
+  vote: "sky",
   closed: "lavender",
 };
 
