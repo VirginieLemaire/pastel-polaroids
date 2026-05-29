@@ -7,6 +7,8 @@ import { useContests, canEditContest, STATUS_LABEL, STATUS_COLOR } from "@/featu
 import { useCurrentUser } from "@/features/user";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
+import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
+import CoverImage from "@/shared/ui/components/CoverImage";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -62,23 +64,14 @@ export default function ContestDetailPage() {
 
         {/* Cover */}
         {contest.coverImage ? (
-          <img
+          <CoverImage
             src={contest.coverImage}
             alt={contest.name}
-            width={800}
-            height={600}
-            loading="lazy"
-            className="w-full aspect-[4/3] object-cover brutal-border brutal-shadow"
+            priority={true} // priority load cause immediatly visible
+            className="brutal-shadow"
           />
         ) : (
-          <div
-            className="w-full aspect-[4/3] brutal-border brutal-shadow bg-pastel-sky/40"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, transparent 0 10px, hsl(var(--foreground) / 0.08) 10px 12px)",
-            }}
-            aria-hidden="true"
-          />
+          <ImagePlaceHolder className="brutal-shadow bg-pastel-sky/40"/>
         )}
 
         {/* Author + status */}
