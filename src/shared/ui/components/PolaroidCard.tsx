@@ -1,3 +1,6 @@
+import CoverImage from "./CoverImage";
+import ImagePlaceHolder from "./ImagePlaceHolder";
+
 interface PolaroidCardProps {
   imageUrl?: string;
   title?: string;
@@ -28,20 +31,18 @@ const PolaroidCard = ({ imageUrl, title, rotation = 0, onClick }: PolaroidCardPr
       }`}
     >
       <div
-        className="brutal-border w-56 h-56 overflow-hidden relative bg-background"
+        className="w-56 h-56 overflow-hidden relative bg-background"
         aria-label={title || "Photo"}
       >
         {imageUrl ? (
-          <img src={imageUrl} alt={title || ""} className="w-full h-full object-cover" />
-        ) : (
-          <div
-            className="w-full h-full"
-            aria-hidden="true"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(135deg, hsl(var(--foreground)) 0 2px, transparent 2px 10px)",
-            }}
+          <CoverImage
+            src={imageUrl}
+            alt={title || "Photo sans titre"}
+            priority={true}
+            className="h-full"
           />
+        ) : (
+          <ImagePlaceHolder className="h-full"/>
         )}
       </div>
       {title && (
