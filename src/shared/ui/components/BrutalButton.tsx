@@ -1,5 +1,5 @@
 import { ButtonHTMLAttributes, ReactNode } from "react";
-import { PastelColor, Shape, Size } from "./types";
+import { PastelColor, Shape, Size } from "../types";
 import { colorClass } from "@/shared/ui";
 
 

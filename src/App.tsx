@@ -4,7 +4,7 @@ import { ContestProvider } from "./features/contests";
 import Home from "./pages/Home";
 import Contest from "./pages/Contest";
 import DevMenu from "./dev/DevMenu";
-import BottomNav from "./components/BottomNav";
+import BottomNav from "./shared/ui/components/BottomNav";
 
 const App = () => (
   <UserProvider>

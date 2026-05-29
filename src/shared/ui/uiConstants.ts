@@ -1,4 +1,4 @@
-import { PastelColor } from "@/components/types";
+import { PastelColor } from "@/shared/ui/types";
 
 export const colorClass: Record<PastelColor, string> = {
   pink: "bg-pastel-pink",

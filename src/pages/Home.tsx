@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import BrutalButton from "@/components/BrutalButton";
-import BrutalCard from "@/components/BrutalCard";
-import Modal from "@/components/Modal";
-import CreateContestForm from "@/components/CreateContestForm";
-import StatusBadge from "@/components/StatusBadge";
-import PolaroidCard from "@/components/PolaroidCard";
+import BrutalButton from "@/shared/ui/components/BrutalButton";
+import BrutalCard from "@/shared/ui/components/BrutalCard";
+import Modal from "@/shared/ui/components/Modal";
+import CreateContestForm from "@/features/contests/components/CreateContestForm";
+import StatusBadge from "@/shared/ui/components/StatusBadge";
+import PolaroidCard from "@/shared/ui/components/PolaroidCard";
 import { useContests } from "@/features/contests";
 import type { CreateContestInput, Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
