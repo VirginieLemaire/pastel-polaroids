@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
-import BrutalButton from "./BrutalButton";
+import BrutalButton from "../../../shared/ui/components/BrutalButton";
 
 interface CreateContestFormProps {
   onSubmit: (data: {

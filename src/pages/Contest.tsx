@@ -1,11 +1,11 @@
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Pencil } from "lucide-react";
-import BrutalCard from "@/components/BrutalCard";
-import BrutalButton from "@/components/BrutalButton";
-import StatusBadge from "@/components/StatusBadge";
+import BrutalCard from "@/shared/ui/components/BrutalCard";
+import BrutalButton from "@/shared/ui/components/BrutalButton";
+import StatusBadge from "@/shared/ui/components/StatusBadge";
 import { useContests, canEditContest, STATUS_LABEL, STATUS_COLOR } from "@/features/contests";
 import { useCurrentUser } from "@/features/user";
-import { getContestStatus, type ContestStatus } from "@/features/contests/contestStatus";
+import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 
 const formatDate = (iso: string) =>
