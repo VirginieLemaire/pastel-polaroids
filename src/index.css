@@ -12,6 +12,9 @@
     --muted-foreground: 0 0% 35%;
     --border: 0 0% 8%;
 
+    --bottom-nav-h: 4rem; /* hauteur figée de BottomNav, partagée avec le wrapper de pages */
+
+
     --pastel-pink: 341 65% 85%;       /* #f0c2d1 */
     --pastel-lavender: 257 50% 85%;   /* #d2c6ec */
     --pastel-mint: 159 50% 80%;       /* #b3e6d5 */

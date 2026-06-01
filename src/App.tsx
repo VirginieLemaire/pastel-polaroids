@@ -11,12 +11,13 @@ const App = () => (
     <ContestProvider>
       <BrowserRouter>
         <DevMenu />
-        <div className="pb-16">
+        <div className="min-h-[calc(100dvh-var(--bottom-nav-h))] flex flex-col">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/contest/:id" element={<ContestDetailPage />} />
           </Routes>
         </div>
+
         <BottomNav />
       </BrowserRouter>
     </ContestProvider>
