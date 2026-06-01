@@ -1,155 +1,47 @@
-## Refactor archi par feature + Étape 5
+## Fix layout : `<main>` + `BottomNav` = 100% du viewport
 
-Deux blocs séquentiels : (A) refactor archi, (B) page détail thème.
+### Recommandations
 
----
+**Portée → globale (wrapper dans `App.tsx`).**
+Raison : la `BottomNav` est présente sur toutes les routes. Si chaque page recalcule sa hauteur de son côté, on duplique la règle et on prend le risque d'oublier une page. Une seule source de vérité dans `App.tsx`, chaque page reste libre de scroller si son contenu dépasse (overflow naturel).
 
-## A. Refactor — création de la feature `contests`
+**Hauteur BottomNav → figée + variable CSS.**
+Best practice front mobile : la hauteur d'une nav statique (icône + label) ne change jamais à l'usage. Un `ResizeObserver` ajouterait du JS pour zéro bénéfice réel et un risque de flash au premier render. Le standard (utilisé par iOS Safari, Material, Tailwind UI) c'est : hauteur figée + token CSS partagé entre la nav et le wrapper de contenu.
 
-### A.1 Nouvelle arborescence
+### Changements
 
-```text
-src/
-  features/
-    contests/
-      types.ts                  ← Contest, CreateContestInput, ContestContextValue
-      ContestContext.tsx        ← Provider seul
-      useContests.ts            ← hook
-      mocks/
-        contests.mocks.ts       ← ex src/dev/mockDatas.ts (renommé)
-      index.ts                  ← barrel: re-export Contest, CreateContestInput,
-                                   ContestProvider, useContests, DEV_SCENARIO_CHANGE_EVENT
-  context/                       ← supprimé (vide)
-  dev/
-    mockDatas.ts                 ← supprimé
-    mockScenarios.ts             ← import mis à jour vers @/features/contests/mocks/contests.mocks
-    DevMenu.tsx                  ← import mis à jour vers @/features/contests
-```
+1. **`src/index.css`** — ajouter dans `:root` :
+   ```css
+   --bottom-nav-h: 4rem; /* 64px, hauteur figée de BottomNav */
+   ```
 
-### A.2 Détail des déplacements
+2. **`src/shared/ui/components/BottomNav.tsx`** — figer la hauteur :
+   ```tsx
+   className="fixed bottom-0 ... h-[var(--bottom-nav-h)] ..."
+   ```
+   (et nettoyer le `py-2` qui devient redondant — centrage via `items-center`).
 
-- **`src/context/ContestContext.tsx`** → split en deux :
-  - `src/features/contests/types.ts` : interfaces `Contest`, `CreateContestInput`, `ContestContextValue`.
-  - `src/features/contests/ContestContext.tsx` : `createContext`, `ContestProvider`, ré-export de `DEV_SCENARIO_CHANGE_EVENT`. Import des types depuis `./types`, import des mocks depuis `./mocks/contests.mocks`.
-- **`src/context/useContests.ts`** → `src/features/contests/useContests.ts` (inchangé hormis l'import du Context).
-- **`src/dev/mockDatas.ts`** → `src/features/contests/mocks/contests.mocks.ts` (contenu identique, juste l'import `Contest` qui passe en `@/features/contests`).
-- **`src/features/contests/index.ts`** (barrel) :
-  ```ts
-  export type { Contest, CreateContestInput, ContestContextValue } from "./types";
-  export { ContestProvider, DEV_SCENARIO_CHANGE_EVENT } from "./ContestContext";
-  export { useContests } from "./useContests";
-  ```
+3. **`src/App.tsx`** — remplacer le wrapper actuel `<div className="pb-16">` par un conteneur qui réserve exactement la zone utile :
+   ```tsx
+   <div className="min-h-[calc(100dvh-var(--bottom-nav-h))]">
+     <Routes>…</Routes>
+   </div>
+   ```
+   - `100dvh` (dynamic viewport height) plutôt que `100vh` → gère correctement la barre d'URL mobile qui apparaît/disparaît au scroll.
+   - `min-h` (pas `h`) → si une page a beaucoup de contenu, elle scrolle normalement ; sinon elle remplit la zone.
 
-### A.3 Mise à jour des imports (consommateurs)
+4. **`src/features/home/HomePage.tsx`** — retirer `min-h-screen` du `<main>`. Garder `flex flex-col` + `flex-1` sur la section centrale : elle prendra naturellement toute la hauteur disponible héritée du wrapper, sans déborder.
 
-Tous les `@/context/useContests` et `@/context/ContestContext` deviennent `@/features/contests`.
-Fichiers à patcher : `App.tsx` (ou `main.tsx` selon montage du Provider), `pages/Home.tsx`, `pages/Contest.tsx`, `components/CreateContestForm.tsx`, `components/StatusBadge.tsx` si concerné, `lib/contestStatus.ts`, `dev/mockScenarios.ts`, `dev/DevMenu.tsx`.
+5. **`src/features/contests/ContestDetailPage.tsx`** — même nettoyage : retirer `min-h-screen` du `<main>` (devenu inutile, géré par le wrapper).
 
-### A.4 Suppressions
+### Bénéfices
 
-- `src/context/ContestContext.tsx`, `src/context/useContests.ts`, dossier `src/context/`.
-- `src/dev/mockDatas.ts`.
+- Plus aucun chevauchement avec la BottomNav, sur tous les écrans, toutes les pages.
+- Une seule constante (`--bottom-nav-h`) à modifier si la nav change un jour.
+- Zéro JS ajouté, aucune dépendance, conforme à l'objectif éco-conception.
+- `100dvh` corrige aussi le bug iOS Safari où `100vh` inclut la zone sous la barre d'URL.
 
-### A.5 Critère de validation refactor
+### Hors-scope
 
-- Build OK, app identique en preview (Home + Contest fonctionnent, DevMenu switch toujours les scénarios).
-- Plus aucun import qui pointe vers `@/context/*` ou `@/dev/mockDatas`.
-
----
-
-## B. Étape 5 — Page détail d'un thème
-
-(Inchangé par rapport à ce qu'on avait cadré, mais désormais aligné sur l'archi feature.)
-
-### B.1 Feature `user` (user mock unique)
-
-```text
-src/features/user/
-  types.ts          ← interface User { id, name, email, avatarSeed }
-  mockUser.ts       ← CURRENT_USER constant (id "user-1", name "Camille")
-  UserContext.tsx   ← Provider exposant { currentUser }
-  useCurrentUser.ts ← hook
-  index.ts          ← barrel
-```
-
-Monté dans `App.tsx` autour de `ContestProvider`.
-
-### B.2 Compat Airtable sur `Contest`
-
-- Ajouter `authorId: string` à l'interface (`features/contests/types.ts`).
-- Tous les mocks de `contests.mocks.ts` reçoivent `authorId: "user-1"`, sauf **« Noël 2025 »** qui reçoit `authorId: "user-other"` (test du masquage du bouton Éditer).
-- `createContest` injecte automatiquement `authorId: currentUser.id`. → le Provider lit `useCurrentUser()`.
-
-Aucun champ `status` introduit — calcul dynamique conservé.
-
-### B.3 Avatar DiceBear
-
-- **Demande de confirmation install** avant tout : `@dicebear/core` + `@dicebear/collection` (collection `thumbs` proposée, neutre et légère). Si refus, fallback initiales sur un disque pastel.
-- Helper `src/shared/avatar.ts` : `getAvatarDataUri(seed: string): string` (SVG inline, zéro requête réseau).
-
-### B.4 Permissions
-
-`src/features/contests/permissions.ts` :
-```ts
-export const canEditContest = (contest: Contest, userId: string) =>
-  contest.authorId === userId;
-```
-(`canEditPhoto`, `canUserSubmit` viendront avec la feature `photos`.)
-
-### B.5 Page `Contest.tsx` redesignée
-
-Layout mobile-first :
-
-```text
-[ ← Retour ]
-[ Cover pleine largeur, brutal-border, ratio 4/3, placeholder hachuré si absente ]
-[ Avatar (DiceBear, 40px) │ "Créé par <Nom>" │ <StatusBadge> ]
-[ BrutalCard (color butter, rotation -1deg) :
-    <h1> nom </h1>
-    <p>  description si présente </p>
-    Soumission : Xj  •  Vote : Yj
-    Créé le …  ·  Phase actuelle se termine le …
-    0 photo soumise pour l'instant
-]
-[ CTA pleine largeur selon statut :
-    submission → "Soumettre une photo"  (mint)
-    vote       → "Voter"                 (butter)
-    closed     → "Voir le palmarès"     (lavender)
-  → tous routent vers /contest/:id/photos (lien mort jusqu'à l'étape 6)
-]
-[ Si canEditContest : bouton "Éditer le thème" (sky, sm) → console.log + toast placeholder ]
-```
-
-### B.6 Barre de navigation basse
-
-`src/components/BottomNav.tsx` : fixed bottom, 2 entrées (`Accueil`, `Galerie`). Montée dans `App.tsx`, visible sur toutes les routes. Galerie = lien mort.
-
-### B.7 Accessibilité / éco-conception
-
-- `<img>` cover : `width`/`height`, `loading="lazy"`, `alt` = nom du thème.
-- Avatar SVG inline, `width`/`height` fixes, `alt=""` (décoratif, nom rendu à côté).
-- `<h1>` unique. Bouton Retour = vrai `<Link>`.
-- Contrastes pastel/foreground OK.
-
-### B.8 Hors-scope (rappels)
-
-- Pas d'édition réelle du thème (modale plus tard).
-- Pas de page photos (étape 6).
-- Pas de switcher multi-users (étape ultérieure).
-
-### B.9 Critère de validation étape 5
-
-- Scénario `one-active-rest-closed`, `/contest/mock-1` : cover placeholder, avatar Camille, badge « Soumission », post-it, CTA « Soumettre une photo », bouton « Éditer le thème » visible.
-- `/contest/mock-2` (Noël, `authorId: "user-other"`) : bouton « Éditer » absent.
-- Switch DevMenu → badge change, aucune trace de champ `status` dans le code.
-- Build OK, aucune erreur console.
-
----
-
-## Fichiers touchés (récap)
-
-**Créés** : `src/features/contests/{types.ts, ContestContext.tsx, useContests.ts, permissions.ts, index.ts}`, `src/features/contests/mocks/contests.mocks.ts`, `src/features/user/{types.ts, mockUser.ts, UserContext.tsx, useCurrentUser.ts, index.ts}`, `src/shared/avatar.ts`, `src/components/BottomNav.tsx`.
-
-**Modifiés** : `src/App.tsx`, `src/pages/Home.tsx`, `src/pages/Contest.tsx`, `src/components/CreateContestForm.tsx`, `src/components/StatusBadge.tsx` (si import concerné), `src/lib/contestStatus.ts`, `src/dev/mockScenarios.ts`, `src/dev/DevMenu.tsx`, `package.json` (DiceBear, après confirmation).
-
-**Supprimés** : `src/context/` (dossier entier), `src/dev/mockDatas.ts`.
+- Pas de refonte du contenu de HomePage ni de la nav.
+- Pas de gestion du safe-area iOS (`env(safe-area-inset-bottom)`) — à ajouter plus tard si on cible vraiment les iPhone à encoche, ça se branchera sur la même variable.
