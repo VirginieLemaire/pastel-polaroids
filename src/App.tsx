@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./features/user";
 import { ContestProvider } from "./features/contests";
+import { PhotoProvider } from "./features/photos";
 import HomePage from "./features/home/HomePage";
 import ContestDetailPage from "./features/contests/ContestDetailPage";
 import DevMenu from "./dev/DevMenu";
@@ -9,6 +10,7 @@ import BottomNav from "./shared/ui/components/BottomNav";
 const App = () => (
   <UserProvider>
     <ContestProvider>
+      <PhotoProvider>
       <BrowserRouter>
         <DevMenu />
         <div className="min-h-[calc(100dvh-var(--bottom-nav-h))] flex flex-col">
@@ -20,6 +22,7 @@ const App = () => (
 
         <BottomNav />
       </BrowserRouter>
+      </PhotoProvider>
     </ContestProvider>
   </UserProvider>
 );
