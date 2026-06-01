@@ -11,7 +11,7 @@ const App = () => (
     <ContestProvider>
       <BrowserRouter>
         <DevMenu />
-        <div className="pb-16">
+        <div className="min-h-[calc(100dvh-var(--bottom-nav-h))]">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/contest/:id" element={<ContestDetailPage />} />
