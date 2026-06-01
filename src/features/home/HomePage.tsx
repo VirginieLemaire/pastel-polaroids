@@ -57,7 +57,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="bg-background px-6 py-12 flex flex-col">
+    <main className="flex-1 bg-background px-6 py-12 flex flex-col">
       <header className="text-center space-y-2 mb-10">
         <h1 className="font-mono text-4xl md:text-5xl font-bold">Photo de Famille</h1>
         <p className="font-mono text-sm text-muted-foreground">
