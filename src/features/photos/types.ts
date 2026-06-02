@@ -19,4 +19,5 @@ export interface PhotoContextValue {
   photos: Photo[];
   getPhotosByContest: (contestId: string) => Photo[];
   getUserPhotosCount: (contestId: string, userId: string) => number;
+  submitPhoto: (input: CreatePhotoInput) => Photo;
 }
