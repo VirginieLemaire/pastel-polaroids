@@ -1,13 +1,22 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Plus } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
 import PolaroidCard from "@/shared/ui/components/PolaroidCard";
+import Modal from "@/shared/ui/components/Modal";
 import { useContests } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { useCurrentUser } from "@/features/user";
-import { usePhotos, getVisiblePhotos } from "@/features/photos";
+import {
+  usePhotos,
+  getVisiblePhotos,
+  canUserSubmit,
+  MAX_PHOTOS_PER_USER,
+  type CreatePhotoInput,
+} from "@/features/photos";
+import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 
 // Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
 const getRotation = (id: string) => {
@@ -20,8 +29,9 @@ export default function PhotosPage() {
   const { id = "" } = useParams();
   const { getContest } = useContests();
   const { currentUser } = useCurrentUser();
-  const { getPhotosByContest } = usePhotos();
+  const { getPhotosByContest, getUserPhotosCount, submitPhoto } = usePhotos();
   const contest = getContest(id);
+  const [isFormOpen, setFormOpen] = useState(false);
 
   if (!contest) {
     return (
@@ -44,11 +54,19 @@ export default function PhotosPage() {
   const status = getContestStatus(contest);
   const allPhotos = getPhotosByContest(contest.id);
   const visiblePhotos = getVisiblePhotos(allPhotos, contest, currentUser.id);
+  const userCount = getUserPhotosCount(contest.id, currentUser.id);
+  const canSubmit = canUserSubmit(contest, userCount);
+  const showSubmitArea = status === "submission";
 
   const emptyMessage =
     status === "submission"
       ? "Vous n'avez encore soumis aucune photo pour ce thème."
       : "Aucune photo n'a été soumise pour ce thème.";
+
+  const handleSubmit = (data: CreatePhotoInput) => {
+    submitPhoto(data);
+    setFormOpen(false);
+  };
 
   return (
     <main className="flex-1 bg-background px-5 py-6">
@@ -68,6 +86,27 @@ export default function PhotosPage() {
           <StatusBadge status={status} />
         </header>
 
+        {showSubmitArea && (
+          <BrutalCard color="mint">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="font-mono text-sm">
+                Vos soumissions&nbsp;: <strong>{userCount}/{MAX_PHOTOS_PER_USER}</strong>
+              </p>
+              <BrutalButton
+                color="butter"
+                size="sm"
+                icon={<Plus size={14} aria-hidden="true" />}
+                disabled={!canSubmit}
+                aria-disabled={!canSubmit}
+                title={canSubmit ? undefined : "Limite de 3 photos atteinte."}
+                onClick={() => setFormOpen(true)}
+              >
+                Soumettre une photo
+              </BrutalButton>
+            </div>
+          </BrutalCard>
+        )}
+
         {visiblePhotos.length === 0 ? (
           <BrutalCard color="butter">
             <p className="font-mono text-sm">{emptyMessage}</p>
@@ -86,6 +125,14 @@ export default function PhotosPage() {
           </ul>
         )}
       </div>
+
+      <Modal open={isFormOpen} onClose={() => setFormOpen(false)} title="Soumettre une photo">
+        <SubmitPhotoForm
+          contestId={contest.id}
+          onSubmit={handleSubmit}
+          onCancel={() => setFormOpen(false)}
+        />
+      </Modal>
     </main>
   );
 }
