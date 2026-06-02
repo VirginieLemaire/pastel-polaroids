@@ -1,5 +1,6 @@
 import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
-import type { Photo, PhotoContextValue } from "./types";
+import { useCurrentUser } from "@/features/user";
+import type { Photo, PhotoContextValue, CreatePhotoInput } from "./types";
 import { defaultPhotos } from "./mocks/photos.mocks";
 
 export const PhotoContext = createContext<PhotoContextValue | null>(null);
@@ -9,7 +10,8 @@ interface IPhotoProviderProps {
 }
 
 export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
-  const [photos] = useState<Photo[]>(defaultPhotos);
+  const { currentUser } = useCurrentUser();
+  const [photos, setPhotos] = useState<Photo[]>(defaultPhotos);
 
   const photosByContest = useMemo(() => {
     const map = new Map<string, Photo[]>();
@@ -32,9 +34,26 @@ export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
     [photosByContest],
   );
 
+  const submitPhoto = useCallback(
+    (input: CreatePhotoInput): Photo => {
+      const photo: Photo = {
+        id: crypto.randomUUID(),
+        contestId: input.contestId,
+        authorId: currentUser.id,
+        title: input.title.trim(),
+        description: input.description?.trim() || undefined,
+        imageUrl: input.imageUrl,
+        createdAt: new Date().toISOString(),
+      };
+      setPhotos((prev) => [...prev, photo]);
+      return photo;
+    },
+    [currentUser.id],
+  );
+
   const value = useMemo<PhotoContextValue>(
-    () => ({ photos, getPhotosByContest, getUserPhotosCount }),
-    [photos, getPhotosByContest, getUserPhotosCount],
+    () => ({ photos, getPhotosByContest, getUserPhotosCount, submitPhoto }),
+    [photos, getPhotosByContest, getUserPhotosCount, submitPhoto],
   );
 
   return <PhotoContext.Provider value={value}>{children}</PhotoContext.Provider>;
