@@ -3,12 +3,24 @@ import { ArrowLeft } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
+import PolaroidCard from "@/shared/ui/components/PolaroidCard";
 import { useContests } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
+import { useCurrentUser } from "@/features/user";
+import { usePhotos, getVisiblePhotos } from "@/features/photos";
+
+// Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
+const getRotation = (id: string) => {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
+  return ((hash % 7) - 3); // -3°..+3°
+};
 
 export default function PhotosPage() {
   const { id = "" } = useParams();
   const { getContest } = useContests();
+  const { currentUser } = useCurrentUser();
+  const { getPhotosByContest } = usePhotos();
   const contest = getContest(id);
 
   if (!contest) {
@@ -30,10 +42,17 @@ export default function PhotosPage() {
   }
 
   const status = getContestStatus(contest);
+  const allPhotos = getPhotosByContest(contest.id);
+  const visiblePhotos = getVisiblePhotos(allPhotos, contest, currentUser.id);
+
+  const emptyMessage =
+    status === "submission"
+      ? "Vous n'avez encore soumis aucune photo pour ce thème."
+      : "Aucune photo n'a été soumise pour ce thème.";
 
   return (
     <main className="flex-1 bg-background px-5 py-6">
-      <div className="max-w-3xl mx-auto space-y-5">
+      <div className="max-w-5xl mx-auto space-y-5">
         <Link
           to={`/contest/${contest.id}`}
           className="font-mono text-sm font-bold inline-flex items-center gap-1 hover:underline"
@@ -49,11 +68,23 @@ export default function PhotosPage() {
           <StatusBadge status={status} />
         </header>
 
-        <BrutalCard color="butter">
-          <p className="font-mono text-sm">
-            Aucune photo à afficher pour le moment.
-          </p>
-        </BrutalCard>
+        {visiblePhotos.length === 0 ? (
+          <BrutalCard color="butter">
+            <p className="font-mono text-sm">{emptyMessage}</p>
+          </BrutalCard>
+        ) : (
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            {visiblePhotos.map((photo) => (
+              <li key={photo.id}>
+                <PolaroidCard
+                  imageUrl={photo.imageUrl}
+                  title={photo.title}
+                  rotation={getRotation(photo.id)}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </main>
   );
