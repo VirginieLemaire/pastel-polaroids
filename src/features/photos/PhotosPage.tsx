@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
@@ -12,9 +12,13 @@ import { useCurrentUser } from "@/features/user";
 import {
   usePhotos,
   getVisiblePhotos,
+  isAuthoredPhoto,
   canUserSubmit,
+  canEditPhoto,
+  canDeletePhoto,
   MAX_PHOTOS_PER_USER,
   type CreatePhotoInput,
+  type Photo,
 } from "@/features/photos";
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 
@@ -25,13 +29,16 @@ const getRotation = (id: string) => {
   return ((hash % 7) - 3); // -3°..+3°
 };
 
+type FormState = { mode: "create" } | { mode: "edit"; photo: Photo } | null;
+
 export default function PhotosPage() {
   const { id = "" } = useParams();
   const { getContest } = useContests();
   const { currentUser } = useCurrentUser();
-  const { getPhotosByContest, getUserPhotosCount, submitPhoto } = usePhotos();
+  const { getPhotosByContest, getUserPhotosCount, submitPhoto, updatePhoto, deletePhoto } =
+    usePhotos();
   const contest = getContest(id);
-  const [isFormOpen, setFormOpen] = useState(false);
+  const [form, setForm] = useState<FormState>(null);
 
   if (!contest) {
     return (
@@ -63,9 +70,24 @@ export default function PhotosPage() {
       ? "Vous n'avez encore soumis aucune photo pour ce thème."
       : "Aucune photo n'a été soumise pour ce thème.";
 
-  const handleSubmit = (data: CreatePhotoInput) => {
+  const handleCreate = (data: CreatePhotoInput) => {
     submitPhoto(data);
-    setFormOpen(false);
+    setForm(null);
+  };
+
+  const handleEdit = (photoId: string, data: CreatePhotoInput) => {
+    updatePhoto(photoId, {
+      title: data.title,
+      description: data.description,
+      imageUrl: data.imageUrl,
+    });
+    setForm(null);
+  };
+
+  const handleDelete = (photo: Photo) => {
+    if (window.confirm(`Supprimer la photo « ${photo.title} » ? Action définitive.`)) {
+      deletePhoto(photo.id);
+    }
   };
 
   return (
@@ -99,7 +121,7 @@ export default function PhotosPage() {
                 disabled={!canSubmit}
                 aria-disabled={!canSubmit}
                 title={canSubmit ? undefined : "Limite de 3 photos atteinte."}
-                onClick={() => setFormOpen(true)}
+                onClick={() => setForm({ mode: "create" })}
               >
                 Soumettre une photo
               </BrutalButton>
@@ -113,25 +135,68 @@ export default function PhotosPage() {
           </BrutalCard>
         ) : (
           <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-            {visiblePhotos.map((photo) => (
-              <li key={photo.id}>
-                <PolaroidCard
-                  imageUrl={photo.imageUrl}
-                  title={photo.title}
-                  rotation={getRotation(photo.id)}
-                />
-              </li>
-            ))}
+            {visiblePhotos.map((photo) => {
+              const isOwn = isAuthoredPhoto(photo);
+              const showActions =
+                isOwn && canEditPhoto(photo as Photo, contest, currentUser.id);
+              return (
+                <li key={photo.id} className="flex flex-col items-center gap-2">
+                  <PolaroidCard
+                    imageUrl={photo.imageUrl}
+                    title={photo.title}
+                    rotation={getRotation(photo.id)}
+                  />
+                  {showActions && (
+                    <div className="flex gap-2">
+                      <BrutalButton
+                        type="button"
+                        color="sky"
+                        size="sm"
+                        icon={<Pencil size={14} aria-hidden="true" />}
+                        onClick={() => setForm({ mode: "edit", photo: photo as Photo })}
+                      >
+                        Éditer
+                      </BrutalButton>
+                      {canDeletePhoto(photo as Photo, contest, currentUser.id) && (
+                        <BrutalButton
+                          type="button"
+                          color="pink"
+                          size="sm"
+                          icon={<Trash2 size={14} aria-hidden="true" />}
+                          onClick={() => handleDelete(photo as Photo)}
+                        >
+                          Suppr.
+                        </BrutalButton>
+                      )}
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
 
-      <Modal open={isFormOpen} onClose={() => setFormOpen(false)} title="Soumettre une photo">
-        <SubmitPhotoForm
-          contestId={contest.id}
-          onSubmit={handleSubmit}
-          onCancel={() => setFormOpen(false)}
-        />
+      <Modal
+        open={form !== null}
+        onClose={() => setForm(null)}
+        title={form?.mode === "edit" ? "Éditer la photo" : "Soumettre une photo"}
+      >
+        {form?.mode === "edit" ? (
+          <SubmitPhotoForm
+            contestId={contest.id}
+            initial={form.photo}
+            submitLabel="Enregistrer"
+            onSubmit={(data) => handleEdit(form.photo.id, data)}
+            onCancel={() => setForm(null)}
+          />
+        ) : (
+          <SubmitPhotoForm
+            contestId={contest.id}
+            onSubmit={handleCreate}
+            onCancel={() => setForm(null)}
+          />
+        )}
       </Modal>
     </main>
   );
