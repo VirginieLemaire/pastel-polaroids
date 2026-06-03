@@ -1,10 +1,12 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import { createPhotoSchema } from "../schemas";
-import type { CreatePhotoInput } from "../types";
+import type { CreatePhotoInput, Photo } from "../types";
 
 interface ISubmitPhotoFormProps {
   contestId: string;
+  initial?: Pick<Photo, "title" | "description" | "imageUrl">;
+  submitLabel?: string;
   onSubmit: (data: CreatePhotoInput) => void;
   onCancel: () => void;
 }
@@ -17,10 +19,16 @@ const readFileAsDataUrl = (file: File) =>
     reader.readAsDataURL(file);
   });
 
-const SubmitPhotoForm = ({ contestId, onSubmit, onCancel }: ISubmitPhotoFormProps) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [imageUrl, setImageUrl] = useState<string>("");
+const SubmitPhotoForm = ({
+  contestId,
+  initial,
+  submitLabel = "Soumettre",
+  onSubmit,
+  onCancel,
+}: ISubmitPhotoFormProps) => {
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [imageUrl, setImageUrl] = useState<string>(initial?.imageUrl ?? "");
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -136,7 +144,7 @@ const SubmitPhotoForm = ({ contestId, onSubmit, onCancel }: ISubmitPhotoFormProp
           Annuler
         </BrutalButton>
         <BrutalButton type="submit" color="mint" size="sm">
-          Soumettre
+          {submitLabel}
         </BrutalButton>
       </div>
     </form>
