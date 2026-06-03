@@ -22,12 +22,11 @@ import {
 } from "@/features/photos";
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 
-// Rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
+// Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
 const getRotation = (id: string) => {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
-  // Fractional degrees for smoother spread, range -8°..+8°
-  return ((hash % 1600) / 100) - 8;
+  return ((hash % 7) - 3); // -3°..+3°
 };
 
 type FormState = { mode: "create" } | { mode: "edit"; photo: Photo } | null;
