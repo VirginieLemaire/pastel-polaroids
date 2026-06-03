@@ -43,14 +43,46 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
     [currentUser.id]
   );
 
+  const updateContest: ContestContextValue["updateContest"] = useCallback(
+    (id, input) => {
+      let updated: Contest | undefined;
+      setContests((prev) =>
+        prev.map((c) => {
+          if (c.id !== id) return c;
+          if (c.authorId !== currentUser.id) return c;
+          updated = {
+            ...c,
+            name: input.name.trim(),
+            description: input.description?.trim() || undefined,
+            coverImage: input.coverImage,
+            submissionDays: input.submissionDays,
+            voteDays: input.voteDays,
+          };
+          return updated;
+        })
+      );
+      return updated;
+    },
+    [currentUser.id]
+  );
+
+  const deleteContest: ContestContextValue["deleteContest"] = useCallback(
+    (id) => {
+      setContests((prev) =>
+        prev.filter((c) => !(c.id === id && c.authorId === currentUser.id))
+      );
+    },
+    [currentUser.id]
+  );
+
   const getContest = useCallback(
     (id: string) => contests.find((c) => c.id === id),
     [contests]
   );
 
   const value = useMemo(
-    () => ({ contests, createContest, getContest }),
-    [contests, createContest, getContest]
+    () => ({ contests, createContest, updateContest, deleteContest, getContest }),
+    [contests, createContest, updateContest, deleteContest, getContest]
   );
 
   return <ContestContext.Provider value={value}>{children}</ContestContext.Provider>;
