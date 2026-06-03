@@ -1,6 +1,6 @@
 import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
-import type { Photo, PhotoContextValue, CreatePhotoInput } from "./types";
+import type { Photo, PhotoContextValue, CreatePhotoInput, UpdatePhotoInput } from "./types";
 import { defaultPhotos } from "./mocks/photos.mocks";
 
 export const PhotoContext = createContext<PhotoContextValue | null>(null);
@@ -51,9 +51,33 @@ export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
     [currentUser.id],
   );
 
+  const updatePhoto = useCallback(
+    (id: string, input: UpdatePhotoInput): Photo | undefined => {
+      let updated: Photo | undefined;
+      setPhotos((prev) =>
+        prev.map((p) => {
+          if (p.id !== id) return p;
+          updated = {
+            ...p,
+            title: input.title.trim(),
+            description: input.description?.trim() || undefined,
+            imageUrl: input.imageUrl,
+          };
+          return updated;
+        }),
+      );
+      return updated;
+    },
+    [],
+  );
+
+  const deletePhoto = useCallback((id: string) => {
+    setPhotos((prev) => prev.filter((p) => p.id !== id));
+  }, []);
+
   const value = useMemo<PhotoContextValue>(
-    () => ({ photos, getPhotosByContest, getUserPhotosCount, submitPhoto }),
-    [photos, getPhotosByContest, getUserPhotosCount, submitPhoto],
+    () => ({ photos, getPhotosByContest, getUserPhotosCount, submitPhoto, updatePhoto, deletePhoto }),
+    [photos, getPhotosByContest, getUserPhotosCount, submitPhoto, updatePhoto, deletePhoto],
   );
 
   return <PhotoContext.Provider value={value}>{children}</PhotoContext.Provider>;
