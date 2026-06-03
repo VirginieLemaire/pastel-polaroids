@@ -50,12 +50,23 @@ export default function ContestDetailPage() {
   }
 
   const status = getContestStatus(contest);
-  const isAuthor = canEditContest(contest, currentUser.id);
-  // Pour l'instant, l'auteur du thème = currentUser quand isAuthor (sinon nom générique).
-  // Le switcher multi-users introduira un lookup propre.
-  const authorName = isAuthor ? currentUser.name : "Un autre membre";
+  const isOwner = contest.authorId === currentUser.id;
+  const canEdit = canEditContest(contest, currentUser.id);
+  const canDelete = canDeleteContest(contest, currentUser.id);
+  const authorName = isOwner ? currentUser.name : "Un autre membre";
   const authorSeed = contest.authorId;
   const photoCount = contest.photos.length;
+
+  const handleUpdate = (data: UpdateContestInput) => {
+    updateContest(contest.id, data);
+    setEditOpen(false);
+  };
+
+  const handleDelete = () => {
+    if (!window.confirm(`Supprimer le thème « ${contest.name} » ? Cette action est irréversible.`)) return;
+    deleteContest(contest.id);
+    navigate("/");
+  };
 
   return (
     <main className="flex-1 bg-background px-5 py-6">
