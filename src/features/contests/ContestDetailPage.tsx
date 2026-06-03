@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
-import { useContests, canEditContest, STATUS_LABEL, STATUS_COLOR } from "@/features/contests";
+import Modal from "@/shared/ui/components/Modal";
+import CreateContestForm from "@/features/contests/components/CreateContestForm";
+import { useContests, canEditContest, canDeleteContest, STATUS_COLOR } from "@/features/contests";
+import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser } from "@/features/user";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
@@ -22,8 +26,9 @@ const statusCorrespondingActionText = {
 export default function ContestDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const { getContest } = useContests();
+  const { getContest, updateContest, deleteContest } = useContests();
   const { currentUser } = useCurrentUser();
+  const [editOpen, setEditOpen] = useState(false);
   const contest = getContest(id);
 
   if (!contest) {
