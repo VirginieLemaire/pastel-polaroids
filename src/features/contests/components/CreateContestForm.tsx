@@ -1,15 +1,19 @@
 import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import BrutalButton from "../../../shared/ui/components/BrutalButton";
 
+interface ContestFormData {
+  name: string;
+  description?: string;
+  coverImage?: string;
+  submissionDays: number;
+  voteDays: number;
+}
+
 interface CreateContestFormProps {
-  onSubmit: (data: {
-    name: string;
-    description?: string;
-    coverImage?: string;
-    submissionDays: number;
-    voteDays: number;
-  }) => void;
+  onSubmit: (data: ContestFormData) => void;
   onCancel: () => void;
+  initial?: ContestFormData;
+  submitLabel?: string;
 }
 
 const readFileAsDataUrl = (file: File) =>
@@ -20,12 +24,12 @@ const readFileAsDataUrl = (file: File) =>
     reader.readAsDataURL(file);
   });
 
-const CreateContestForm = ({ onSubmit, onCancel }: CreateContestFormProps) => {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [coverImage, setCoverImage] = useState<string | undefined>(undefined);
-  const [submissionDays, setSubmissionDays] = useState(15);
-  const [voteDays, setVoteDays] = useState(3);
+const CreateContestForm = ({ onSubmit, onCancel, initial, submitLabel = "Créer" }: CreateContestFormProps) => {
+  const [name, setName] = useState(initial?.name ?? "");
+  const [description, setDescription] = useState(initial?.description ?? "");
+  const [coverImage, setCoverImage] = useState<string | undefined>(initial?.coverImage);
+  const [submissionDays, setSubmissionDays] = useState(initial?.submissionDays ?? 15);
+  const [voteDays, setVoteDays] = useState(initial?.voteDays ?? 3);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -172,7 +176,7 @@ const CreateContestForm = ({ onSubmit, onCancel }: CreateContestFormProps) => {
           Annuler
         </BrutalButton>
         <BrutalButton type="submit" color="mint" size="sm">
-          Créer
+          {submitLabel}
         </BrutalButton>
       </div>
     </form>

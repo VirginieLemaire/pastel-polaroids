@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
-import { useContests, canEditContest, STATUS_LABEL, STATUS_COLOR } from "@/features/contests";
+import Modal from "@/shared/ui/components/Modal";
+import CreateContestForm from "@/features/contests/components/CreateContestForm";
+import { useContests, canEditContest, canDeleteContest, STATUS_COLOR } from "@/features/contests";
+import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser } from "@/features/user";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
@@ -22,8 +26,9 @@ const statusCorrespondingActionText = {
 export default function ContestDetailPage() {
   const { id = "" } = useParams();
   const navigate = useNavigate();
-  const { getContest } = useContests();
+  const { getContest, updateContest, deleteContest } = useContests();
   const { currentUser } = useCurrentUser();
+  const [editOpen, setEditOpen] = useState(false);
   const contest = getContest(id);
 
   if (!contest) {
@@ -45,12 +50,23 @@ export default function ContestDetailPage() {
   }
 
   const status = getContestStatus(contest);
-  const isAuthor = canEditContest(contest, currentUser.id);
-  // Pour l'instant, l'auteur du thème = currentUser quand isAuthor (sinon nom générique).
-  // Le switcher multi-users introduira un lookup propre.
-  const authorName = isAuthor ? currentUser.name : "Un autre membre";
+  const isOwner = contest.authorId === currentUser.id;
+  const canEdit = canEditContest(contest, currentUser.id);
+  const canDelete = canDeleteContest(contest, currentUser.id);
+  const authorName = isOwner ? currentUser.name : "Un autre membre";
   const authorSeed = contest.authorId;
   const photoCount = contest.photos.length;
+
+  const handleUpdate = (data: UpdateContestInput) => {
+    updateContest(contest.id, data);
+    setEditOpen(false);
+  };
+
+  const handleDelete = () => {
+    if (!window.confirm(`Supprimer le thème « ${contest.name} » ? Cette action est irréversible.`)) return;
+    deleteContest(contest.id);
+    navigate("/");
+  };
 
   return (
     <main className="flex-1 bg-background px-5 py-6">
@@ -119,27 +135,45 @@ export default function ContestDetailPage() {
           {statusCorrespondingActionText[status]}
         </BrutalButton>
 
-        {/* Édition (auteur uniquement) */}
-        {isAuthor && (
+        {(canEdit || canDelete) && (
           <div className="flex justify-end gap-2">
-            <BrutalButton
-              color="sky"
-              size="sm"
-              icon={<Pencil size={14} aria-hidden="true" />}
-              onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
-            >
-              Éditer
-            </BrutalButton>
-            <BrutalButton
-              color="pink"
-              size="sm"
-              icon={<Trash2 size={14} aria-hidden="true" />}
-              onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
-            >
-              Supprimer
-            </BrutalButton>
+            {canEdit && (
+              <BrutalButton
+                color="sky"
+                size="sm"
+                icon={<Pencil size={14} aria-hidden="true" />}
+                onClick={() => setEditOpen(true)}
+              >
+                Éditer
+              </BrutalButton>
+            )}
+            {canDelete && (
+              <BrutalButton
+                color="pink"
+                size="sm"
+                icon={<Trash2 size={14} aria-hidden="true" />}
+                onClick={handleDelete}
+              >
+                Supprimer
+              </BrutalButton>
+            )}
           </div>
         )}
+
+        <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Éditer le thème">
+          <CreateContestForm
+            initial={{
+              name: contest.name,
+              description: contest.description,
+              coverImage: contest.coverImage,
+              submissionDays: contest.submissionDays,
+              voteDays: contest.voteDays,
+            }}
+            submitLabel="Enregistrer"
+            onSubmit={handleUpdate}
+            onCancel={() => setEditOpen(false)}
+          />
+        </Modal>
       </div>
     </main>
   );
