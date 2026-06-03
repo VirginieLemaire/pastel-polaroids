@@ -135,27 +135,45 @@ export default function ContestDetailPage() {
           {statusCorrespondingActionText[status]}
         </BrutalButton>
 
-        {/* Édition (auteur uniquement) */}
-        {isAuthor && (
+        {(canEdit || canDelete) && (
           <div className="flex justify-end gap-2">
-            <BrutalButton
-              color="sky"
-              size="sm"
-              icon={<Pencil size={14} aria-hidden="true" />}
-              onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
-            >
-              Éditer
-            </BrutalButton>
-            <BrutalButton
-              color="pink"
-              size="sm"
-              icon={<Trash2 size={14} aria-hidden="true" />}
-              onClick={() => console.info("[TODO] Éditer le thème", contest.id)}
-            >
-              Supprimer
-            </BrutalButton>
+            {canEdit && (
+              <BrutalButton
+                color="sky"
+                size="sm"
+                icon={<Pencil size={14} aria-hidden="true" />}
+                onClick={() => setEditOpen(true)}
+              >
+                Éditer
+              </BrutalButton>
+            )}
+            {canDelete && (
+              <BrutalButton
+                color="pink"
+                size="sm"
+                icon={<Trash2 size={14} aria-hidden="true" />}
+                onClick={handleDelete}
+              >
+                Supprimer
+              </BrutalButton>
+            )}
           </div>
         )}
+
+        <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Éditer le thème">
+          <CreateContestForm
+            initial={{
+              name: contest.name,
+              description: contest.description,
+              coverImage: contest.coverImage,
+              submissionDays: contest.submissionDays,
+              voteDays: contest.voteDays,
+            }}
+            submitLabel="Enregistrer"
+            onSubmit={handleUpdate}
+            onCancel={() => setEditOpen(false)}
+          />
+        </Modal>
       </div>
     </main>
   );
