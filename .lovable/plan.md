@@ -14,7 +14,7 @@ Poser le squelette de la feature `photos` : types, mocks, Context read-only, hoo
    - `interface PhotoContextValue { photos; getPhotosByContest(contestId); getUserPhotosCount(contestId, userId) }`.
 
 2. **`src/features/photos/mocks/photos.mocks.ts`**
-   - 2-3 photos rattachées à `mock-1` (auteurs variés : `user-1` et `user-other`) pour pouvoir visualiser dès l'étape 4. URLs Unsplash.
+   - 2-3 photos rattachées à `mock-1` (auteurs variés : `user-1` et `user-2`) pour pouvoir visualiser dès l'étape 4. URLs Unsplash.
    - Export nommé `defaultPhotos`.
 
 3. **`src/features/photos/PhotoContext.tsx`**

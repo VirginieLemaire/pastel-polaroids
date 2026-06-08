@@ -14,7 +14,7 @@ export const defaultPhotos: Photo[] = [
   {
     id: "photo-2",
     contestId: "mock-1",
-    authorId: "user-other",
+    authorId: "user-2",
     title: "Pique-nique en montagne",
     imageUrl:
       "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?q=80&w=1200&auto=format&fit=crop",
@@ -33,7 +33,7 @@ export const defaultPhotos: Photo[] = [
   {
     id: "photo-4",
     contestId: "mock-2",
-    authorId: "user-other",
+    authorId: "user-2",
     title: "Un sapin à travers un sapin",
     imageUrl:
       "https://images.unsplash.com/photo-1514377006585-6e7975371bd6?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
