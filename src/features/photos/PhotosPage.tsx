@@ -201,6 +201,8 @@ export default function PhotosPage() {
           />
         )}
       </Modal>
+
+      <PhotoDetailModal photo={detail} contest={contest} onClose={() => setDetail(null)} />
     </main>
   );
 }
