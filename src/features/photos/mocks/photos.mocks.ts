@@ -30,4 +30,23 @@ export const defaultPhotos: Photo[] = [
       "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1200&auto=format&fit=crop",
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
   },
+  {
+    id: "photo-4",
+    contestId: "mock-2",
+    authorId: "user-other",
+    title: "Un sapin à travers un sapin",
+    imageUrl:
+      "https://images.unsplash.com/photo-1514377006585-6e7975371bd6?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    createdAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "photo-5",
+    contestId: "mock-2",
+    authorId: "user-1",
+    title: "Cadeaux !",
+    description: "Les cadeaux emballés dans du papier kraft sont si beaux",
+    imageUrl:
+      "https://images.unsplash.com/photo-1545608444-f045a6db6133?q=80&w=1473&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+  },
 ];

@@ -15,8 +15,13 @@ export const USERS: User[] = [
     email: "camille@famille.test",
   },
   {
-    id: "user-other",
+    id: "user-2",
     name: "Bob",
     email: "bobdilane@famille.test"
+  },
+  {
+    id: "user-3",
+    name: "Bobbette",
+    email: "bobinette@famille.test"
   }
 ];
