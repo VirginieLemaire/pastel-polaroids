@@ -53,7 +53,7 @@ export default function ContestDetailPage() {
   const isOwner = contest.authorId === currentUser.id;
   const canEdit = canEditContest(contest, currentUser.id);
   const canDelete = canDeleteContest(contest, currentUser.id);
-  const authorName = isOwner ? currentUser.name : "Un autre membre";
+  const authorName = isOwner ? currentUser.name : getUserName(contest.authorId);
   const authorSeed = contest.authorId;
   const photoCount = contest.photos.length;
 
