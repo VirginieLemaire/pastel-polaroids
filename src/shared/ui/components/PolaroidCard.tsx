@@ -4,11 +4,18 @@ import ImagePlaceHolder from "./ImagePlaceHolder";
 interface PolaroidCardProps {
   imageUrl?: string;
   title?: string;
+  description?: string;
   rotation?: number;
   onClick?: () => void;
 }
 
-const PolaroidCard = ({ imageUrl, title, rotation = 0, onClick }: PolaroidCardProps) => {
+const PolaroidCard = ({
+  imageUrl,
+  title,
+  description,
+  rotation = 0,
+  onClick,
+}: PolaroidCardProps) => {
   const interactive = !!onClick;
   return (
     <div
@@ -26,7 +33,7 @@ const PolaroidCard = ({ imageUrl, title, rotation = 0, onClick }: PolaroidCardPr
           : undefined
       }
       style={{ transform: `rotate(${rotation}deg)` }}
-      className={`inline-block bg-background brutal-border brutal-shadow-lg p-3 pb-10 select-none ${
+      className={`inline-block w-64 bg-background brutal-border brutal-shadow-lg p-3 pb-10 select-none ${
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >
@@ -42,11 +49,16 @@ const PolaroidCard = ({ imageUrl, title, rotation = 0, onClick }: PolaroidCardPr
             className="h-full"
           />
         ) : (
-          <ImagePlaceHolder className="h-full"/>
+          <ImagePlaceHolder className="h-full" />
         )}
       </div>
       {title && (
         <p className="mt-3 text-center font-mono text-sm truncate">{title}</p>
+      )}
+      {description && (
+        <p className="mt-1 text-center font-mono text-xs text-muted-foreground line-clamp-2">
+          {description}
+        </p>
       )}
     </div>
   );
