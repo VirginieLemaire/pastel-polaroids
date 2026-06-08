@@ -23,10 +23,8 @@ import {
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 
 // Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
-const getRotation = (id: string) => {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
-  return ((hash % 7) - 3); // -3°..+3°
+const getRotation = (max: number, min: number) => {
+  return (Math.floor(Math.random() * (max - min + 1) + min)); 
 };
 
 type FormState = { mode: "create" } | { mode: "edit"; photo: Photo } | null;
@@ -144,7 +142,7 @@ export default function PhotosPage() {
                   <PolaroidCard
                     imageUrl={photo.imageUrl}
                     title={photo.title}
-                    rotation={getRotation(photo.id)}
+                    rotation={getRotation(1,-1)}
                   />
                   {showActions && (
                     <div className="flex gap-2">
