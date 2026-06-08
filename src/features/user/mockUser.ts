@@ -25,3 +25,9 @@ export const USERS: User[] = [
     email: "bobinette@famille.test"
   }
 ];
+
+export const getUserById = (id: string): User | undefined =>
+  USERS.find((u) => u.id === id);
+
+export const getUserName = (id: string): string =>
+  getUserById(id)?.name ?? "Un autre membre";
