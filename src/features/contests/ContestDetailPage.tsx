@@ -8,7 +8,7 @@ import Modal from "@/shared/ui/components/Modal";
 import CreateContestForm from "@/features/contests/components/CreateContestForm";
 import { useContests, canEditContest, canDeleteContest, STATUS_COLOR } from "@/features/contests";
 import type { UpdateContestInput } from "@/features/contests";
-import { useCurrentUser } from "@/features/user";
+import { useCurrentUser, getUserName } from "@/features/user";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
