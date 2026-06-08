@@ -53,11 +53,11 @@ const PolaroidCard = ({
         )}
       </div>
       {title && (
-        <p className="mt-3 text-center font-mono text-sm truncate">{title}</p>
+        <p className="mt-3 text-center font-mono text-sm break-words">{title}</p>
       )}
       {description && (
-        <p className="mt-1 text-center font-mono text-xs text-muted-foreground line-clamp-2">
-          {description}
+        <p className="mt-1 text-center font-mono text-xs text-muted-foreground break-words">
+          {description.length > 80 ? `${description.slice(0, 80).trimEnd()}…` : description}
         </p>
       )}
     </div>
