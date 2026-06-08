@@ -142,7 +142,8 @@ export default function PhotosPage() {
                   <PolaroidCard
                     imageUrl={photo.imageUrl}
                     title={photo.title}
-                    rotation={getRotation(1,-1)}
+                    description={photo.description}
+                    rotation={getRotation(1, -1)}
                   />
                   {showActions && (
                     <div className="flex gap-2">
