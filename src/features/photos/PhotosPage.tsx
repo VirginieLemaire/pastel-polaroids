@@ -21,6 +21,8 @@ import {
   type Photo,
 } from "@/features/photos";
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
+import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
+import type { VisiblePhoto } from "@/features/photos";
 
 // Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
 const getRotation = (max: number, min: number) => {
@@ -37,6 +39,7 @@ export default function PhotosPage() {
     usePhotos();
   const contest = getContest(id);
   const [form, setForm] = useState<FormState>(null);
+  const [detail, setDetail] = useState<VisiblePhoto | null>(null);
 
   if (!contest) {
     return (
@@ -144,6 +147,7 @@ export default function PhotosPage() {
                     title={photo.title}
                     description={photo.description}
                     rotation={getRotation(1, -1)}
+                    onClick={() => setDetail(photo)}
                   />
                   {showActions && (
                     <div className="flex gap-2">
