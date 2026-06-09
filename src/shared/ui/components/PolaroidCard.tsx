@@ -1,5 +1,6 @@
 import CoverImage from "./CoverImage";
 import ImagePlaceHolder from "./ImagePlaceHolder";
+import VoteStars from "./VoteStars";
 
 interface PolaroidCardProps {
   imageUrl?: string;
