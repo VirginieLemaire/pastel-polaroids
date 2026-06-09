@@ -14,7 +14,7 @@ const App = () => (
       <PhotoProvider>
       <BrowserRouter>
         <DevMenu />
-        <div className="min-h-[calc(100dvh-var(--bottom-nav-h))] flex flex-col">
+        <div className="min-h-dvh flex flex-col pb-[calc(var(--bottom-nav-h)+3px)]">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/contest/:id" element={<ContestDetailPage />} />
