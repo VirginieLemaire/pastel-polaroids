@@ -146,6 +146,7 @@ export default function PhotosPage() {
                     imageUrl={photo.imageUrl}
                     title={photo.title}
                     description={photo.description}
+                    showEmptyStars={status === "vote"}
                     rotation={getRotation(1, -1)}
                     onClick={() => setDetail(photo)}
                   />

@@ -5,6 +5,7 @@ interface PolaroidCardProps {
   imageUrl?: string;
   title?: string;
   description?: string;
+  showEmptyStars?: boolean;
   rotation?: number;
   onClick?: () => void;
 }
@@ -13,6 +14,7 @@ const PolaroidCard = ({
   imageUrl,
   title,
   description,
+  showEmptyStars,
   rotation = 0,
   onClick,
 }: PolaroidCardProps) => {
