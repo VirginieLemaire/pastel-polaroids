@@ -7,6 +7,8 @@ interface PolaroidCardProps {
   title?: string;
   description?: string;
   showEmptyStars?: boolean;
+  photoId?: string;
+  contestId?: string;
   rotation?: number;
   onClick?: () => void;
 }
@@ -16,6 +18,8 @@ const PolaroidCard = ({
   title,
   description,
   showEmptyStars,
+  photoId,
+  contestId,
   rotation = 0,
   onClick,
 }: PolaroidCardProps) => {
@@ -58,7 +62,9 @@ const PolaroidCard = ({
       {title && (
         <p className="mt-3 text-center font-mono text-sm break-words">{title}</p>
       )}
-      {showEmptyStars && <VoteStars />}
+      {showEmptyStars && photoId && contestId && (
+        <VoteStars photoId={photoId} contestId={contestId} />
+      )}
       {description && (
         <p className="mt-1 text-center font-mono text-xs text-muted-foreground break-words">
           {description.length > 80 ? `${description.slice(0, 80).trimEnd()}…` : description}
