@@ -1,6 +1,7 @@
 import CoverImage from "./CoverImage";
 import ImagePlaceHolder from "./ImagePlaceHolder";
 import VoteStars from "./VoteStars";
+import DisplayStars from "./DisplayStars";
 import WinnerBadge from "./WinnerBadge";
 
 interface PolaroidCardProps {
@@ -14,6 +15,8 @@ interface PolaroidCardProps {
   onClick?: () => void;
   /** Si true, affiche le badge "photo gagnante" */
   isWinner?: boolean;
+  /** Note moyenne à afficher (pour le mode résultats) */
+  averageRating?: number;
 }
 
 const PolaroidCard = ({
@@ -26,6 +29,7 @@ const PolaroidCard = ({
   rotation = 0,
   onClick,
   isWinner = false,
+  averageRating,
 }: PolaroidCardProps) => {
   const interactive = !!onClick;
   return (
@@ -44,29 +48,27 @@ const PolaroidCard = ({
           : undefined
       }
       style={{ transform: `rotate(${rotation}deg)` }}
-      className={`inline-block w-64 bg-background brutal-border brutal-shadow-lg p-3 pb-10 select-none ${
+      className={`inline-block w-64 bg-background brutal-border brutal-shadow-lg p-3 pb-10 select-none relative ${
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >
-      {/* Badge gagnant (en haut à droite, absolu par rapport à la carte) */}
-      <div className="relative">
-        {isWinner && <WinnerBadge />}
-        
-        <div
-          className="w-56 h-56 overflow-hidden relative bg-background"
-          aria-label={title || "Photo"}
-        >
-          {imageUrl ? (
-            <CoverImage
-              src={imageUrl}
-              alt={title || "Photo sans titre"}
-              priority={true}
-              className="h-full"
-            />
-          ) : (
-            <ImagePlaceHolder className="h-full" />
-          )}
-        </div>
+      {/* Badge gagnant (en haut à droite de la carte complète) */}
+      {isWinner && <WinnerBadge />}
+      
+      <div
+        className="w-56 h-56 overflow-hidden relative bg-background"
+        aria-label={title || "Photo"}
+      >
+        {imageUrl ? (
+          <CoverImage
+            src={imageUrl}
+            alt={title || "Photo sans titre"}
+            priority={true}
+            className="h-full"
+          />
+        ) : (
+          <ImagePlaceHolder className="h-full" />
+        )}
       </div>
       {title && (
         <p className="mt-3 text-center font-mono text-sm break-words">{title}</p>
@@ -78,6 +80,12 @@ const PolaroidCard = ({
         <p className="mt-1 text-center font-mono text-xs text-muted-foreground break-words">
           {description.length > 80 ? `${description.slice(0, 80).trimEnd()}…` : description}
         </p>
+      )}
+      {/* Note moyenne en bas de la carte (pour le mode résultats) */}
+      {averageRating !== undefined && (
+        <div className="mt-2 flex justify-center">
+          <DisplayStars rating={averageRating} showRatingText size={4} />
+        </div>
       )}
     </div>
   );
