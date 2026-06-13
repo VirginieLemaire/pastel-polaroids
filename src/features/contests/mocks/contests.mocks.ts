@@ -1,4 +1,5 @@
-import { DAY_MS, type Contest } from "@/features/contests";
+import { DAY_MS } from "@/shared/utils/constants";
+import type { Contest } from "@/features/contests";
 
 export const noContests: Contest[] = [];
 
