@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Filter, Trophy } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
+import Modal from "@/shared/ui/components/Modal";
 import PhotoGrid, { type PhotoWithResults } from "@/shared/ui/components/PhotoGrid";
-import StatusBadge from "@/shared/ui/components/StatusBadge";
+import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
 import { useContests, getContestStatus } from "@/features/contests";
 import { usePhotos } from "@/features/photos";
 import { useVotes, getExpectedVoterIds } from "@/features/votes";
 import type { Contest } from "@/features/contests/types";
 import type { Photo } from "@/features/photos/types";
+import type { VisiblePhoto } from "@/features/photos";
 
 /**
  * Page affichant toutes les photos de tous les concours CLOS.
@@ -28,6 +30,14 @@ export default function AllResultsPage() {
   // État des filtres
   const [selectedContestIds, setSelectedContestIds] = useState<string[]>([]);
   const [showOnlyWinners, setShowOnlyWinners] = useState(false);
+  
+  // État pour la modale de détail
+  const [detail, setDetail] = useState<{
+    photo: VisiblePhoto | null;
+    contest: Contest | null;
+    averageRating?: number;
+    isWinner?: boolean;
+  }>({ photo: null, contest: null });
 
   // Récupérer les concours clos
   const closedContests = useMemo(() => {
@@ -219,16 +229,34 @@ export default function AllResultsPage() {
           <PhotoGrid
             photos={allPhotosWithResults}
             // Pour PhotoGrid, il faut un contest. On utilise le premier contest trouvé
-            // ou un contest factice. Comme on n'utilise pas contestId dans PhotoGrid en mode results,
-            // on peut passer n'importe quel contest.
             contest={closedContests[0]}
             mode="results"
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photo) => {
-              // Ouvrir la modale de détail si nécessaire
+            onPhotoClick={(photoWithResults) => {
+              // Trouver le contest correspondant à cette photo
+              const photoContest = contests.find((c) => c.id === photoWithResults.photo.contestId);
+              if (photoContest) {
+                setDetail({
+                  photo: photoWithResults.photo,
+                  contest: photoContest,
+                  averageRating: photoWithResults.averageRating,
+                  isWinner: photoWithResults.isWinner,
+                });
+              }
             }}
+          />
+        )}
+
+        {/* Modale de détail */}
+        {detail.photo && detail.contest && (
+          <PhotoDetailModal
+            photo={detail.photo}
+            contest={detail.contest}
+            onClose={() => setDetail({ photo: null, contest: null })}
+            averageRating={detail.averageRating}
+            isWinner={detail.isWinner}
           />
         )}
       </div>
