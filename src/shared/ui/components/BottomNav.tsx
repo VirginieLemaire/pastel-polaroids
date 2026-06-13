@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Home, Images } from "lucide-react";
+import { Home, Trophy } from "lucide-react";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `flex-1 flex flex-col items-center justify-center gap-1 font-mono text-xs font-bold ${
@@ -16,9 +16,9 @@ const BottomNav = () => (
       <Home size={20} aria-hidden="true" />
       <span>Accueil</span>
     </NavLink>
-    <NavLink to="/gallery" className={linkClass}>
-      <Images size={20} aria-hidden="true" />
-      <span>Galerie</span>
+    <NavLink to="/photos" className={linkClass} title="photos des concours clos">
+      <Trophy size={20} aria-hidden="true" />
+      <span>Résultats</span>
     </NavLink>
   </nav>
 );
