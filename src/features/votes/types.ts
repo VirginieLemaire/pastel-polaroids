@@ -15,6 +15,23 @@ export interface VoteContextValue {
   getVoteByUser: (photoId: string, userId: string) => Vote | undefined;
   getVotesForPhoto: (photoId: string) => Vote[];
   getAverageRating: (photoId: string) => number | null;
+  getPhotoAverageRating: (
+    photoId: string,
+    expectedVoterIds: string[]
+  ) => number | null;
+  getRankedPhotos: (
+    photos: { id: string; authorId: string }[],
+    expectedVoterIds: string[]
+  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  getWinners: (
+    photos: { id: string; authorId: string }[],
+    expectedVoterIds: string[]
+  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  isPhotoWinner: (
+    photoId: string,
+    photos: { id: string; authorId: string }[],
+    expectedVoterIds: string[]
+  ) => boolean;
   castVote: (photoId: string, contestId: string, rating: Rating) => void;
   removeVote: (photoId: string) => void;
 }

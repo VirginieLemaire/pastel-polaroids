@@ -3,6 +3,14 @@ import { useCurrentUser } from "@/features/user";
 import type { Vote, VoteContextValue, Rating } from "./types";
 import { defaultVotes } from "./mocks/votes.mocks";
 import { castVoteSchema } from "./schemas";
+import {
+  NEUTRAL_RATING,
+  getPhotoAverageRating as computePhotoAverageRating,
+  getRankedPhotos as computeRankedPhotos,
+  getWinners as computeWinners,
+  isPhotoWinner as computeIsPhotoWinner,
+} from "./results";
+import type { Photo } from "@/features/photos/types";
 
 export const VoteContext = createContext<VoteContextValue | null>(null);
 
@@ -83,16 +91,83 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
     [currentUser.id],
   );
 
+  // Fonctions de calcul des résultats avec votes neutres
+  const getPhotoAverageRating = useCallback(
+    (photoId: string, expectedVoterIds: string[]): number | null => {
+      return computePhotoAverageRating(photoId, votes, expectedVoterIds);
+    },
+    [votes],
+  );
+
+  const getRankedPhotos = useCallback(
+    (
+      photos: { id: string; authorId: string }[],
+      expectedVoterIds: string[],
+    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
+      return computeRankedPhotos(
+        photos as unknown as Photo[],
+        votes,
+        expectedVoterIds,
+      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    },
+    [votes],
+  );
+
+  const getWinners = useCallback(
+    (
+      photos: { id: string; authorId: string }[],
+      expectedVoterIds: string[],
+    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
+      return computeWinners(
+        photos as unknown as Photo[],
+        votes,
+        expectedVoterIds,
+      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    },
+    [votes],
+  );
+
+  const isPhotoWinner = useCallback(
+    (
+      photoId: string,
+      photos: { id: string; authorId: string }[],
+      expectedVoterIds: string[],
+    ): boolean => {
+      return computeIsPhotoWinner(
+        photoId,
+        photos as unknown as Photo[],
+        votes,
+        expectedVoterIds,
+      );
+    },
+    [votes],
+  );
+
   const value = useMemo<VoteContextValue>(
     () => ({
       votes,
       getVoteByUser,
       getVotesForPhoto,
       getAverageRating,
+      getPhotoAverageRating,
+      getRankedPhotos,
+      getWinners,
+      isPhotoWinner,
       castVote,
       removeVote,
     }),
-    [votes, getVoteByUser, getVotesForPhoto, getAverageRating, castVote, removeVote],
+    [
+      votes,
+      getVoteByUser,
+      getVotesForPhoto,
+      getAverageRating,
+      getPhotoAverageRating,
+      getRankedPhotos,
+      getWinners,
+      isPhotoWinner,
+      castVote,
+      removeVote,
+    ],
   );
 
   return <VoteContext.Provider value={value}>{children}</VoteContext.Provider>;
