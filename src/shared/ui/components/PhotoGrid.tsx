@@ -140,22 +140,18 @@ export default function PhotoGrid({
 
         return (
           <li key={photoId} className="flex flex-col items-center gap-2">
-            <div className="relative">
-              {/* Badge gagnant si applicable */}
-              {showWinnerBadge && isWinner && <WinnerBadge />}
-
-              {/* Carte Polaroid */}
-              <PolaroidCard
-                imageUrl={photo.imageUrl}
-                title={photo.title}
-                description={photo.description}
-                showEmptyStars={mode === "vote"}
-                photoId={photoId}
-                contestId={contestId}
-                rotation={getRotation(1, -1, photoId)}
-                onClick={() => onPhotoClick?.(photo)}
-              />
-            </div>
+            {/* Carte Polaroid avec badge gagnant intégré si applicable */}
+            <PolaroidCard
+              imageUrl={photo.imageUrl}
+              title={photo.title}
+              description={photo.description}
+              showEmptyStars={mode === "vote"}
+              photoId={photoId}
+              contestId={contestId}
+              rotation={getRotation(1, -1, photoId)}
+              onClick={() => onPhotoClick?.(photo)}
+              isWinner={showWinnerBadge && isWinner}
+            />
 
             {/* Actions personnalisées (si fournies) */}
             {actions && <div className="flex gap-2">{actions}</div>}
