@@ -1,5 +1,7 @@
 import Modal from "@/shared/ui/components/Modal";
 import CoverImage from "@/shared/ui/components/CoverImage";
+import DisplayStars from "@/shared/ui/components/DisplayStars";
+import WinnerBadge from "@/shared/ui/components/WinnerBadge";
 import type { Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getUserName } from "@/features/user";
@@ -9,6 +11,10 @@ interface PhotoDetailModalProps {
   photo: VisiblePhoto | null;
   contest: Contest;
   onClose: () => void;
+  /** Note moyenne de la photo (pour afficher dans les détails) */
+  averageRating?: number;
+  /** Si true, la photo est gagnante */
+  isWinner?: boolean;
 }
 
 const formatDate = (iso: string) =>
@@ -18,7 +24,13 @@ const formatDate = (iso: string) =>
     year: "numeric",
   });
 
-const PhotoDetailModal = ({ photo, contest, onClose }: PhotoDetailModalProps) => {
+const PhotoDetailModal = ({ 
+  photo, 
+  contest, 
+  onClose, 
+  averageRating,
+  isWinner = false,
+}: PhotoDetailModalProps) => {
   if (!photo) return null;
   const status = getContestStatus(contest);
   const authored = isAuthoredPhoto(photo);
@@ -28,13 +40,16 @@ const PhotoDetailModal = ({ photo, contest, onClose }: PhotoDetailModalProps) =>
   return (
     <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"}>
       <div className="space-y-4">
-        <div className="w-full brutal-border bg-background">
+        {/* Image avec badge gagnant */}
+        <div className="w-full brutal-border bg-background relative">
           <CoverImage
             src={photo.imageUrl}
             alt={photo.title || "Photo sans titre"}
             priority={true}
             className="w-full max-h-[60vh]"
           />
+          {/* Badge gagnant sur l'image */}
+          {isWinner && <WinnerBadge className="top-2 right-2" />}
         </div>
 
         <dl className="font-mono text-sm space-y-2">
@@ -44,12 +59,42 @@ const PhotoDetailModal = ({ photo, contest, onClose }: PhotoDetailModalProps) =>
               <dd className="break-words whitespace-pre-wrap">{photo.description}</dd>
             </div>
           )}
+          
+          {/* Note moyenne */}
+          {averageRating !== undefined && (
+            <div>
+              <dt className="text-xs text-muted-foreground">Note moyenne</dt>
+              <dd>
+                <DisplayStars rating={averageRating} showRatingText size={5} />
+              </dd>
+            </div>
+          )}
+          
+          {/* Badge gagnant (version texte) */}
+          {isWinner && (
+            <div>
+              <dt className="text-xs text-muted-foreground">Statut</dt>
+              <dd>
+                <span className="flex items-center gap-1">
+                  <WinnerBadge />
+                </span>
+              </dd>
+            </div>
+          )}
+          
+          {/* Concours */}
+          <div>
+            <dt className="text-xs text-muted-foreground">Concours</dt>
+            <dd>{contest.name}</dd>
+          </div>
+          
           {showAuthor && (
             <div>
               <dt className="text-xs text-muted-foreground">Auteur</dt>
               <dd>{getUserName(photo.authorId)}</dd>
             </div>
           )}
+          
           <div>
             <dt className="text-xs text-muted-foreground">Soumise le</dt>
             <dd>{formatDate(photo.createdAt)}</dd>

@@ -36,7 +36,11 @@ export default function PhotosPage() {
     usePhotos();
   const contest = getContest(id);
   const [form, setForm] = useState<FormState>(null);
-  const [detail, setDetail] = useState<VisiblePhoto | null>(null);
+  const [detail, setDetail] = useState<{
+    photo: VisiblePhoto | null;
+    averageRating?: number;
+    isWinner?: boolean;
+  }>({ photo: null });
 
   if (!contest) {
     return (
@@ -232,7 +236,11 @@ export default function PhotosPage() {
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photo) => setDetail(photo)}
+            onPhotoClick={(photoWithResults) => setDetail({
+              photo: photoWithResults.photo,
+              averageRating: photoWithResults.averageRating,
+              isWinner: photoWithResults.isWinner,
+            })}
           />
         ) : (
           /* En phase submission/vote : afficher avec actions */
@@ -240,7 +248,7 @@ export default function PhotosPage() {
             photos={photosWithActions}
             contest={contest}
             mode={status}
-            onPhotoClick={(photo) => setDetail(photo)}
+            onPhotoClick={(photoWithActions) => setDetail({ photo: photoWithActions.photo })}
           />
         )}
       </div>
@@ -267,7 +275,13 @@ export default function PhotosPage() {
         )}
       </Modal>
 
-      <PhotoDetailModal photo={detail} contest={contest} onClose={() => setDetail(null)} />
+      <PhotoDetailModal 
+        photo={detail.photo} 
+        contest={contest} 
+        onClose={() => setDetail({ photo: null })}
+        averageRating={detail.averageRating}
+        isWinner={detail.isWinner}
+      />
     </main>
   );
 }
