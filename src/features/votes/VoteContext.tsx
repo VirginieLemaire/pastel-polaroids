@@ -1,4 +1,4 @@
-import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Vote, VoteContextValue, Rating } from "./types";
 import { defaultVotes } from "./mocks/votes.mocks";
@@ -10,13 +10,31 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
+import { getScenarioById, getStoredScenarioId, DEV_SCENARIO_CHANGE_EVENT } from "@/dev/mockScenarios";
 import type { Photo } from "@/features/photos/types";
 
 export const VoteContext = createContext<VoteContextValue | null>(null);
 
 export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
-  const [votes, setVotes] = useState<Vote[]>(defaultVotes);
+  const [votes, setVotes] = useState<Vote[]>(() => {
+    // En mode dev, utiliser les votes du scénario actif
+    if (import.meta.env.DEV) {
+      return getScenarioById(getStoredScenarioId()).votes;
+    }
+    return defaultVotes;
+  });
+
+  // En mode dev, écouter les changements de scénario
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      setVotes(getScenarioById(id).votes);
+    };
+    window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+    return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+  }, []);
 
   const votesByPhoto = useMemo(() => {
     const map = new Map<string, Vote[]>();
