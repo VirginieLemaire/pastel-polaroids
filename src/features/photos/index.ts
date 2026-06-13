@@ -12,5 +12,5 @@ export {
   anonymizePhoto,
   isAuthoredPhoto,
 } from "./visibility";
-export type { AnonymousPhoto, VisiblePhoto } from "./visibility";
+export type { AnonymousPhoto, VisiblePhoto, VisiblePhotoWithResults } from "./visibility";
 export { createPhotoSchema } from "./schemas";

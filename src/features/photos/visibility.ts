@@ -41,3 +41,13 @@ export const getVisiblePhotos = (
 /** Type guard : la photo expose-t-elle son auteur ? */
 export const isAuthoredPhoto = (photo: VisiblePhoto): photo is Photo =>
   "authorId" in photo;
+
+/**
+ * Photo visible avec ses résultats de vote (pour la phase closed).
+ * Étend VisiblePhoto avec la note moyenne et le statut de gagnante.
+ */
+export interface VisiblePhotoWithResults {
+  photo: VisiblePhoto;
+  averageRating: number;
+  isWinner: boolean;
+}
