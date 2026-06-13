@@ -1,5 +1,7 @@
 import { PastelColor } from "@/shared/ui/types";
-import { ContestStatus, DAY_MS, type Contest } from "@/features/contests";
+import { DAY_MS } from "@/shared/utils/constants";
+import type { Contest } from "@/features/contests";
+import type { ContestStatus } from "@/features/contests";
 
 export const STATUS_LABEL: Record<ContestStatus, string> = {
   submission: "Soumission",
