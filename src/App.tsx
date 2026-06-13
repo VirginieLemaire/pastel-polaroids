@@ -6,7 +6,6 @@ import { VoteProvider } from "./features/votes";
 import HomePage from "./features/home/HomePage";
 import ContestDetailPage from "./features/contests/ContestDetailPage";
 import PhotosPage from "./features/photos/PhotosPage";
-import ResultsPage from "./features/contests/ResultsPage";
 import DevMenu from "./dev/DevMenu";
 import BottomNav from "./shared/ui/components/BottomNav";
 
@@ -22,7 +21,6 @@ const App = () => (
                 <Route path="/" element={<HomePage />} />
                 <Route path="/contest/:id" element={<ContestDetailPage />} />
                 <Route path="/contest/:id/photos" element={<PhotosPage />} />
-                <Route path="/contest/:id/results" element={<ResultsPage />} />
               </Routes>
             </div>
 
