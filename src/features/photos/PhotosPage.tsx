@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
-import PolaroidCard from "@/shared/ui/components/PolaroidCard";
+import PhotoGrid, { type PhotoWithActions } from "@/shared/ui/components/PhotoGrid";
 import Modal from "@/shared/ui/components/Modal";
 import { useContests } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
@@ -19,15 +19,10 @@ import {
   MAX_PHOTOS_PER_USER,
   type CreatePhotoInput,
   type Photo,
+  type VisiblePhoto,
 } from "@/features/photos";
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
-import type { VisiblePhoto } from "@/features/photos";
-
-// Petite rotation pseudo-aléatoire stable pour l'effet polaroid éparpillé.
-const getRotation = (max: number, min: number) => {
-  return (Math.floor(Math.random() * (max - min + 1) + min)); 
-};
 
 type FormState = { mode: "create" } | { mode: "edit"; photo: Photo } | null;
 
@@ -91,6 +86,51 @@ export default function PhotosPage() {
     }
   };
 
+  // Préparer les photos avec leurs actions pour PhotoGrid
+  const photosWithActions = useMemo<PhotoWithActions[]>(() => {
+    return visiblePhotos.map((photo) => {
+      const isOwn = isAuthoredPhoto(photo);
+      const showActions = isOwn && canEditPhoto(photo as Photo, contest, currentUser.id);
+      
+      // Générer les boutons d'action si nécessaire
+      const actions = showActions ? (
+        <div className="flex gap-2">
+          <BrutalButton
+            type="button"
+            color="sky"
+            size="sm"
+            icon={<Pencil size={14} aria-hidden="true" />}
+            onClick={(e) => {
+              e.stopPropagation();
+              setForm({ mode: "edit", photo: photo as Photo });
+            }}
+          >
+            Éditer
+          </BrutalButton>
+          {canDeletePhoto(photo as Photo, contest, currentUser.id) && (
+            <BrutalButton
+              type="button"
+              color="pink"
+              size="sm"
+              icon={<Trash2 size={14} aria-hidden="true" />}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(photo as Photo);
+              }}
+            >
+              Suppr.
+            </BrutalButton>
+          )}
+        </div>
+      ) : null;
+
+      return {
+        photo,
+        actions,
+      };
+    });
+  }, [visiblePhotos, contest, currentUser.id, setForm, handleDelete]);
+
   return (
     <main className="flex-1 bg-background px-5 py-6">
       <div className="max-w-5xl mx-auto space-y-5">
@@ -135,51 +175,12 @@ export default function PhotosPage() {
             <p className="font-mono text-sm">{emptyMessage}</p>
           </BrutalCard>
         ) : (
-          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
-            {visiblePhotos.map((photo) => {
-              const isOwn = isAuthoredPhoto(photo);
-              const showActions =
-                isOwn && canEditPhoto(photo as Photo, contest, currentUser.id);
-              return (
-                <li key={photo.id} className="flex flex-col items-center gap-2">
-                  <PolaroidCard
-                    imageUrl={photo.imageUrl}
-                    title={photo.title}
-                    description={photo.description}
-                    showEmptyStars={status === "vote"}
-                    photoId={photo.id}
-                    contestId={contest.id}
-                    rotation={getRotation(1, -1)}
-                    onClick={() => setDetail(photo)}
-                  />
-                  {showActions && (
-                    <div className="flex gap-2">
-                      <BrutalButton
-                        type="button"
-                        color="sky"
-                        size="sm"
-                        icon={<Pencil size={14} aria-hidden="true" />}
-                        onClick={() => setForm({ mode: "edit", photo: photo as Photo })}
-                      >
-                        Éditer
-                      </BrutalButton>
-                      {canDeletePhoto(photo as Photo, contest, currentUser.id) && (
-                        <BrutalButton
-                          type="button"
-                          color="pink"
-                          size="sm"
-                          icon={<Trash2 size={14} aria-hidden="true" />}
-                          onClick={() => handleDelete(photo as Photo)}
-                        >
-                          Suppr.
-                        </BrutalButton>
-                      )}
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <PhotoGrid
+            photos={photosWithActions}
+            contest={contest}
+            mode={status}
+            onPhotoClick={(photo) => setDetail(photo)}
+          />
         )}
       </div>
 
