@@ -52,9 +52,6 @@ const PolaroidCard = ({
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >
-      {/* Badge gagnant (en haut à droite de la carte complète) */}
-      {isWinner && <WinnerBadge />}
-      
       <div
         className="w-56 h-56 overflow-hidden relative bg-background"
         aria-label={title || "Photo"}
@@ -85,6 +82,12 @@ const PolaroidCard = ({
       {averageRating !== undefined && (
         <div className="mt-2 flex justify-center">
           <DisplayStars rating={averageRating} showRatingText size={4} />
+        </div>
+      )}
+      {/* Badge gagnant sous la note */}
+      {isWinner && (
+        <div className="mt-2 flex justify-center">
+          <WinnerBadge />
         </div>
       )}
     </div>

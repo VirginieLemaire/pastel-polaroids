@@ -1,7 +1,5 @@
 import { useMemo, type ReactNode } from "react";
 import PolaroidCard from "./PolaroidCard";
-import DisplayStars from "./DisplayStars";
-import WinnerBadge from "./WinnerBadge";
 import type { Contest } from "@/features/contests/types";
 import type { Photo } from "@/features/photos/types";
 import type { VisiblePhoto, AnonymousPhoto } from "@/features/photos/visibility";

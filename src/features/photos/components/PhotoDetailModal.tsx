@@ -73,7 +73,6 @@ const PhotoDetailModal = ({
           {/* Badge gagnant (version texte) */}
           {isWinner && (
             <div>
-              <dt className="text-xs text-muted-foreground">Statut</dt>
               <dd>
                 <span className="flex items-center gap-1">
                   <WinnerBadge />

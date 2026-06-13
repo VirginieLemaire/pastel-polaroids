@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Filter, Trophy } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
-import Modal from "@/shared/ui/components/Modal";
 import PhotoGrid, { type PhotoWithResults } from "@/shared/ui/components/PhotoGrid";
 import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
 import { useContests, getContestStatus } from "@/features/contests";
@@ -136,21 +135,18 @@ export default function AllResultsPage() {
           <ArrowLeft size={16} aria-hidden="true" /> Retour
         </Link>
 
-        <header className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <p className="font-mono text-xs text-muted-foreground">Photos de tous les concours</p>
-            <h1 className="font-mono text-2xl font-bold truncate">Résultats</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <Trophy size={20} className="text-yellow-600" />
-          </div>
+        <header className="flex justify-center gap-3">
+            <h1 className="font-mono text-3xl font-bold">Résultats</h1>
+            <Trophy size={40} className="text-yellow-600" />
+
         </header>
+            <p className="font-mono text-s text-center text-muted-foreground">Photos de tous les concours</p>
 
         {/* Informations globales */}
         {allPhotosWithResults.length > 0 && (
-          <BrutalCard color="butter">
+          // <BrutalCard color="butter">
             <p className="font-mono text-sm">
-              {allPhotosWithResults.length} photo{allPhotosWithResults.length > 1 ? "s" : ""} 
+              {allPhotosWithResults.length} photo{allPhotosWithResults.length > 1 ? "s" : ""} {" "}
               répartie{allPhotosWithResults.length > 1 ? "s" : ""} dans {closedContests.length} concours terminé{closedContests.length > 1 ? "s" : ""}.
               {winnerCount > 0 && (
                 <>
@@ -159,7 +155,7 @@ export default function AllResultsPage() {
                 </>
               )}
             </p>
-          </BrutalCard>
+          // </BrutalCard>
         )}
 
         {/* Filtres */}
@@ -234,15 +230,17 @@ export default function AllResultsPage() {
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photoWithResults) => {
+            onPhotoClick={(photo) => {
+              // Trouver les infos de résultat pour cette photo
+              const found = allPhotosWithResults.find(p => p.photo.id === photo.id);
               // Trouver le contest correspondant à cette photo
-              const photoContest = contests.find((c) => c.id === photoWithResults.photo.contestId);
-              if (photoContest) {
+              const photoContest = contests.find((c) => c.id === photo.contestId);
+              if (found && photoContest) {
                 setDetail({
-                  photo: photoWithResults.photo,
+                  photo,
                   contest: photoContest,
-                  averageRating: photoWithResults.averageRating,
-                  isWinner: photoWithResults.isWinner,
+                  averageRating: found.averageRating,
+                  isWinner: found.isWinner,
                 });
               }
             }}
