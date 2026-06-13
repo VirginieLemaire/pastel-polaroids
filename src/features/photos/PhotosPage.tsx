@@ -1,14 +1,15 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Plus, Trash2, Filter } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
-import PhotoGrid, { type PhotoWithActions } from "@/shared/ui/components/PhotoGrid";
+import PhotoGrid, { type PhotoWithActions, type PhotoWithResults } from "@/shared/ui/components/PhotoGrid";
 import Modal from "@/shared/ui/components/Modal";
 import { useContests } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { useCurrentUser } from "@/features/user";
+import { useVotes, getExpectedVoterIds } from "@/features/votes";
 import {
   usePhotos,
   getVisiblePhotos,
@@ -23,6 +24,7 @@ import {
 } from "@/features/photos";
 import SubmitPhotoForm from "@/features/photos/components/SubmitPhotoForm";
 import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
+import type { VisiblePhotoWithResults } from "@/features/photos/visibility";
 
 type FormState = { mode: "create" } | { mode: "edit"; photo: Photo } | null;
 
@@ -54,12 +56,44 @@ export default function PhotosPage() {
     );
   }
 
+  const { getRankedPhotos, getWinners } = useVotes();
   const status = getContestStatus(contest);
   const allPhotos = getPhotosByContest(contest.id);
   const visiblePhotos = getVisiblePhotos(allPhotos, contest, currentUser.id);
   const userCount = getUserPhotosCount(contest.id, currentUser.id);
   const canSubmit = canUserSubmit(contest, userCount);
   const showSubmitArea = status === "submission";
+  
+  // État pour le filtre "gagnantes seulement" (uniquement en phase closed)
+  const [showOnlyWinners, setShowOnlyWinners] = useState(false);
+
+  // Calcul des résultats pour la phase closed
+  const { photosWithResults, winners } = useMemo(() => {
+    if (status !== "closed" || allPhotos.length === 0) {
+      return { photosWithResults: [], winners: [] };
+    }
+
+    // Récupérer les votants attendus (auteurs des photos)
+    const voterIds = getExpectedVoterIds(allPhotos as Photo[]);
+
+    // Calculer les photos classées avec leurs notes
+    const rankedPhotos = getRankedPhotos(allPhotos as Photo[], voterIds);
+
+    // Identifier les gagnants
+    const winners = getWinners(allPhotos as Photo[], voterIds);
+    const winnerIds = new Set(winners.map((w) => w.photo.id));
+
+    // Préparer les photos avec leurs résultats
+    const photosWithResults: VisiblePhotoWithResults[] = rankedPhotos.map(
+      (ranked) => ({
+        photo: ranked.photo,
+        averageRating: ranked.averageRating,
+        isWinner: winnerIds.has(ranked.photo.id),
+      })
+    );
+
+    return { photosWithResults, winners };
+  }, [status, allPhotos, getRankedPhotos, getWinners]);
 
   const emptyMessage =
     status === "submission"
@@ -170,11 +204,38 @@ export default function PhotosPage() {
           </BrutalCard>
         )}
 
+        {/* Filtre pour les gagnantes (uniquement en phase closed) */}
+        {status === "closed" && winners.length > 0 && (
+          <div className="flex items-center gap-2">
+            <BrutalButton
+              color={showOnlyWinners ? "mint" : "sky"}
+              size="sm"
+              icon={<Filter size={14} aria-hidden="true" />}
+              onClick={() => setShowOnlyWinners((prev) => !prev)}
+              aria-pressed={showOnlyWinners}
+            >
+              {showOnlyWinners ? "Toutes les photos" : "Gagnantes seulement"}
+            </BrutalButton>
+          </div>
+        )}
+
         {visiblePhotos.length === 0 ? (
           <BrutalCard color="butter">
             <p className="font-mono text-sm">{emptyMessage}</p>
           </BrutalCard>
+        ) : status === "closed" ? (
+          /* En phase closed : afficher les résultats */
+          <PhotoGrid
+            photos={photosWithResults}
+            contest={contest}
+            mode="results"
+            showWinnerBadge
+            sortBy="rating"
+            filter={{ onlyWinners: showOnlyWinners }}
+            onPhotoClick={(photo) => setDetail(photo)}
+          />
         ) : (
+          /* En phase submission/vote : afficher avec actions */
           <PhotoGrid
             photos={photosWithActions}
             contest={contest}
