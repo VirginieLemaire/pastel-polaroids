@@ -1,6 +1,7 @@
 import CoverImage from "./CoverImage";
 import ImagePlaceHolder from "./ImagePlaceHolder";
 import VoteStars from "./VoteStars";
+import WinnerBadge from "./WinnerBadge";
 
 interface PolaroidCardProps {
   imageUrl?: string;
@@ -11,6 +12,8 @@ interface PolaroidCardProps {
   contestId?: string;
   rotation?: number;
   onClick?: () => void;
+  /** Si true, affiche le badge "photo gagnante" */
+  isWinner?: boolean;
 }
 
 const PolaroidCard = ({
@@ -22,6 +25,7 @@ const PolaroidCard = ({
   contestId,
   rotation = 0,
   onClick,
+  isWinner = false,
 }: PolaroidCardProps) => {
   const interactive = !!onClick;
   return (
@@ -44,20 +48,25 @@ const PolaroidCard = ({
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >
-      <div
-        className="w-56 h-56 overflow-hidden relative bg-background"
-        aria-label={title || "Photo"}
-      >
-        {imageUrl ? (
-          <CoverImage
-            src={imageUrl}
-            alt={title || "Photo sans titre"}
-            priority={true}
-            className="h-full"
-          />
-        ) : (
-          <ImagePlaceHolder className="h-full" />
-        )}
+      {/* Badge gagnant (en haut à droite, absolu par rapport à la carte) */}
+      <div className="relative">
+        {isWinner && <WinnerBadge />}
+        
+        <div
+          className="w-56 h-56 overflow-hidden relative bg-background"
+          aria-label={title || "Photo"}
+        >
+          {imageUrl ? (
+            <CoverImage
+              src={imageUrl}
+              alt={title || "Photo sans titre"}
+              priority={true}
+              className="h-full"
+            />
+          ) : (
+            <ImagePlaceHolder className="h-full" />
+          )}
+        </div>
       </div>
       {title && (
         <p className="mt-3 text-center font-mono text-sm break-words">{title}</p>
