@@ -10,8 +10,9 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
-import { getScenarioById, getStoredScenarioId, DEV_SCENARIO_CHANGE_EVENT } from "@/dev/mockScenarios";
+import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
 import type { Photo } from "@/features/photos/types";
+import { DEV_SCENARIO_CHANGE_EVENT } from "../contests";
 
 export const VoteContext = createContext<VoteContextValue | null>(null);
 
