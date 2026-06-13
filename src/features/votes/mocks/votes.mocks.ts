@@ -1,7 +1,8 @@
+import { DAY_MS } from "@/shared/utils/constants";
 import type { Vote } from "../types";
 
 const iso = (hoursAgo: number) =>
-  new Date(Date.now() - hoursAgo * 60 * 60 * 1000).toISOString();
+  new Date(Date.now() - (hoursAgo / 24) * DAY_MS).toISOString();
 
 // Notes attribuées par les autres utilisateurs (user-2, user-3) sur les photos
 // existantes — user-1 n'a encore rien voté pour pouvoir tester l'UI.
