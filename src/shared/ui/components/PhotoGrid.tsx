@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import PolaroidCard from "./PolaroidCard";
 import DisplayStars from "./DisplayStars";
 import WinnerBadge from "./WinnerBadge";
@@ -15,9 +15,19 @@ export interface PhotoWithResults {
   isWinner?: boolean;
 }
 
+/**
+ * Type pour une photo avec des actions personnalisées.
+ */
+export interface PhotoWithActions {
+  photo: Photo | VisiblePhoto | AnonymousPhoto;
+  averageRating?: number;
+  isWinner?: boolean;
+  actions?: ReactNode;
+}
+
 interface PhotoGridProps {
   /** Liste des photos à afficher */
-  photos: PhotoWithResults[];
+  photos: (PhotoWithResults | PhotoWithActions)[];
   /** Concours associé */
   contest: Contest;
   /** Mode d'affichage : détermine le comportement des étoiles */
@@ -118,17 +128,21 @@ export default function PhotoGrid({
 
   return (
     <ul className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center ${className}`}>
-      {sortedPhotos.map((photoWithResults) => {
-        const photo = photoWithResults.photo;
-        const isOwnPhoto = "authorId" in photo;
+      {sortedPhotos.map((photoWithResultsOrActions) => {
+        const photo = photoWithResultsOrActions.photo;
         const photoId = photo.id;
         const contestId = contest.id;
+        const isWinner = photoWithResultsOrActions.isWinner;
+        const averageRating = photoWithResultsOrActions.averageRating;
+        const actions = "actions" in photoWithResultsOrActions 
+          ? photoWithResultsOrActions.actions 
+          : null;
 
         return (
           <li key={photoId} className="flex flex-col items-center gap-2">
             <div className="relative">
               {/* Badge gagnant si applicable */}
-              {showWinnerBadge && photoWithResults.isWinner && <WinnerBadge />}
+              {showWinnerBadge && isWinner && <WinnerBadge />}
 
               {/* Carte Polaroid */}
               <PolaroidCard
@@ -143,11 +157,14 @@ export default function PhotoGrid({
               />
             </div>
 
+            {/* Actions personnalisées (si fournies) */}
+            {actions && <div className="flex gap-2">{actions}</div>}
+
             {/* Affichage des résultats en mode "results" */}
-            {mode === "results" && photoWithResults.averageRating !== undefined && (
+            {mode === "results" && averageRating !== undefined && (
               <div className="text-center">
                 <DisplayStars
-                  rating={photoWithResults.averageRating}
+                  rating={averageRating}
                   showRatingText
                   size={4}
                 />
