@@ -140,7 +140,7 @@ export default function PhotoGrid({
 
         return (
           <li key={photoId} className="flex flex-col items-center gap-2">
-            {/* Carte Polaroid avec badge gagnant intégré si applicable */}
+            {/* Carte Polaroid avec badge gagnant et note intégrés */}
             <PolaroidCard
               imageUrl={photo.imageUrl}
               title={photo.title}
@@ -151,20 +151,12 @@ export default function PhotoGrid({
               rotation={getRotation(1, -1, photoId)}
               onClick={() => onPhotoClick?.(photo)}
               isWinner={showWinnerBadge && isWinner}
+              averageRating={mode === "results" || mode === "closed" ? averageRating : undefined}
             />
 
-            {/* Actions personnalisées (si fournies) */}
-            {actions && <div className="flex gap-2">{actions}</div>}
-
-            {/* Affichage des résultats en mode "results" */}
-            {mode === "results" && averageRating !== undefined && (
-              <div className="text-center">
-                <DisplayStars
-                  rating={averageRating}
-                  showRatingText
-                  size={4}
-                />
-              </div>
+            {/* Actions personnalisées (si fournies) - seulement en mode non-results */}
+            {actions && (mode !== "results" && mode !== "closed") && (
+              <div className="flex gap-2">{actions}</div>
             )}
           </li>
         );
