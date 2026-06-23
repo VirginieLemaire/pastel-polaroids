@@ -18,6 +18,7 @@ import {
 } from "@/features/contests";
 import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser, getUserName } from "@/features/user";
+import { usePhotos } from "@/features/photos";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
 import CoverImage from "@/shared/ui/components/CoverImage";
@@ -27,6 +28,7 @@ export default function ContestDetailPage() {
   const navigate = useNavigate();
   const { getContest, updateContest, deleteContest } = useContests();
   const { currentUser } = useCurrentUser();
+  const { getPhotosByContest } = usePhotos();
   const [editOpen, setEditOpen] = useState(false);
   const contest = getContest(id);
 
@@ -54,7 +56,8 @@ export default function ContestDetailPage() {
   const canDelete = canDeleteContest(contest, currentUser.id);
   const authorName = isOwner ? currentUser.name : getUserName(contest.authorId);
   const authorSeed = contest.authorId;
-  const photoCount = contest.photos.length;
+  const contestPhotos = getPhotosByContest(contest.id);
+  const photoCount = contestPhotos.length;
 
   const handleUpdate = (data: UpdateContestInput) => {
     updateContest(contest.id, data);
