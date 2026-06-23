@@ -9,12 +9,12 @@ import {
   canEditPhoto,
   canDeletePhoto,
 } from '@/features/photos/permissions';
-import type { Contest, Photo } from '@/features/contests/types';
+import type { Contest } from '@/features/contests/types';
+import { DAY_MS } from '@/shared/utils/dateUtils';
 
 describe('photos/permissions', () => {
   let mockNow: Date;
   let realDate: typeof Date;
-  const DAY_MS = 24 * 60 * 60 * 1000;
 
   beforeEach(() => {
     realDate = global.Date;
