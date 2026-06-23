@@ -1,5 +1,5 @@
 import { PastelColor } from "@/shared/ui/types";
-import { DAY_MS } from "@/shared/utils/constants";
+import { DAY_MS } from "@/shared/utils/dateUtils";
 import type { Contest } from "@/features/contests";
 import type { ContestStatus } from "@/features/contests";
 
