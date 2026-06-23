@@ -6,22 +6,21 @@ import BrutalButton from "@/shared/ui/components/BrutalButton";
 import StatusBadge from "@/shared/ui/components/StatusBadge";
 import Modal from "@/shared/ui/components/Modal";
 import CreateContestForm from "@/features/contests/components/CreateContestForm";
-import { useContests, canEditContest, canDeleteContest, STATUS_COLOR } from "@/features/contests";
+import {
+  useContests,
+  canEditContest,
+  canDeleteContest,
+  STATUS_COLOR,
+  getContestStatus,
+  formatDate,
+  getNextStepText,
+  statusCorrespondingActionText
+} from "@/features/contests";
 import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser, getUserName } from "@/features/user";
-import { getContestStatus } from "@/features/contests/contestStatus";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
 import CoverImage from "@/shared/ui/components/CoverImage";
-
-const formatDate = (iso: string) =>
-  new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
-
-const statusCorrespondingActionText = {
-  submission: "Soumettre une photo",
-  vote: "Voter",
-  closed: "Voir les photos"
-};
 
 export default function ContestDetailPage() {
   const { id = "" } = useParams();
@@ -114,6 +113,9 @@ export default function ContestDetailPage() {
           )}
           <p className="font-mono text-sm">
             Soumission&nbsp;: {contest.submissionDays}j&nbsp;•&nbsp;Vote&nbsp;: {contest.voteDays}j
+          </p>
+          <p className="font-mono text-sm mt-1">
+            {getNextStepText(contest, status)}
           </p>
           <p className="font-mono text-xs text-muted-foreground mt-2">
             Créé le {formatDate(contest.createdAt)}
