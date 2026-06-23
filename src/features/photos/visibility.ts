@@ -24,7 +24,7 @@ export const anonymizePhoto = (photo: Photo): AnonymousPhoto => {
  */
 export const getVisiblePhotos = (
   photos: Photo[],
-  contest: Contest,
+  contest: Omit<Contest, 'photos'>,
   userId: string,
 ): VisiblePhoto[] => {
   const status = getContestStatus(contest);
