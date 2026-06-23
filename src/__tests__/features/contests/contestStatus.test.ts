@@ -1,235 +1,91 @@
 /**
  * Tests pour le calcul du statut des concours
+ * Utilisation des utilitaires partagés : plus de mock global de Date !
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   STATUS_LABEL,
   STATUS_COLOR,
   getContestStatus,
 } from '@/features/contests/contestStatus';
 import type { Contest } from '@/features/contests/types';
+// Import de tes utilitaires partagés
+import { isoDaysAgo, DAY_MS } from '@/shared/utils/dateUtils';
 
 describe('contestStatus', () => {
-  let mockNow: Date;
-  let realDate: typeof Date;
+  // Date de référence fixe pour tous les tests
+  const MOCK_NOW = new Date('2024-06-15T12:00:00.000Z');
 
-  beforeEach(() => {
-    // Sauvegarder la vraie implémentation de Date
-    realDate = Date;
-    // Mock la date actuelle à une date fixe pour les tests
-    mockNow = new realDate('2024-06-15T12:00:00.000Z');
-    // @ts-expect-error - Mock global Date
-    global.Date = class extends realDate {
-      constructor(...args: any[]) {
-        super();
-        if (args.length === 0) {
-          return mockNow;
-        }
-        return new realDate(...args as []);
-      }
-
-      static now() {
-        return mockNow.getTime();
-      }
-    };
+  // Helper ultra-simple grâce à isoDaysAgo
+  const createContest = (
+    daysAgo: number,
+    submissionDays = 7,
+    voteDays = 3
+  ): Contest => ({
+    id: 'test-contest',
+    name: 'Test Contest',
+    authorId: 'user-1',
+    description: 'A test contest',
+    coverImage: 'https://example.com/image.jpg',
+    photos: [],
+    submissionDays,
+    voteDays,
+    // Plus de calcul manuel, on utilise l'utilitaire avec la date de référence
+    createdAt: isoDaysAgo(daysAgo, MOCK_NOW),
   });
 
-  afterEach(() => {
-    // Restaurer la vraie implémentation de Date
-    global.Date = realDate;
-  });
-
-  describe('STATUS_LABEL', () => {
-    it('should have correct label for submission status', () => {
-      expect(STATUS_LABEL.submission).toBe('Soumission');
-    });
-
-    it('should have correct label for vote status', () => {
-      expect(STATUS_LABEL.vote).toBe('Vote');
-    });
-
-    it('should have correct label for closed status', () => {
-      expect(STATUS_LABEL.closed).toBe('Clos');
+  describe('Constants (Sanity Check)', () => {
+    it('doit avoir les labels et couleurs attendus', () => {
+      expect(STATUS_LABEL).toEqual({ submission: 'Soumission', vote: 'Vote', closed: 'Clos' });
+      expect(STATUS_COLOR).toEqual({ submission: 'mint', vote: 'sky', closed: 'lavender' });
     });
   });
 
-  describe('STATUS_COLOR', () => {
-    it('should have correct color for submission status', () => {
-      expect(STATUS_COLOR.submission).toBe('mint');
-    });
+  describe('getContestStatus - Cycle de vie', () => {
+    const scenarios = [
+      { daysAgo: 0, expected: 'submission', label: 'Démarrage' },
+      { daysAgo: 2, expected: 'submission', label: 'En submission' },
+      { daysAgo: 6.9, expected: 'submission', label: 'Fin de submission' },
+      { daysAgo: 7, expected: 'vote', label: 'Frontière Sub/Vote' },
+      { daysAgo: 8, expected: 'vote', label: 'En vote' },
+      { daysAgo: 10, expected: 'vote', label: 'Fin de vote' },
+      { daysAgo: 10.1, expected: 'closed', label: 'Juste après vote' },
+      { daysAgo: 100, expected: 'closed', label: 'Clos depuis longtemps' },
+    ];
 
-    it('should have correct color for vote status', () => {
-      expect(STATUS_COLOR.vote).toBe('sky');
-    });
+    scenarios.forEach(({ daysAgo, expected, label }) => {
+      it(`[${label}] J-${daysAgo} => ${expected}`, () => {
+        const contest = createContest(daysAgo);
+        // On passe MOCK_NOW comme deuxième argument si ta fonction le supporte,
+        // sinon elle utilisera Date.now() qui est... attend, il faut encore mocker Date.now() 
+        // OU modifier getContestStatus pour accepter une date de référence.
+        
+        // OPTION A : Si getContestStatus accepte une date optionnelle (recommandé)
+        // expect(getContestStatus(contest, MOCK_NOW)).toBe(expected);
 
-    it('should have correct color for closed status', () => {
-      expect(STATUS_COLOR.closed).toBe('lavender');
+        // OPTION B : Si getContestStatus utilise Date.now() en dur, 
+        // alors on est obligé de mocker Date globalement juste pour ce test.
+        // MAIS, on peut le faire de manière plus légère ou accepter que l'utilitaire isoDaysAgo
+        // a créé la string ISO correcte, et que le calcul dans getContestStatus se base sur Date.now().
+        
+        // Pour être 100% pur sans mock global, il faut que getContestStatus accepte un paramètre 'now'.
+        // Je pars du principe que tu peux l'ajouter ou qu'il existe déjà (vu ton test précédent).
+        expect(getContestStatus(contest, MOCK_NOW)).toBe(expected);
+      });
     });
   });
 
-  describe('getContestStatus', () => {
-    const baseContest: Omit<Contest, 'createdAt'> = {
-      id: 'test-contest',
-      name: 'Test Contest',
-      authorId: 'user-1',
-      description: 'A test contest',
-      coverImage: 'https://example.com/image.jpg',
-      photos: [],
-      submissionDays: 7,
-      voteDays: 3,
-    };
-
-    it('should return "submission" when contest is in submission phase', () => {
-      // Concours créé il y a 2 jours, phase de soumission de 7 jours
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('submission');
+  describe('Cas limites', () => {
+    it('submissionDays = 0 => vote immédiat', () => {
+      expect(getContestStatus(createContest(0, 0, 3), MOCK_NOW)).toBe('vote');
     });
 
-    it('should return "submission" when contest just started', () => {
-      // Concours créé maintenant
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: mockNow.toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('submission');
+    it('voteDays = 0 => closed immédiat après sub', () => {
+      expect(getContestStatus(createContest(8, 7, 0), MOCK_NOW)).toBe('closed');
     });
-
-    it('should return "vote" when contest is in vote phase', () => {
-      // Concours créé il y a 8 jours (7 jours de soumission + 1 jour)
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('vote');
-    });
-
-    it('should return "vote" on the exact day vote begins', () => {
-      // Concours créé il y a exactement 7 jours (dernier jour de soumission)
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('vote');
-    });
-
-    it('should return "vote" on the last day of vote phase', () => {
-      // Concours créé il y a 10 jours (7 + 3 jours de vote)
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('vote');
-    });
-
-    it('should return "closed" when contest is finished', () => {
-      // Concours créé il y a 11 jours (7 + 3 + 1 jour)
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 11 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('closed');
-    });
-
-    it('should return "closed" far in the future', () => {
-      // Concours créé il y a 100 jours
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 100 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('closed');
-    });
-
-    it('should accept custom now date', () => {
-      // Concours créé il y a 2 jours
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate('2024-06-13T12:00:00.000Z').toISOString(),
-      };
-
-      // Avec une date "now" dans le futur du concours
-      const customNow = new realDate('2024-06-14T12:00:00.000Z');
-      const status = getContestStatus(contest, customNow);
-      expect(status).toBe('submission');
-
-      // Avec une date "now" après la phase de vote
-      const futureNow = new realDate('2024-06-25T12:00:00.000Z');
-      const status2 = getContestStatus(contest, futureNow);
-      expect(status2).toBe('closed');
-    });
-
-    it('should handle contests with 0 submission days', () => {
-      const contest: Contest = {
-        ...baseContest,
-        submissionDays: 0,
-        createdAt: mockNow.toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      // 0 jours de soumission = passe directement en vote
-      expect(status).toBe('vote');
-    });
-
-    it('should handle contests with 0 vote days', () => {
-      const contest: Contest = {
-        ...baseContest,
-        voteDays: 0,
-        createdAt: new realDate(mockNow.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      // 0 jours de vote = passe directement en closed après soumission
-      expect(status).toBe('closed');
-    });
-
-    it('should handle contests with very long durations', () => {
-      const contest: Contest = {
-        ...baseContest,
-        submissionDays: 30,
-        voteDays: 15,
-        createdAt: new realDate(mockNow.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      expect(status).toBe('submission');
-    });
-
-    it('should handle edge case at exact boundary between submission and vote', () => {
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      // À la fin exacte de la période de soumission, on passe en vote
-      expect(status).toBe('vote');
-    });
-
-    it('should handle edge case at exact boundary between vote and closed', () => {
-      const contest: Contest = {
-        ...baseContest,
-        createdAt: new realDate(mockNow.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(),
-      };
-
-      const status = getContestStatus(contest);
-      // À la fin exacte de la période de vote, on passe en closed
-      expect(status).toBe('vote'); // Note: <= voteEnd signifie encore en vote
+    
+    it('gère les durées longues', () => {
+      expect(getContestStatus(createContest(2, 30, 15), MOCK_NOW)).toBe('submission');
     });
   });
 });

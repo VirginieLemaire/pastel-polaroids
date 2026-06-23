@@ -15,11 +15,16 @@ export const STATUS_COLOR: Record<ContestStatus, PastelColor> = {
   closed: "lavender",
 };
 
-export const getContestStatus = (contest: Contest, now: Date = new Date()): ContestStatus => {
+// CORRECTION : On utilise Date.now() directement comme valeur par défaut
+// Ainsi, le mock vi.spyOn(Date, 'now') sera TOUJOURS capté, même sans passer de paramètre.
+export const getContestStatus = (
+  contest: Omit<Contest, 'photos'>, 
+  now: Date = new Date(Date.now()) 
+): ContestStatus => {
   const start = new Date(contest.createdAt).getTime();
   const voteBegins = start + contest.submissionDays * DAY_MS;
   const voteEnd = voteBegins + contest.voteDays * DAY_MS;
-  const currentDate = Number(now.getTime());
+  const currentDate = now.getTime();
   
   if (currentDate < voteBegins) return "submission";
   if (currentDate <= voteEnd) return "vote";

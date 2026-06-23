@@ -19,12 +19,12 @@ describe('contests/utils', () => {
     mockNow = new realDate('2024-06-15T12:00:00.000Z');
     // @ts-expect-error - Mock global Date
     global.Date = class extends realDate {
-      constructor(...args: any[]) {
+      constructor(...args: Parameters<typeof Date>) {
         super();
         if (args.length === 0) {
           return mockNow;
         }
-        return new realDate(...args as []);
+        return new realDate(...args);
       }
 
       static now() {

@@ -4,7 +4,7 @@ import type { Contest, ContestStatus } from "./types";
 export const formatDate = (iso: string | number) =>
   new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
 
-export const getNextStepText = (contest: Contest, status: ContestStatus): string => {
+export const getNextStepText = (contest: Omit<Contest, 'photos'>, status: ContestStatus): string => {
   const createdAt = new Date(contest.createdAt).getTime();
   const voteBegins = createdAt + contest.submissionDays * DAY_MS;
   const voteEnd = voteBegins + contest.voteDays * DAY_MS;
