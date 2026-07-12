@@ -1,6 +1,6 @@
 # Contexte du projet : pastel-polaroids
 
-*Dernière mise à jour : 13 juin 2026*
+*Dernière mise à jour : 12 juillet 2026*
 
 ---
 
@@ -28,7 +28,7 @@ Dans un second temps, le projet sera forké pour devenir le projet réél, en pr
 | **Validation** | Zod (schémas) |
 | **Icons** | lucide-react |
 | **Avatars** | DiceBear (@dicebear/collection + core) |
-| **Tests** | Vitest + @testing-library/react |
+| **Tests** | Vitest + @testing-library/react + @testing-library/user-event + @vitest/coverage-v8 + jsdom |
 
 ---
 
@@ -104,12 +104,14 @@ Organisée en **features** (dossier `src/features/`) :
 
 ## 🔧 État actuel (d’après les commits)
 - **Derniers commits** :
-  - `8d40c42` : `fix` (dernier commit, 13 juin 2026)
-  - `a34d92d` : `feat`
-  - `2134850` : `feat`
-  - `22b2412` : `fix`
-  - `6b74c64` : `fix`
-- **Statut** : Projet **fonctionnel** mais en développement actif (tout est mocké, pas de backend).
+  - `6e00f9f` : `fix(contests test) : remove unused imports` (12 juillet 2026)
+  - `cd3097f` : `test(votes) unit tests vote feature`
+  - `4c9cfad` : `refactor(DAY_MS): another DAY_MS created by AI instead of importing it`
+  - `990327c` : `fix(error on contest tests): error after modifying dateUtils - needs some modifications`
+  - `1402c77` : `test(photos): unit test for photos permission, visibility and some schemas rules`
+  - `9ee9468` : `test(contest): init tests and unit test contest feature`
+  - `bbd0f0c` : `fix: align @vitest/coverage-v8 version with vitest@3.x`
+- **Statut** : Projet **fonctionnel** avec **104 tests unitaires** couvrant votes, concours et photos (tout est mocké, pas de backend).
 - **Déploiement** : Configuré pour [Lovable](https://lovable.dev) (référencé dans le README).
 
 ---
@@ -132,4 +134,5 @@ Organisée en **features** (dossier `src/features/`) :
   - Une API pour persister concours/photos/votes.
 - **Authentification** : Le `UserContext` utilise un utilisateur mocké (`mockUser`). Intégrer Firebase Auth ou NextAuth.
 - **Upload d’images** : Les `imageUrl` pointent vers des URLs externes (picsum). Ajouter un système d’upload (Cloudinary, Supabase Storage).
-- **Tests E2E** : Peu de tests présentes (seulement `vitest.config.ts` et `test/setup.ts` vides).
+- **Tests E2E** : Tests unitaires complets (104 tests Vitest). À compléter avec des tests E2E (Cypress, Playwright).
+- **Documentation composants** : Intégrer Storybook pour documenter les composants UI (PolaroidCard, BrutalButton, PhotoGrid, etc.).
