@@ -11,6 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  args: { className: '' },
   play: async ({ canvas }) => {
     const placeholder = canvas.getByRole('presentation', { hidden: true });
     await expect(placeholder).toBeVisible();

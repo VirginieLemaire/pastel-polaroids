@@ -23,7 +23,7 @@ export const Default: Story = {
 
 export const WithImage: Story = {
   args: {
-    imageUrl: 'https://via.placeholder.com/300x300',
+    imageUrl: 'https://placehold.co//300x300',
     title: 'Photo with Image',
   },
 };

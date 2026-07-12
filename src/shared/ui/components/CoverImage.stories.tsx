@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    src: 'https://via.placeholder.com/800x600',
+    src: 'https://placehold.co/600x400',
     alt: 'Placeholder image',
   },
   play: async ({ canvas }) => {
@@ -22,7 +22,7 @@ export const Default: Story = {
 
 export const Priority: Story = {
   args: {
-    src: 'https://via.placeholder.com/800x600',
+    src: 'https://placehold.co/600x400',
     alt: 'Priority image',
     priority: true,
   },
@@ -30,7 +30,7 @@ export const Priority: Story = {
 
 export const WithAspectRatio: Story = {
   args: {
-    src: 'https://via.placeholder.com/800x600',
+    src: 'https://placehold.co/600x400',
     alt: 'Square image',
     aspectRatio: '1',
   },
@@ -38,7 +38,7 @@ export const WithAspectRatio: Story = {
 
 export const WithCustomClass: Story = {
   args: {
-    src: 'https://via.placeholder.com/800x600',
+    src: 'https://placehold.co/600x400',
     alt: 'Custom styled image',
     className: 'rounded-lg',
   },
