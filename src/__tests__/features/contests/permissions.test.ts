@@ -6,7 +6,6 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { canEditContest, canDeleteContest } from '@/features/contests/permissions';
 import type { Contest } from '@/features/contests/types';
 import { isoDaysAgo } from '@/shared/utils/dateUtils';
-import { getContestStatus } from '@/features/contests';
 
 describe('contests/permissions', () => {
   // On définit une date de référence fixe pour tous les calculs

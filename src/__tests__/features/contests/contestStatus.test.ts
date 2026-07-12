@@ -10,7 +10,7 @@ import {
 } from '@/features/contests/contestStatus';
 import type { Contest } from '@/features/contests/types';
 // Import de tes utilitaires partagés
-import { isoDaysAgo, DAY_MS } from '@/shared/utils/dateUtils';
+import { isoDaysAgo } from '@/shared/utils/dateUtils';
 
 describe('contestStatus', () => {
   // Date de référence fixe pour tous les tests

@@ -8,7 +8,7 @@ import {
   statusCorrespondingActionText,
 } from '@/features/contests/utils';
 import { DAY_MS } from '@/shared/utils/dateUtils';
-import type { Contest, ContestStatus } from '@/features/contests/types';
+import type { Contest } from '@/features/contests/types';
 
 describe('contests/utils', () => {
   let mockNow: Date;
