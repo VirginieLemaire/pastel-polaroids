@@ -1,13 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Read environment variables from .env file.
- */
-import dotenv from 'dotenv';
-dotenv.config();
-
-/**
  * See https://playwright.dev/docs/test-configuration.
+ * Playwright automatically loads environment variables from .env files
  */
 export default defineConfig({
   testDir: './e2e',
