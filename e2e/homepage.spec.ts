@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, setupScenario, SCENARIOS } from './testUtils';
 
 test.describe('Homepage', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    // Use default scenario for homepage tests (one-active-rest-closed)
+    await setupScenario(page, SCENARIOS.ONE_ACTIVE_REST_CLOSED);
   });
 
   test('should load the homepage successfully', async ({ page }) => {
@@ -20,22 +21,30 @@ test.describe('Homepage', () => {
   });
 
   test('should display current contest or create button', async ({ page }) => {
-    const polaroidCard = page.locator('.polaroid-card');
-    const createButton = page.getByRole('button').filter({ hasText: /Nouveau thème/ });
+    // Either a contest card (brutal-border div with specific size) or the create button text should be visible
+    const contestCard = page.locator('div.brutal-border.w-64').first();
+    const createButtonText = page.getByText('Nouveau thème');
     
-    const hasContest = await polaroidCard.count() > 0;
-    const hasCreateButton = await createButton.count() > 0;
-    
-    expect(hasContest || hasCreateButton).toBeTruthy();
+    const contestCardOrButton = contestCard.or(createButtonText);
+    await expect(contestCardOrButton).toBeVisible({ timeout: 5000 });
   });
 
-  test('should have a button to create new contest', async ({ page }) => {
-    const createButton = page.getByRole('button').filter({ hasText: /Nouveau thème/ });
+  test('should have a button to create new contest when no active contest', async ({ page }) => {
+    // This test checks the button appears when there's no active contest
+    // We use empty scenario for this
+    await setupScenario(page, SCENARIOS.EMPTY);
+    
+    // Find button by aria-label since the visible text is "+" which might not be accessible
+    const createButton = page.getByRole('button', { name: 'Créer un nouveau thème' });
     await expect(createButton).toBeVisible();
+    
+    // Also check the visible "+" symbol and "Nouveau thème" text
+    await expect(page.getByText('＋')).toBeVisible();
+    await expect(page.getByText('Nouveau thème')).toBeVisible();
   });
 
   test('should display ancient themes button when there are past contests', async ({ page }) => {
     const ancientButton = page.getByRole('button', { name: /Anciens thèmes/ });
-    await expect(ancientButton).toBeVisible().or(expect(ancientButton).not.toBeVisible());
+    await expect(ancientButton).toBeVisible();
   });
 });

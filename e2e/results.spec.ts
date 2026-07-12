@@ -1,12 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, setupScenario, SCENARIOS } from './testUtils';
 
 test.describe('Results Page', () => {
-  test.beforeEach(async ({ page, context }) => {
-    // Use the "all-closed" scenario which has closed contests with results
-    await context.addInitScript({ 
-      content: `window.localStorage.setItem('dev:mockScenario', 'all-closed');` 
-    });
-    
+  test.beforeEach(async ({ page }) => {
+    // Use all-closed scenario for results page tests
+    await setupScenario(page, SCENARIOS.ALL_CLOSED);
     await page.goto('/photos');
   });
 

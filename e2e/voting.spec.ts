@@ -1,13 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, setupScenario, SCENARIOS } from './testUtils';
 
 test.describe('Voting', () => {
-  test.beforeEach(async ({ page, context }) => {
-    // Use the "one-active-vote" scenario which has a contest in vote phase
-    await context.addInitScript({ 
-      content: `window.localStorage.setItem('dev:mockScenario', 'one-active-vote');` 
-    });
-    
-    await page.goto('/');
+  test.beforeEach(async ({ page }) => {
+    // Use one-active-vote scenario for voting tests
+    await setupScenario(page, SCENARIOS.ONE_ACTIVE_VOTE);
   });
 
   test('should display contest in vote phase', async ({ page }) => {

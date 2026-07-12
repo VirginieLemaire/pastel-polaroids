@@ -10,6 +10,10 @@ import { UserProvider } from '@/features/user/UserContext';
 import type { Contest } from '@/features/contests/types';
 import type { Photo } from '@/features/photos/types';
 import type { Vote } from '@/features/votes/types';
+// Re-export scenarios for use in tests
+import { MOCK_SCENARIOS, getScenarioById, DEFAULT_SCENARIO_ID } from '@/dev/mockScenarios';
+
+export { MOCK_SCENARIOS, getScenarioById, DEFAULT_SCENARIO_ID };
 
 // Type pour les providers combinés
 interface AllProvidersProps {

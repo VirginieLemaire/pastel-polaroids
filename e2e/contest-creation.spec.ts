@@ -1,8 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, setupScenario, SCENARIOS } from './testUtils';
 
 test.describe('Contest Creation', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    // Use empty scenario for contest creation tests
+    await setupScenario(page, SCENARIOS.EMPTY);
   });
 
   test('should open contest creation modal when clicking create button', async ({ page }) => {
@@ -75,7 +76,7 @@ test.describe('Contest Creation', () => {
     await submitButton.click();
     
     // Should be redirected to contest detail page
-    await expect(page).toHaveURL(/-/contest\//);
+    await expect(page).toHaveURL(/\/contest\//);
     
     // Should display contest name
     await expect(page.getByText('Concours Test E2E')).toBeVisible();

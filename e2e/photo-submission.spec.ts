@@ -1,11 +1,13 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, setupScenario, SCENARIOS } from './testUtils';
 
 test.describe('Photo Submission', () => {
   let contestId: string;
 
-  test.beforeAll(async ({ page, request }) => {
+  test.beforeAll(async ({ page }) => {
+    // Use empty scenario to create a contest from scratch
+    await setupScenario(page, SCENARIOS.EMPTY);
+    
     // Create a contest first to have a valid contestId
-    await page.goto('/');
     
     // Open contest creation modal
     const createButton = page.getByRole('button').filter({ hasText: /Nouveau thème/ });
@@ -22,7 +24,7 @@ test.describe('Photo Submission', () => {
     
     // Extract contestId from URL
     const url = page.url();
-    const match = url.match(^/contest/([^/]+)/?$/);
+    const match = url.match('/^\/contest\/([^\/]+)\/?$/');
     contestId = match ? match[1] : '';
     
     expect(contestId).toBeTruthy();
@@ -100,7 +102,7 @@ test.describe('Photo Submission', () => {
     // For this test, we'll use the file input approach
     // We'll use a simple approach: set the input value via JavaScript
     const fileInput = page.locator('input[type="file"]').first();
-    await fileInput.setInputFiles({}
+    await fileInput.setInputFiles({
       name: 'test-image.jpg',
       mimeType: 'image/jpeg',
       buffer: Buffer.from('fake-image-data'),
