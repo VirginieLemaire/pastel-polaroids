@@ -28,3 +28,9 @@ dist-ssr
 
 *storybook.log
 storybook-static
+
+# Playwright
+playwright-report/
+test-results/
+playwright-show-report*
+playwright-dev-server*
