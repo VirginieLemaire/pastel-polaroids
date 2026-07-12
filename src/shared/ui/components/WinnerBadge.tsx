@@ -16,11 +16,12 @@ export default function WinnerBadge({ className = "" }: WinnerBadgeProps) {
   return (
     <div
       className={`bg-pastel-mint brutal-border px-2 py-1 ${className}`}
-      aria-label="photo gagnante"
+      role="status"
+      aria-labelledby="winner-text"
     >
       <span className="flex items-center gap-1 font-mono text-xs">
         <Trophy size={12} className="shrink-0" />
-        <span>photo gagnante</span>
+        <span id="winner-text">photo gagnante</span>
       </span>
     </div>
   );
