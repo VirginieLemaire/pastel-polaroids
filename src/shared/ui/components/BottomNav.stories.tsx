@@ -4,7 +4,7 @@ import BottomNav from './BottomNav';
 
 const meta = {
   component: BottomNav,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof BottomNav>;
 
 export default meta;

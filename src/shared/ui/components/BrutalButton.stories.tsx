@@ -4,7 +4,7 @@ import BrutalButton from './BrutalButton';
 
 const meta = {
   component: BrutalButton,
-  tags: ['ai-generated'],
+  tags: ['ai-generated', 'autodocs'],
 } satisfies Meta<typeof BrutalButton>;
 
 export default meta;

@@ -4,7 +4,7 @@ import BrutalCard from './BrutalCard';
 
 const meta = {
   component: BrutalCard,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof BrutalCard>;
 
 export default meta;

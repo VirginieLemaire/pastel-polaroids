@@ -5,7 +5,7 @@ import type { ContestStatus } from '@/features/contests/types';
 
 const meta = {
   component: StatusBadge,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof StatusBadge>;
 
 export default meta;
