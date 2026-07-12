@@ -25,3 +25,6 @@ dist-ssr
 
 # Avoid lock files as Lovable seems to use other package manager
 *lock*
+
+*storybook.log
+storybook-static
