@@ -52,7 +52,7 @@ const PolaroidCard = ({
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >
-      <div
+      <figure
         className="w-56 h-56 overflow-hidden relative bg-background"
         aria-label={title || "Photo"}
       >
@@ -66,7 +66,7 @@ const PolaroidCard = ({
         ) : (
           <ImagePlaceHolder className="h-full" />
         )}
-      </div>
+      </figure>
       {title && (
         <p className="mt-3 text-center font-mono text-sm break-words">{title}</p>
       )}
