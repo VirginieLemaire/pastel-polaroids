@@ -4,7 +4,7 @@ import PolaroidCard from './PolaroidCard';
 
 const meta = {
   component: PolaroidCard,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof PolaroidCard>;
 
 export default meta;

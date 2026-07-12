@@ -5,7 +5,7 @@ import Modal from './Modal';
 
 const meta = {
   component: Modal,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof Modal>;
 
 export default meta;

@@ -4,7 +4,7 @@ import CoverImage from './CoverImage';
 
 const meta = {
   component: CoverImage,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof CoverImage>;
 
 export default meta;

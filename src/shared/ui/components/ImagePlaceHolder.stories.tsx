@@ -4,7 +4,7 @@ import ImagePlaceHolder from './ImagePlaceHolder';
 
 const meta = {
   component: ImagePlaceHolder,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof ImagePlaceHolder>;
 
 export default meta;

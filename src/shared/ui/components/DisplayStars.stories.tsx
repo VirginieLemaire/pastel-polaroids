@@ -4,7 +4,7 @@ import DisplayStars from './DisplayStars';
 
 const meta = {
   component: DisplayStars,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof DisplayStars>;
 
 export default meta;

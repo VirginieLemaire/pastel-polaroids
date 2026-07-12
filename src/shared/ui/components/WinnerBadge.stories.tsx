@@ -4,7 +4,7 @@ import WinnerBadge from './WinnerBadge';
 
 const meta = {
   component: WinnerBadge,
-  tags: ['ai-generated'],
+  tags: ['ai-generated','autodocs'],
 } satisfies Meta<typeof WinnerBadge>;
 
 export default meta;
