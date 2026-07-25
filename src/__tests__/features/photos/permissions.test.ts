@@ -10,6 +10,7 @@ import {
   canDeletePhoto,
 } from '@/features/photos/permissions';
 import type { Contest } from '@/features/contests/types';
+import type { Photo } from '@/features/photos/types';
 import { DAY_MS } from '@/shared/utils/dateUtils';
 
 describe('photos/permissions', () => {

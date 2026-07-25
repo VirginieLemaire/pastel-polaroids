@@ -153,7 +153,7 @@ export default function PhotoGrid({
             />
 
             {/* Actions personnalisées (si fournies) - seulement en mode non-results */}
-            {actions && (mode !== "results" && mode !== "closed") && (
+            {actions && mode !== "results" && (
               <div className="flex gap-2">{actions}</div>
             )}
           </li>
