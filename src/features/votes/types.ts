@@ -20,13 +20,13 @@ export interface VoteContextValue {
     expectedVoterIds: string[]
   ) => number | null;
   getRankedPhotos: (
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
-  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  ) => { photo: Photo; averageRating: number }[];
   getWinners: (
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
-  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  ) => { photo: Photo; averageRating: number }[];
   isPhotoWinner: (
     photoId: string,
     photos: { id: string; authorId: string }[],
