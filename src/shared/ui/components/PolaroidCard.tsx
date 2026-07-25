@@ -48,7 +48,7 @@ const PolaroidCard = ({
           : undefined
       }
       style={{ transform: `rotate(${rotation}deg)` }}
-      className={`inline-block w-64 bg-background brutal-border brutal-shadow-lg p-3 pb-10 select-none relative ${
+      className={`inline-block w-64 bg-white brutal-border brutal-shadow-lg p-3 pb-10 select-none relative ${
         interactive ? "cursor-pointer hover:-translate-y-1 transition-transform" : ""
       }`}
     >

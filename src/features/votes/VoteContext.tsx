@@ -120,28 +120,20 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
 
   const getRankedPhotos = useCallback(
     (
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
-    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
-      return computeRankedPhotos(
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    ): { photo: Photo; averageRating: number }[] => {
+      return computeRankedPhotos(photos, votes, expectedVoterIds);
     },
     [votes],
   );
 
   const getWinners = useCallback(
     (
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
-    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
-      return computeWinners(
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    ): { photo: Photo; averageRating: number }[] => {
+      return computeWinners(photos, votes, expectedVoterIds);
     },
     [votes],
   );
@@ -149,15 +141,10 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const isPhotoWinner = useCallback(
     (
       photoId: string,
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
     ): boolean => {
-      return computeIsPhotoWinner(
-        photoId,
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      );
+      return computeIsPhotoWinner(photoId, photos, votes, expectedVoterIds);
     },
     [votes],
   );
