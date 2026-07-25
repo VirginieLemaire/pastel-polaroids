@@ -1,3 +1,5 @@
+import type { Photo } from "@/features/photos/types";
+
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export interface Vote {
