@@ -58,7 +58,7 @@ export default function HomePage() {
 
   return (
     <main className="flex-1 bg-background px-6 py-12 flex flex-col">
-      <header className="text-center space-y-2 mb-10">
+      <header className="text-center space-y-2 mb-10 mt-8">
         <h1 className="font-mono text-4xl md:text-5xl font-bold">Photo de Famille</h1>
         <p className="font-mono text-sm text-muted-foreground">
           Concours photo en famille, un thème à la fois.
