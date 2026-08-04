@@ -10,7 +10,7 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
-import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
+import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
 import type { Photo } from "@/features/photos/types";
 import { DEV_SCENARIO_CHANGE_EVENT } from "../contests";
 
