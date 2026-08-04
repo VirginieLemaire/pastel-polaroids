@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
+import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
 import { useCurrentUser } from "@/features/user";
 import type { Contest, ContestContextValue } from "./types";
 
