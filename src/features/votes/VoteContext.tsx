@@ -18,17 +18,12 @@ export const VoteContext = createContext<VoteContextValue | null>(null);
 
 export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
-  const [votes, setVotes] = useState<Vote[]>(() => {
-    // En mode dev, utiliser les votes du scénario actif
-    if (import.meta.env.DEV) {
-      return getScenarioById(getStoredScenarioId()).votes;
-    }
-    return defaultVotes;
-  });
+  const [votes, setVotes] = useState<Vote[]>(
+    () => getScenarioById(getStoredScenarioId()).votes,
+  );
 
-  // En mode dev, écouter les changements de scénario
+  // Le visiteur peut changer de scénario de démo à tout moment
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setVotes(getScenarioById(id).votes);
