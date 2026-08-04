@@ -16,7 +16,7 @@ const App = () => (
       <PhotoProvider>
         <VoteProvider>
           <BrowserRouter>
-            <DevMenu />
+            <DemoScenarioPanel />
             <div className="min-h-dvh flex flex-col pb-[calc(var(--bottom-nav-h)+3px)]">
               <Routes>
                 <Route path="/" element={<HomePage />} />
