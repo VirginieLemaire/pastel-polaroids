@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Vote, VoteContextValue, Rating } from "./types";
-import { defaultVotes } from "./mocks/votes.mocks";
+
 import { castVoteSchema } from "./schemas";
 import {
   NEUTRAL_RATING,
@@ -10,7 +10,7 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
-import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
+import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
 import type { Photo } from "@/features/photos/types";
 import { DEV_SCENARIO_CHANGE_EVENT } from "../contests";
 
@@ -18,17 +18,12 @@ export const VoteContext = createContext<VoteContextValue | null>(null);
 
 export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
-  const [votes, setVotes] = useState<Vote[]>(() => {
-    // En mode dev, utiliser les votes du scénario actif
-    if (import.meta.env.DEV) {
-      return getScenarioById(getStoredScenarioId()).votes;
-    }
-    return defaultVotes;
-  });
+  const [votes, setVotes] = useState<Vote[]>(
+    () => getScenarioById(getStoredScenarioId()).votes,
+  );
 
-  // En mode dev, écouter les changements de scénario
+  // Le visiteur peut changer de scénario de démo à tout moment
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setVotes(getScenarioById(id).votes);

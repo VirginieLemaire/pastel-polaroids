@@ -7,7 +7,7 @@ import HomePage from "./features/home/HomePage";
 import ContestDetailPage from "./features/contests/ContestDetailPage";
 import PhotosPage from "./features/photos/PhotosPage";
 import AllResultsPage from "./features/photos/AllResultsPage";
-import DevMenu from "./dev/DevMenu";
+import DemoScenarioPanel from "./features/demo/DemoScenarioPanel";
 import BottomNav from "./shared/ui/components/BottomNav";
 
 const App = () => (
@@ -16,7 +16,7 @@ const App = () => (
       <PhotoProvider>
         <VoteProvider>
           <BrowserRouter>
-            <DevMenu />
+            <DemoScenarioPanel />
             <div className="min-h-dvh flex flex-col pb-[calc(var(--bottom-nav-h)+3px)]">
               <Routes>
                 <Route path="/" element={<HomePage />} />

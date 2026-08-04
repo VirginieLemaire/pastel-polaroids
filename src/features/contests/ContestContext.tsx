@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
+import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
 import { useCurrentUser } from "@/features/user";
 import type { Contest, ContestContextValue } from "./types";
 
@@ -15,7 +15,6 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setContests(getScenarioById(id).contests);
