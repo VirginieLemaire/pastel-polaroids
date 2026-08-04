@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Vote, VoteContextValue, Rating } from "./types";
-import { defaultVotes } from "./mocks/votes.mocks";
+
 import { castVoteSchema } from "./schemas";
 import {
   NEUTRAL_RATING,
