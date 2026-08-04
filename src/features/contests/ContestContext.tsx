@@ -15,7 +15,6 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
   );
 
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setContests(getScenarioById(id).contests);
