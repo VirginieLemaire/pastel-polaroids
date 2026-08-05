@@ -269,12 +269,20 @@ export default function PhotosPage() {
       </Modal>
 
       <PhotoDetailModal 
-        photo={detail.photo} 
+        photo={detailIndex !== null ? detailList[detailIndex]?.photo ?? null : null} 
         contest={contest} 
-        onClose={() => setDetail({ photo: null })}
-        averageRating={detail.averageRating}
-        isWinner={detail.isWinner}
+        onClose={() => setDetailIndex(null)}
+        averageRating={detailIndex !== null ? detailList[detailIndex]?.averageRating : undefined}
+        isWinner={detailIndex !== null ? detailList[detailIndex]?.isWinner : undefined}
+        onPrev={detailIndex !== null && detailIndex > 0 ? () => setDetailIndex(detailIndex - 1) : undefined}
+        onNext={
+          detailIndex !== null && detailIndex < detailList.length - 1
+            ? () => setDetailIndex(detailIndex + 1)
+            : undefined
+        }
+        positionLabel={detailIndex !== null ? `${detailIndex + 1} / ${detailList.length}` : undefined}
       />
+
     </main>
   );
 }
