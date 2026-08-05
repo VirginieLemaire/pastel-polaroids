@@ -40,16 +40,32 @@ const PhotoDetailModal = ({
   onClose, 
   averageRating,
   isWinner = false,
+  onPrev,
+  onNext,
+  positionLabel,
 }: PhotoDetailModalProps) => {
+  // Navigation clavier entre les photos (flèches gauche / droite)
+  useEffect(() => {
+    if (!photo) return;
+    const handleArrowKeys = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") onPrev?.();
+      if (e.key === "ArrowRight") onNext?.();
+    };
+    document.addEventListener("keydown", handleArrowKeys);
+    return () => document.removeEventListener("keydown", handleArrowKeys);
+  }, [photo, onPrev, onNext]);
+
   if (!photo) return null;
   const status = getContestStatus(contest);
   const authored = isAuthoredPhoto(photo);
   // Anonymat strict en phase vote : pas de nom d'auteur pour les photos des autres.
   const showAuthor = authored && (status === "submission" || status === "closed");
+  const hasNavigation = Boolean(onPrev || onNext);
 
   return (
     <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"}>
       <div className="space-y-4">
+
         {/* Image avec badge gagnant */}
         <div className="w-full brutal-border bg-background relative">
           <CoverImage
