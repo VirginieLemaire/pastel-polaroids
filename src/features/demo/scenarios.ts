@@ -1,6 +1,8 @@
 import type { Contest } from "@/features/contests";
 import type { Vote } from "@/features/votes/types";
-import { isoDaysAgo } from "@/shared/utils/dateUtils";
+import type { Photo } from "@/features/photos/types";
+import { defaultVotes } from "@/features/votes/mocks/votes.mocks";
+import { defaultPhotos } from "@/features/photos/mocks/photos.mocks";
 import {
   allClosed,
   noContests,
@@ -15,54 +17,22 @@ export interface IDemoScenario {
   /** Ce que le visiteur peut tester avec ce scénario. */
   description: string;
   contests: Contest[];
+  photos: Photo[];
   votes: Vote[];
 }
 
-const emptyVotes: Vote[] = [];
+/** Ne garde que les données rattachées aux thèmes présents dans le scénario. */
+const contestIdsOf = (contests: Contest[]) => new Set(contests.map((c) => c.id));
 
-// Phase de soumission : aucun vote possible
-const oneActiveSubmissionVotes: Vote[] = [];
+const photosOf = (contests: Contest[]): Photo[] => {
+  const ids = contestIdsOf(contests);
+  return defaultPhotos.filter((p) => ids.has(p.contestId));
+};
 
-// Votes pour "one-active-vote" : votes pour mock-1 UNIQUEMENT
-const oneActiveVoteVotes: Vote[] = [
-  { id: "vote-1", photoId: "photo-2", contestId: "mock-1", voterId: "user-1", rating: 4, createdAt: isoDaysAgo(2), updatedAt: isoDaysAgo(2) },
-  { id: "vote-2", photoId: "photo-1", contestId: "mock-1", voterId: "user-2", rating: 5, createdAt: isoDaysAgo(1), updatedAt: isoDaysAgo(1) },
-  { id: "vote-3", photoId: "photo-3", contestId: "mock-1", voterId: "user-2", rating: 3, createdAt: isoDaysAgo(3), updatedAt: isoDaysAgo(3) },
-];
-
-// Votes pour "one-active-rest-closed" : mock-1 (actif) + mock-2 (clos)
-const oneActiveRestClosedVotes: Vote[] = [
-  ...oneActiveVoteVotes,
-  { id: "vote-4", photoId: "photo-4", contestId: "mock-2", voterId: "user-1", rating: 4, createdAt: isoDaysAgo(10), updatedAt: isoDaysAgo(10) },
-  { id: "vote-5", photoId: "photo-6", contestId: "mock-2", voterId: "user-1", rating: 5, createdAt: isoDaysAgo(11), updatedAt: isoDaysAgo(11) },
-  { id: "vote-6", photoId: "photo-7", contestId: "mock-2", voterId: "user-1", rating: 3, createdAt: isoDaysAgo(12), updatedAt: isoDaysAgo(12) },
-  { id: "vote-7", photoId: "photo-9", contestId: "mock-2", voterId: "user-1", rating: 4, createdAt: isoDaysAgo(13), updatedAt: isoDaysAgo(13) },
-  { id: "vote-8", photoId: "photo-5", contestId: "mock-2", voterId: "user-2", rating: 5, createdAt: isoDaysAgo(14), updatedAt: isoDaysAgo(14) },
-  { id: "vote-9", photoId: "photo-6", contestId: "mock-2", voterId: "user-2", rating: 4, createdAt: isoDaysAgo(15), updatedAt: isoDaysAgo(15) },
-  { id: "vote-10", photoId: "photo-8", contestId: "mock-2", voterId: "user-2", rating: 5, createdAt: isoDaysAgo(16), updatedAt: isoDaysAgo(16) },
-  { id: "vote-11", photoId: "photo-9", contestId: "mock-2", voterId: "user-2", rating: 3, createdAt: isoDaysAgo(17), updatedAt: isoDaysAgo(17) },
-  { id: "vote-12", photoId: "photo-4", contestId: "mock-2", voterId: "user-3", rating: 4, createdAt: isoDaysAgo(18), updatedAt: isoDaysAgo(18) },
-  { id: "vote-13", photoId: "photo-5", contestId: "mock-2", voterId: "user-3", rating: 5, createdAt: isoDaysAgo(19), updatedAt: isoDaysAgo(19) },
-  { id: "vote-14", photoId: "photo-7", contestId: "mock-2", voterId: "user-3", rating: 2, createdAt: isoDaysAgo(20), updatedAt: isoDaysAgo(20) },
-  { id: "vote-15", photoId: "photo-8", contestId: "mock-2", voterId: "user-3", rating: 4, createdAt: isoDaysAgo(21), updatedAt: isoDaysAgo(21) },
-];
-
-// Votes pour "all-closed" : mock-1, mock-2, mock-3
-const allClosedVotes: Vote[] = [
-  ...oneActiveRestClosedVotes,
-  { id: "vote-16", photoId: "photo-11", contestId: "mock-3", voterId: "user-1", rating: 5, createdAt: isoDaysAgo(25), updatedAt: isoDaysAgo(25) },
-  { id: "vote-17", photoId: "photo-12", contestId: "mock-3", voterId: "user-1", rating: 4, createdAt: isoDaysAgo(24), updatedAt: isoDaysAgo(24) },
-  { id: "vote-18", photoId: "photo-14", contestId: "mock-3", voterId: "user-1", rating: 3, createdAt: isoDaysAgo(23), updatedAt: isoDaysAgo(23) },
-  { id: "vote-19", photoId: "photo-15", contestId: "mock-3", voterId: "user-1", rating: 5, createdAt: isoDaysAgo(22), updatedAt: isoDaysAgo(22) },
-  { id: "vote-20", photoId: "photo-10", contestId: "mock-3", voterId: "user-2", rating: 4, createdAt: isoDaysAgo(26), updatedAt: isoDaysAgo(26) },
-  { id: "vote-21", photoId: "photo-12", contestId: "mock-3", voterId: "user-2", rating: 5, createdAt: isoDaysAgo(27), updatedAt: isoDaysAgo(27) },
-  { id: "vote-22", photoId: "photo-13", contestId: "mock-3", voterId: "user-2", rating: 3, createdAt: isoDaysAgo(28), updatedAt: isoDaysAgo(28) },
-  { id: "vote-23", photoId: "photo-15", contestId: "mock-3", voterId: "user-2", rating: 4, createdAt: isoDaysAgo(29), updatedAt: isoDaysAgo(29) },
-  { id: "vote-24", photoId: "photo-10", contestId: "mock-3", voterId: "user-3", rating: 5, createdAt: isoDaysAgo(30), updatedAt: isoDaysAgo(30) },
-  { id: "vote-25", photoId: "photo-11", contestId: "mock-3", voterId: "user-3", rating: 4, createdAt: isoDaysAgo(31), updatedAt: isoDaysAgo(31) },
-  { id: "vote-26", photoId: "photo-13", contestId: "mock-3", voterId: "user-3", rating: 5, createdAt: isoDaysAgo(32), updatedAt: isoDaysAgo(32) },
-  { id: "vote-27", photoId: "photo-14", contestId: "mock-3", voterId: "user-3", rating: 3, createdAt: isoDaysAgo(33), updatedAt: isoDaysAgo(33) },
-];
+const votesOf = (contests: Contest[]): Vote[] => {
+  const ids = contestIdsOf(contests);
+  return defaultVotes.filter((v) => ids.has(v.contestId));
+};
 
 export const DEMO_SCENARIOS: IDemoScenario[] = [
   {
@@ -71,7 +41,8 @@ export const DEMO_SCENARIOS: IDemoScenario[] = [
     description:
       "Point de départ : la page d'accueil propose de créer un thème via le formulaire.",
     contests: noContests,
-    votes: emptyVotes,
+    photos: [],
+    votes: [],
   },
   {
     id: "one-active-submission",
@@ -79,7 +50,9 @@ export const DEMO_SCENARIOS: IDemoScenario[] = [
     description:
       "Envoi de photos (3 maximum par personne), avec modification et suppression de ses propres photos.",
     contests: oneActiveSubmissionOnly,
-    votes: oneActiveSubmissionVotes,
+    photos: photosOf(oneActiveSubmissionOnly),
+    // Aucun vote possible pendant la phase de soumission
+    votes: [],
   },
   {
     id: "one-active-vote",
@@ -87,7 +60,8 @@ export const DEMO_SCENARIOS: IDemoScenario[] = [
     description:
       "Notation de 1 à 5 étoiles, en anonymat total : aucun auteur ni note des autres n'est affiché.",
     contests: oneActiveVoteOnly,
-    votes: oneActiveVoteVotes,
+    photos: photosOf(oneActiveVoteOnly),
+    votes: votesOf(oneActiveVoteOnly),
   },
   {
     id: "one-active-rest-closed",
@@ -95,7 +69,8 @@ export const DEMO_SCENARIOS: IDemoScenario[] = [
     description:
       "Navigation entre le thème du moment et les thèmes déjà terminés depuis l'accueil.",
     contests: oneActiveRestClosed,
-    votes: oneActiveRestClosedVotes,
+    photos: photosOf(oneActiveRestClosed),
+    votes: votesOf(oneActiveRestClosed),
   },
   {
     id: "all-closed",
@@ -103,7 +78,8 @@ export const DEMO_SCENARIOS: IDemoScenario[] = [
     description:
       "Résultats visibles : auteurs révélés, notes moyennes et photos gagnantes.",
     contests: allClosed,
-    votes: allClosedVotes,
+    photos: photosOf(allClosed),
+    votes: votesOf(allClosed),
   },
 ];
 
