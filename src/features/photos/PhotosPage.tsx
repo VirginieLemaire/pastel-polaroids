@@ -165,6 +165,19 @@ export default function PhotosPage() {
     });
   }, [visiblePhotos, contest, currentUser.id, setForm, handleDelete]);
 
+  // Liste utilisée pour naviguer d'une photo à l'autre dans la modale de détail
+  const detailList = useMemo<VisiblePhotoWithResults[]>(() => {
+    if (status !== "closed") return visiblePhotos.map((photo) => ({ photo }));
+    return showOnlyWinners ? photosWithResults.filter((p) => p.isWinner) : photosWithResults;
+  }, [status, visiblePhotos, photosWithResults, showOnlyWinners]);
+
+  const findDetailIndex = (photoId: string) => {
+    const index = detailList.findIndex((item) => item.photo.id === photoId);
+    return index === -1 ? null : index;
+  };
+
+
+
   return (
     <main className="flex-1 bg-background px-5 py-6">
       <div className="max-w-5xl mx-auto space-y-5">
