@@ -78,6 +78,41 @@ const PhotoDetailModal = ({
           {isWinner && <WinnerBadge className="top-2 right-2" />}
         </div>
 
+        {/* Navigation entre les photos */}
+        {hasNavigation && (
+          <nav aria-label="Navigation entre les photos" className="flex items-center justify-between gap-3">
+            <BrutalButton
+              type="button"
+              color="sky"
+              size="sm"
+              icon={<ChevronLeft size={16} aria-hidden="true" />}
+              onClick={onPrev}
+              disabled={!onPrev}
+              aria-disabled={!onPrev}
+            >
+              Précédente
+            </BrutalButton>
+            {positionLabel && (
+              <p className="font-mono text-xs text-muted-foreground" aria-live="polite">
+                {positionLabel}
+              </p>
+            )}
+            <BrutalButton
+              type="button"
+              color="sky"
+              size="sm"
+              onClick={onNext}
+              disabled={!onNext}
+              aria-disabled={!onNext}
+            >
+              Suivante
+              <ChevronRight size={16} aria-hidden="true" />
+            </BrutalButton>
+          </nav>
+        )}
+
+
+
         <dl className="font-mono text-sm space-y-2">
           {photo.description && (
             <div>
