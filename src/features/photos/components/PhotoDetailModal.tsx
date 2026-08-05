@@ -1,7 +1,10 @@
+import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Modal from "@/shared/ui/components/Modal";
 import CoverImage from "@/shared/ui/components/CoverImage";
 import DisplayStars from "@/shared/ui/components/DisplayStars";
 import WinnerBadge from "@/shared/ui/components/WinnerBadge";
+import BrutalButton from "@/shared/ui/components/BrutalButton";
 import type { Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getUserName } from "@/features/user";
@@ -15,7 +18,14 @@ interface PhotoDetailModalProps {
   averageRating?: number;
   /** Si true, la photo est gagnante */
   isWinner?: boolean;
+  /** Affiche la photo précédente de la liste (absent = pas de précédente) */
+  onPrev?: () => void;
+  /** Affiche la photo suivante de la liste (absent = pas de suivante) */
+  onNext?: () => void;
+  /** Position courante dans la liste, ex. « 2 / 8 » */
+  positionLabel?: string;
 }
+
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("fr-FR", {
