@@ -1,7 +1,8 @@
-import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Photo, PhotoContextValue, CreatePhotoInput, UpdatePhotoInput } from "./types";
-import { defaultPhotos } from "./mocks/photos.mocks";
+import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
+import { DEV_SCENARIO_CHANGE_EVENT } from "@/features/contests";
 
 export const PhotoContext = createContext<PhotoContextValue | null>(null);
 
@@ -11,7 +12,20 @@ interface IPhotoProviderProps {
 
 export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
   const { currentUser } = useCurrentUser();
-  const [photos, setPhotos] = useState<Photo[]>(defaultPhotos);
+  const [photos, setPhotos] = useState<Photo[]>(
+    () => getScenarioById(getStoredScenarioId()).photos,
+  );
+
+  // Le visiteur peut changer de scénario de démo à tout moment
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      setPhotos(getScenarioById(id).photos);
+    };
+    window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+    return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+  }, []);
+
 
   const photosByContest = useMemo(() => {
     const map = new Map<string, Photo[]>();
