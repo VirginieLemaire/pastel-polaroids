@@ -36,11 +36,7 @@ export default function PhotosPage() {
     usePhotos();
   const contest = getContest(id);
   const [form, setForm] = useState<FormState>(null);
-  const [detail, setDetail] = useState<{
-    photo: VisiblePhoto | null;
-    averageRating?: number;
-    isWinner?: boolean;
-  }>({ photo: null });
+  const [detailIndex, setDetailIndex] = useState<number | null>(null);
 
   if (!contest) {
     return (
@@ -169,6 +165,19 @@ export default function PhotosPage() {
     });
   }, [visiblePhotos, contest, currentUser.id, setForm, handleDelete]);
 
+  // Liste utilisée pour naviguer d'une photo à l'autre dans la modale de détail
+  const detailList = useMemo<{ photo: VisiblePhoto; averageRating?: number; isWinner?: boolean }[]>(() => {
+    if (status !== "closed") return visiblePhotos.map((photo) => ({ photo }));
+    return showOnlyWinners ? photosWithResults.filter((p) => p.isWinner) : photosWithResults;
+  }, [status, visiblePhotos, photosWithResults, showOnlyWinners]);
+
+  const findDetailIndex = (photoId: string) => {
+    const index = detailList.findIndex((item) => item.photo.id === photoId);
+    return index === -1 ? null : index;
+  };
+
+
+
   return (
     <main className="flex-1 bg-background px-5 py-6">
       <div className="max-w-5xl mx-auto space-y-5">
@@ -236,16 +245,7 @@ export default function PhotosPage() {
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photo) => {
-              const found = photosWithResults.find(p => p.photo.id === photo.id);
-              if (found) {
-                setDetail({
-                  photo,
-                  averageRating: found.averageRating,
-                  isWinner: found.isWinner,
-                });
-              }
-            }}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         ) : (
           /* En phase submission/vote : afficher avec actions */
@@ -253,9 +253,10 @@ export default function PhotosPage() {
             photos={photosWithActions}
             contest={contest}
             mode={status}
-            onPhotoClick={(photo) => setDetail({ photo })}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         )}
+
       </div>
 
       <Modal
@@ -281,12 +282,20 @@ export default function PhotosPage() {
       </Modal>
 
       <PhotoDetailModal 
-        photo={detail.photo} 
+        photo={detailIndex !== null ? detailList[detailIndex]?.photo ?? null : null} 
         contest={contest} 
-        onClose={() => setDetail({ photo: null })}
-        averageRating={detail.averageRating}
-        isWinner={detail.isWinner}
+        onClose={() => setDetailIndex(null)}
+        averageRating={detailIndex !== null ? detailList[detailIndex]?.averageRating : undefined}
+        isWinner={detailIndex !== null ? detailList[detailIndex]?.isWinner : undefined}
+        onPrev={detailIndex !== null && detailIndex > 0 ? () => setDetailIndex(detailIndex - 1) : undefined}
+        onNext={
+          detailIndex !== null && detailIndex < detailList.length - 1
+            ? () => setDetailIndex(detailIndex + 1)
+            : undefined
+        }
+        positionLabel={detailIndex !== null ? `${detailIndex + 1} / ${detailList.length}` : undefined}
       />
+
     </main>
   );
 }
