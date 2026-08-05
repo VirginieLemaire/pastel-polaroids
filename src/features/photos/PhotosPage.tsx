@@ -36,11 +36,7 @@ export default function PhotosPage() {
     usePhotos();
   const contest = getContest(id);
   const [form, setForm] = useState<FormState>(null);
-  const [detail, setDetail] = useState<{
-    photo: VisiblePhoto | null;
-    averageRating?: number;
-    isWinner?: boolean;
-  }>({ photo: null });
+  const [detailIndex, setDetailIndex] = useState<number | null>(null);
 
   if (!contest) {
     return (
