@@ -166,7 +166,7 @@ export default function PhotosPage() {
   }, [visiblePhotos, contest, currentUser.id, setForm, handleDelete]);
 
   // Liste utilisée pour naviguer d'une photo à l'autre dans la modale de détail
-  const detailList = useMemo<VisiblePhotoWithResults[]>(() => {
+  const detailList = useMemo<{ photo: VisiblePhoto; averageRating?: number; isWinner?: boolean }[]>(() => {
     if (status !== "closed") return visiblePhotos.map((photo) => ({ photo }));
     return showOnlyWinners ? photosWithResults.filter((p) => p.isWinner) : photosWithResults;
   }, [status, visiblePhotos, photosWithResults, showOnlyWinners]);
