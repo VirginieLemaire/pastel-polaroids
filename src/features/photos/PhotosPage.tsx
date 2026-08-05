@@ -232,16 +232,7 @@ export default function PhotosPage() {
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photo) => {
-              const found = photosWithResults.find(p => p.photo.id === photo.id);
-              if (found) {
-                setDetail({
-                  photo,
-                  averageRating: found.averageRating,
-                  isWinner: found.isWinner,
-                });
-              }
-            }}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         ) : (
           /* En phase submission/vote : afficher avec actions */
@@ -249,9 +240,10 @@ export default function PhotosPage() {
             photos={photosWithActions}
             contest={contest}
             mode={status}
-            onPhotoClick={(photo) => setDetail({ photo })}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         )}
+
       </div>
 
       <Modal
