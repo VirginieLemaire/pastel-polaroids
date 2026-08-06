@@ -84,6 +84,23 @@ export default function HomePage() {
         </p>
       </header>
 
+      {demoHintVisible && (
+        <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+          <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="text-sm leading-snug flex-1">
+            Utilise le bouton <span className="font-bold">Mode démo</span> en haut à droite pour explorer l'application et tester toutes les fonctionnalités.
+          </p>
+          <button
+            type="button"
+            onClick={dismissDemoHint}
+            aria-label="Masquer l'astuce mode démo"
+            className="brutal-border bg-background hover:bg-pastel-peach p-1 shrink-0"
+          >
+            <X aria-hidden="true" className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       <section className="flex-1 flex justify-center flex-col w-full max-w-md mx-auto">
         {currentContest ? 
           (
