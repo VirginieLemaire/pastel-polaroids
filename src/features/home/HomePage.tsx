@@ -16,6 +16,8 @@ const pickOpenContest = (contests: Contest[]): Contest => {
   return openContest ? openContest : null;
 };
 
+const DEMO_HINT_DISMISSED_KEY = "demoHintDismissed";
+
 export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
