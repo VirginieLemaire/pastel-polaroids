@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { X, Info } from "lucide-react";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import Modal from "@/shared/ui/components/Modal";
@@ -15,11 +16,29 @@ const pickOpenContest = (contests: Contest[]): Contest => {
   return openContest ? openContest : null;
 };
 
+const DEMO_HINT_DISMISSED_KEY = "demoHintDismissed";
+
 export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
+  const [demoHintVisible, setDemoHintVisible] = useState(() => {
+    try {
+      return localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== "true";
+    } catch {
+      return true;
+    }
+  });
   const { contests, createContest } = useContests();
   const navigate = useNavigate();
+
+  const dismissDemoHint = () => {
+    setDemoHintVisible(false);
+    try {
+      localStorage.setItem(DEMO_HINT_DISMISSED_KEY, "true");
+    } catch {
+      // ignore storage errors
+    }
+  };
   
   const currentContest = useMemo(
     () => (contests.length > 0 ? pickOpenContest(contests) : null),
@@ -64,6 +83,23 @@ export default function HomePage() {
           Concours photo en famille, un thème à la fois.
         </p>
       </header>
+
+      {demoHintVisible && (
+        <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+          <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="text-sm leading-snug flex-1">
+            Utilise le bouton <span className="font-bold">Mode démo</span> en haut à droite pour explorer l'application et tester toutes les fonctionnalités.
+          </p>
+          <button
+            type="button"
+            onClick={dismissDemoHint}
+            aria-label="Masquer l'astuce mode démo"
+            className="brutal-border bg-background hover:bg-pastel-peach p-1 shrink-0"
+          >
+            <X aria-hidden="true" className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <section className="flex-1 flex justify-center flex-col w-full max-w-md mx-auto">
         {currentContest ? 
