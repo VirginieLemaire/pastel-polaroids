@@ -63,7 +63,7 @@ const PhotoDetailModal = ({
   const hasNavigation = Boolean(onPrev || onNext);
 
   return (
-    <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"}>
+    <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"} size="lg">
       <div className="space-y-4">
 
         {/* Image avec badge gagnant */}
@@ -72,7 +72,7 @@ const PhotoDetailModal = ({
             src={photo.imageUrl}
             alt={photo.title || "Photo sans titre"}
             priority={true}
-            className="w-full max-h-[60vh]"
+            className="w-full max-h-[60vh] md:max-h-[70vh]"
           />
           {/* Badge gagnant sur l'image */}
           {isWinner && <WinnerBadge className="top-2 right-2" />}
@@ -89,8 +89,9 @@ const PhotoDetailModal = ({
               onClick={onPrev}
               disabled={!onPrev}
               aria-disabled={!onPrev}
+              aria-label="Photo précédente"
             >
-              Précédente
+              <span className="hidden sm:inline">Précédente</span>
             </BrutalButton>
             {positionLabel && (
               <p className="font-mono text-xs text-muted-foreground" aria-live="polite">
@@ -104,8 +105,9 @@ const PhotoDetailModal = ({
               onClick={onNext}
               disabled={!onNext}
               aria-disabled={!onNext}
+              aria-label="Photo suivante"
             >
-              Suivante
+              <span className="hidden sm:inline">Suivante</span>
               <ChevronRight size={16} aria-hidden="true" />
             </BrutalButton>
           </nav>

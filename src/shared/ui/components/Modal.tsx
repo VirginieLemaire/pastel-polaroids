@@ -6,12 +6,19 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  /** Largeur maximale : "md" (défaut) ou "lg" pour les vues photo */
+  size?: "md" | "lg";
 }
+
+const sizeClass = {
+  md: "max-w-md",
+  lg: "max-w-md md:max-w-3xl",
+} as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const Modal = ({ open, onClose, title, children }: ModalProps) => {
+const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const titleId = useRef(`modal-title-${Math.random().toString(36).slice(2, 9)}`);
@@ -69,7 +76,7 @@ const Modal = ({ open, onClose, title, children }: ModalProps) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId.current}
-        className="brutal-border brutal-shadow-lg bg-background w-full max-w-md max-h-[90vh] overflow-auto"
+        className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} max-h-[90vh] overflow-auto`}
       >
         <div className="flex items-center justify-between brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter">
           <h2 id={titleId.current} className="font-mono text-lg font-bold">
