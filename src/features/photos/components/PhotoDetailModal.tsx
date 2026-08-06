@@ -44,16 +44,36 @@ const PhotoDetailModal = ({
   onNext,
   positionLabel,
 }: PhotoDetailModalProps) => {
+  const imageRef = useRef<HTMLDivElement>(null);
+  const prevPhotoIdRef = useRef<string | null>(null);
+  const imageId = `photo-detail-image-${photo?.id ?? "empty"}`;
+
   // Navigation clavier entre les photos (flèches gauche / droite)
   useEffect(() => {
     if (!photo) return;
     const handleArrowKeys = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") onPrev?.();
-      if (e.key === "ArrowRight") onNext?.();
+      if (e.key === "ArrowLeft" && onPrev) {
+        e.preventDefault();
+        onPrev();
+      }
+      if (e.key === "ArrowRight" && onNext) {
+        e.preventDefault();
+        onNext();
+      }
     };
     document.addEventListener("keydown", handleArrowKeys);
     return () => document.removeEventListener("keydown", handleArrowKeys);
   }, [photo, onPrev, onNext]);
+
+  // Déplace le focus sur l'image lors d'une navigation Précédente/Suivante
+  // afin d'annoncer le changement de contenu aux lecteurs d'écran.
+  useEffect(() => {
+    if (!photo) return;
+    if (prevPhotoIdRef.current && prevPhotoIdRef.current !== photo.id) {
+      imageRef.current?.focus();
+    }
+    prevPhotoIdRef.current = photo.id;
+  }, [photo]);
 
   if (!photo) return null;
   const status = getContestStatus(contest);
