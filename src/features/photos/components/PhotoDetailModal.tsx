@@ -63,7 +63,7 @@ const PhotoDetailModal = ({
   const hasNavigation = Boolean(onPrev || onNext);
 
   return (
-    <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"}>
+    <Modal open={photo !== null} onClose={onClose} title={photo.title || "Photo"} size="lg">
       <div className="space-y-4">
 
         {/* Image avec badge gagnant */}
@@ -72,7 +72,7 @@ const PhotoDetailModal = ({
             src={photo.imageUrl}
             alt={photo.title || "Photo sans titre"}
             priority={true}
-            className="w-full max-h-[60vh]"
+            className="w-full max-h-[60vh] md:max-h-[70vh]"
           />
           {/* Badge gagnant sur l'image */}
           {isWinner && <WinnerBadge className="top-2 right-2" />}
