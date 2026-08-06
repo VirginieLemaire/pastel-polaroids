@@ -6,7 +6,14 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  /** Largeur maximale : "md" (défaut) ou "lg" pour les vues photo */
+  size?: "md" | "lg";
 }
+
+const sizeClass = {
+  md: "max-w-md",
+  lg: "max-w-md md:max-w-3xl",
+} as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
