@@ -117,11 +117,12 @@ const PhotoDetailModal = ({
               aria-disabled={!onPrev}
               aria-label="Photo précédente"
               aria-controls={imageId}
+              aria-describedby={positionLabel ? "photo-position-label" : undefined}
             >
               <span className="hidden sm:inline">Précédente</span>
             </BrutalButton>
             {positionLabel && (
-              <p className="font-mono text-xs text-muted-foreground" aria-live="polite">
+              <p id="photo-position-label" className="font-mono text-xs text-muted-foreground" aria-live="polite">
                 {positionLabel}
               </p>
             )}
@@ -134,6 +135,7 @@ const PhotoDetailModal = ({
               aria-disabled={!onNext}
               aria-label="Photo suivante"
               aria-controls={imageId}
+              aria-describedby={positionLabel ? "photo-position-label" : undefined}
             >
               <span className="hidden sm:inline">Suivante</span>
               <ChevronRight size={16} aria-hidden="true" />
