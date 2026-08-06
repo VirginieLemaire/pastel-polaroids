@@ -76,7 +76,7 @@ const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId.current}
-        className="brutal-border brutal-shadow-lg bg-background w-full max-w-md max-h-[90vh] overflow-auto"
+        className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} max-h-[90vh] overflow-auto`}
       >
         <div className="flex items-center justify-between brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter">
           <h2 id={titleId.current} className="font-mono text-lg font-bold">
