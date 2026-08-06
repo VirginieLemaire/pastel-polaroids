@@ -116,6 +116,7 @@ const PhotoDetailModal = ({
               disabled={!onPrev}
               aria-disabled={!onPrev}
               aria-label="Photo précédente"
+              aria-controls={imageId}
             >
               <span className="hidden sm:inline">Précédente</span>
             </BrutalButton>
@@ -132,6 +133,7 @@ const PhotoDetailModal = ({
               disabled={!onNext}
               aria-disabled={!onNext}
               aria-label="Photo suivante"
+              aria-controls={imageId}
             >
               <span className="hidden sm:inline">Suivante</span>
               <ChevronRight size={16} aria-hidden="true" />
