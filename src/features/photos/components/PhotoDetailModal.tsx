@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Modal from "@/shared/ui/components/Modal";
 import CoverImage from "@/shared/ui/components/CoverImage";
@@ -44,16 +44,36 @@ const PhotoDetailModal = ({
   onNext,
   positionLabel,
 }: PhotoDetailModalProps) => {
+  const imageRef = useRef<HTMLDivElement>(null);
+  const prevPhotoIdRef = useRef<string | null>(null);
+  const imageId = `photo-detail-image-${photo?.id ?? "empty"}`;
+
   // Navigation clavier entre les photos (flèches gauche / droite)
   useEffect(() => {
     if (!photo) return;
     const handleArrowKeys = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft") onPrev?.();
-      if (e.key === "ArrowRight") onNext?.();
+      if (e.key === "ArrowLeft" && onPrev) {
+        e.preventDefault();
+        onPrev();
+      }
+      if (e.key === "ArrowRight" && onNext) {
+        e.preventDefault();
+        onNext();
+      }
     };
     document.addEventListener("keydown", handleArrowKeys);
     return () => document.removeEventListener("keydown", handleArrowKeys);
   }, [photo, onPrev, onNext]);
+
+  // Déplace le focus sur l'image lors d'une navigation Précédente/Suivante
+  // afin d'annoncer le changement de contenu aux lecteurs d'écran.
+  useEffect(() => {
+    if (!photo) return;
+    if (prevPhotoIdRef.current && prevPhotoIdRef.current !== photo.id) {
+      imageRef.current?.focus();
+    }
+    prevPhotoIdRef.current = photo.id;
+  }, [photo]);
 
   if (!photo) return null;
   const status = getContestStatus(contest);
@@ -67,10 +87,16 @@ const PhotoDetailModal = ({
       <div className="space-y-4">
 
         {/* Image avec badge gagnant */}
-        <div className="w-full brutal-border bg-background relative">
+        <div
+          ref={imageRef}
+          id={imageId}
+          tabIndex={-1}
+          aria-label={photo.title || "Photo sans titre"}
+          className="w-full brutal-border bg-background relative outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+        >
           <CoverImage
             src={photo.imageUrl}
-            alt={photo.title || "Photo sans titre"}
+            alt=""
             priority={true}
             className="w-full max-h-[60vh] md:max-h-[70vh]"
           />
@@ -90,6 +116,7 @@ const PhotoDetailModal = ({
               disabled={!onPrev}
               aria-disabled={!onPrev}
               aria-label="Photo précédente"
+              aria-controls={imageId}
             >
               <span className="hidden sm:inline">Précédente</span>
             </BrutalButton>
@@ -106,6 +133,7 @@ const PhotoDetailModal = ({
               disabled={!onNext}
               aria-disabled={!onNext}
               aria-label="Photo suivante"
+              aria-controls={imageId}
             >
               <span className="hidden sm:inline">Suivante</span>
               <ChevronRight size={16} aria-hidden="true" />
