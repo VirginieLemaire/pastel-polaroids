@@ -21,8 +21,24 @@ const DEMO_HINT_DISMISSED_KEY = "demoHintDismissed";
 export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
+  const [demoHintVisible, setDemoHintVisible] = useState(() => {
+    try {
+      return localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== "true";
+    } catch {
+      return true;
+    }
+  });
   const { contests, createContest } = useContests();
   const navigate = useNavigate();
+
+  const dismissDemoHint = () => {
+    setDemoHintVisible(false);
+    try {
+      localStorage.setItem(DEMO_HINT_DISMISSED_KEY, "true");
+    } catch {
+      // ignore storage errors
+    }
+  };
   
   const currentContest = useMemo(
     () => (contests.length > 0 ? pickOpenContest(contests) : null),
