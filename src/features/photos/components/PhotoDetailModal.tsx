@@ -87,10 +87,16 @@ const PhotoDetailModal = ({
       <div className="space-y-4">
 
         {/* Image avec badge gagnant */}
-        <div className="w-full brutal-border bg-background relative">
+        <div
+          ref={imageRef}
+          id={imageId}
+          tabIndex={-1}
+          aria-label={photo.title || "Photo sans titre"}
+          className="w-full brutal-border bg-background relative outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+        >
           <CoverImage
             src={photo.imageUrl}
-            alt={photo.title || "Photo sans titre"}
+            alt=""
             priority={true}
             className="w-full max-h-[60vh] md:max-h-[70vh]"
           />
