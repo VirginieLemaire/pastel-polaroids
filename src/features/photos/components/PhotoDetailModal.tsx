@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Modal from "@/shared/ui/components/Modal";
 import CoverImage from "@/shared/ui/components/CoverImage";
