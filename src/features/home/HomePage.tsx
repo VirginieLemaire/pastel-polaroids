@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { X, Info } from "lucide-react";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import Modal from "@/shared/ui/components/Modal";
