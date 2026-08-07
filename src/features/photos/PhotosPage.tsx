@@ -202,17 +202,21 @@ export default function PhotosPage() {
               <p className="font-mono text-sm">
                 Vos soumissions&nbsp;: <strong>{userCount}/{MAX_PHOTOS_PER_USER}</strong>
               </p>
-              <BrutalButton
-                color="butter"
-                size="sm"
-                icon={<Plus size={14} aria-hidden="true" />}
-                disabled={!canSubmit}
-                aria-disabled={!canSubmit}
-                title={canSubmit ? undefined : "Limite de 3 photos atteinte."}
-                onClick={() => setForm({ mode: "create" })}
-              >
-                Soumettre une photo
-              </BrutalButton>
+              {canSubmit ? (
+                <BrutalButton
+                  color="butter"
+                  size="sm"
+                  icon={<Plus size={14} aria-hidden="true" />}
+                  onClick={() => setForm({ mode: "create" })}
+                >
+                  Soumettre une photo
+                </BrutalButton>
+              ) : (
+                <p role="status" className="font-mono text-sm max-w-sm">
+                  Vous avez atteint la limite de {MAX_PHOTOS_PER_USER} photos.
+                  Supprimez une de vos photos pour pouvoir en proposer une autre.
+                </p>
+              )}
             </div>
           </BrutalCard>
         )}
