@@ -62,6 +62,8 @@ export default function ContestDetailPage() {
   const authorSeed = contest.authorId;
   const contestPhotos = getPhotosByContest(contest.id);
   const photoCount = contestPhotos.length;
+  const { title: shareTitle, text: shareText } = buildShareText(contest, status);
+
 
   const handleUpdate = (data: UpdateContestInput) => {
     updateContest(contest.id, data);
