@@ -24,6 +24,8 @@ import { usePhotos } from "@/features/photos";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
 import CoverImage from "@/shared/ui/components/CoverImage";
+import ShareButton from "@/shared/ui/components/ShareButton";
+
 
 export default function ContestDetailPage() {
   const { id = "" } = useParams();
