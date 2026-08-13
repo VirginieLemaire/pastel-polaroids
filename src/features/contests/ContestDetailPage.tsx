@@ -140,30 +140,34 @@ export default function ContestDetailPage() {
           {statusCorrespondingActionText[status]}
         </BrutalButton>
 
-        {(canEdit || canDelete) && (
-          <div className="flex justify-end gap-2">
-            {canEdit && (
-              <BrutalButton
-                color="sky"
-                size="sm"
-                icon={<Pencil size={14} aria-hidden="true" />}
-                onClick={() => setEditOpen(true)}
-              >
-                Éditer
-              </BrutalButton>
-            )}
-            {canDelete && (
-              <BrutalButton
-                color="pink"
-                size="sm"
-                icon={<Trash2 size={14} aria-hidden="true" />}
-                onClick={handleDelete}
-              >
-                Supprimer
-              </BrutalButton>
-            )}
-          </div>
-        )}
+        <div className="flex flex-wrap justify-end gap-2">
+          <ShareButton
+            title={shareTitle}
+            text={shareText}
+            url={typeof window !== "undefined" ? window.location.href : ""}
+          />
+          {canEdit && (
+            <BrutalButton
+              color="sky"
+              size="sm"
+              icon={<Pencil size={14} aria-hidden="true" />}
+              onClick={() => setEditOpen(true)}
+            >
+              Éditer
+            </BrutalButton>
+          )}
+          {canDelete && (
+            <BrutalButton
+              color="pink"
+              size="sm"
+              icon={<Trash2 size={14} aria-hidden="true" />}
+              onClick={handleDelete}
+            >
+              Supprimer
+            </BrutalButton>
+          )}
+        </div>
+
 
         <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Éditer le thème">
           <CreateContestForm
