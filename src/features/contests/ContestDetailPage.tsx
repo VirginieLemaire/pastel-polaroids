@@ -14,8 +14,10 @@ import {
   getContestStatus,
   formatDate,
   getNextStepText,
-  statusCorrespondingActionText
+  statusCorrespondingActionText,
+  buildShareText
 } from "@/features/contests";
+
 import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser, getUserName } from "@/features/user";
 import { usePhotos } from "@/features/photos";
