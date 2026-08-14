@@ -27,7 +27,7 @@ describe('contests/utils', () => {
         return new realDate(...args);
       }
 
-      static now() {
+      static override now() {
         return mockNow.getTime();
       }
     };

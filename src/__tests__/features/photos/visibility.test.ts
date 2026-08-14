@@ -26,7 +26,7 @@ describe('photos/visibility', () => {
         if (args.length === 0) return mockNow;
         return new realDate(...args);
       }
-      static now() { return mockNow.getTime(); }
+      static override now() { return mockNow.getTime(); }
     };
   });
 

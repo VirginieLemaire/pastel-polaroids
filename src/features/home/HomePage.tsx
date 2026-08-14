@@ -11,7 +11,7 @@ import { useContests } from "@/features/contests";
 import type { CreateContestInput, Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 
-const pickOpenContest = (contests: Contest[]): Contest => {
+const pickOpenContest = (contests: Contest[]): Contest | null => {
   const openContest = contests.find((c) => getContestStatus(c) !== "closed")
   return openContest ? openContest : null;
 };
