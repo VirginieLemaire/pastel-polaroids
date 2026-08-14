@@ -1,0 +1,29 @@
+{
+  "customizations": [
+    { "token": "--background", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--foreground", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--card", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "--muted", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--muted-foreground", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--border", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--bottom-nav-h", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-pink", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-lavender", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-mint", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-butter", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-sky", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--pastel-peach", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--shadow-brutal", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--shadow-brutal-lg", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--shadow-brutal-hover", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "--font-display (Space Grotesk)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "--font-mono (Space Mono)", "source": "tailwind.config.ts", "reappliedIn": "src/styles.css" },
+    { "token": "base body font + heading font rules", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".brutal-border", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".brutal-shadow", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".brutal-shadow-lg", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".brutal-btn", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": ".brutal-input", "source": "src/index.css", "reappliedIn": "src/styles.css" },
+    { "token": "Google Fonts import (Space Grotesk / Space Mono)", "source": "src/index.css", "reappliedIn": "src/styles.css" }
+  ]
+}

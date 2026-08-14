@@ -155,12 +155,12 @@ describe('votes/results', () => {
 
       // photo-1: 5, photo-3: 4, photo-2: 3
       expect(result).toHaveLength(3);
-      expect(result[0].photo.id).toBe('photo-1');
-      expect(result[0].averageRating).toBe(5);
-      expect(result[1].photo.id).toBe('photo-3');
-      expect(result[1].averageRating).toBe(4);
-      expect(result[2].photo.id).toBe('photo-2');
-      expect(result[2].averageRating).toBe(3);
+      expect(result[0]!.photo.id).toBe('photo-1');
+      expect(result[0]!.averageRating).toBe(5);
+      expect(result[1]!.photo.id).toBe('photo-3');
+      expect(result[1]!.averageRating).toBe(4);
+      expect(result[2]!.photo.id).toBe('photo-2');
+      expect(result[2]!.averageRating).toBe(3);
     });
 
     it('should maintain ex-aequo order when ratings are equal', () => {
@@ -181,9 +181,9 @@ describe('votes/results', () => {
       // All photos have rating 4, order should be preserved
       expect(result).toHaveLength(3);
       expect(result.every(r => r.averageRating === 4)).toBe(true);
-      expect(result[0].photo.id).toBe('photo-1');
-      expect(result[1].photo.id).toBe('photo-2');
-      expect(result[2].photo.id).toBe('photo-3');
+      expect(result[0]!.photo.id).toBe('photo-1');
+      expect(result[1]!.photo.id).toBe('photo-2');
+      expect(result[2]!.photo.id).toBe('photo-3');
     });
   });
 
@@ -209,8 +209,8 @@ describe('votes/results', () => {
       const result = getWinners(photos, votes, expectedVoterIds);
 
       expect(result).toHaveLength(1);
-      expect(result[0].photo.id).toBe('photo-1');
-      expect(result[0].averageRating).toBe(5);
+      expect(result[0]!.photo.id).toBe('photo-1');
+      expect(result[0]!.averageRating).toBe(5);
     });
 
     it('should return all winners when there is a tie for first place', () => {

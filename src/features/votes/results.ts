@@ -94,7 +94,7 @@ export const getWinners = (
   const ranked = getRankedPhotos(photos, votes, expectedVoterIds);
   if (ranked.length === 0) return [];
 
-  const bestRating = ranked[0].averageRating;
+  const bestRating = ranked[0]!.averageRating;
   return ranked.filter((r) => r.averageRating === bestRating);
 };
 

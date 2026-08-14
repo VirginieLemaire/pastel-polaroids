@@ -31,7 +31,7 @@ export interface VoteContextValue {
   ) => { photo: Photo; averageRating: number }[];
   isPhotoWinner: (
     photoId: string,
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
   ) => boolean;
   castVote: (photoId: string, contestId: string, rating: Rating) => void;

@@ -1,4 +1,4 @@
-export default function ImagePlaceHolder({className}) {
+export default function ImagePlaceHolder({ className = "" }: { className?: string }) {
   return (
     <div
       className={`w-full aspect-[4/3] brutal-border ${className}`}

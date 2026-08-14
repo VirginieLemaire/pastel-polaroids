@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { ArrowLeft, Filter, Trophy } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
@@ -79,7 +79,7 @@ export default function AllResultsPage() {
     }
 
     // Trier par note décroissante
-    return results.sort((a, b) => b.averageRating - a.averageRating);
+    return results.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0));
   }, [photosForClosedContests, getRankedPhotos, getWinners]);
 
   // Grouper les photos par concours pour le filtre
@@ -234,7 +234,7 @@ export default function AllResultsPage() {
           <PhotoGrid
             photos={allPhotosWithResults}
             // Pour PhotoGrid, il faut un contest. On utilise le premier contest trouvé
-            contest={closedContests[0]}
+            contest={closedContests[0]!}
             mode="results"
             showWinnerBadge
             sortBy="rating"

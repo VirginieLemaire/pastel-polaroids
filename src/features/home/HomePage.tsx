@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "@/lib/router-compat";
 import { X, Info } from "lucide-react";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
@@ -11,7 +11,7 @@ import { useContests } from "@/features/contests";
 import type { CreateContestInput, Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 
-const pickOpenContest = (contests: Contest[]): Contest => {
+const pickOpenContest = (contests: Contest[]): Contest | null => {
   const openContest = contests.find((c) => getContestStatus(c) !== "closed")
   return openContest ? openContest : null;
 };
@@ -21,13 +21,15 @@ const DEMO_HINT_DISMISSED_KEY = "demoHintDismissed";
 export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
-  const [demoHintVisible, setDemoHintVisible] = useState(() => {
+  // SSR-safe : le serveur rend sans le bandeau, le client le révèle après hydratation
+  const [demoHintVisible, setDemoHintVisible] = useState(false);
+  useEffect(() => {
     try {
-      return localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== "true";
+      setDemoHintVisible(localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== "true");
     } catch {
-      return true;
+      setDemoHintVisible(true);
     }
-  });
+  }, []);
   const { contests, createContest } = useContests();
   const navigate = useNavigate();
 
