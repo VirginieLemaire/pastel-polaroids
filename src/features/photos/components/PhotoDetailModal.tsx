@@ -92,7 +92,7 @@ const PhotoDetailModal = ({
           id={imageId}
           tabIndex={-1}
           aria-label={photo.title || "Photo sans titre"}
-          className="w-full brutal-border bg-background relative outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+          className="w-full brutal-border bg-background relative outline-hidden focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
         >
           <CoverImage
             src={photo.imageUrl}
