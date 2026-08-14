@@ -49,7 +49,7 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
         prev.map((c) => {
           if (c.id !== id) return c;
           if (c.authorId !== currentUser.id) return c;
-          updated = {
+          const next: Contest = {
             ...c,
             name: input.name.trim(),
             description: input.description?.trim() || undefined,
@@ -57,7 +57,8 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
             submissionDays: input.submissionDays,
             voteDays: input.voteDays,
           };
-          return updated;
+          updated = next;
+          return next;
         })
       );
       return updated;

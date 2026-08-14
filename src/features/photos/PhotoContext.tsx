@@ -71,13 +71,14 @@ export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
       setPhotos((prev) =>
         prev.map((p) => {
           if (p.id !== id) return p;
-          updated = {
+          const next: Photo = {
             ...p,
             title: input.title.trim(),
             description: input.description?.trim() || undefined,
             imageUrl: input.imageUrl,
           };
-          return updated;
+          updated = next;
+          return next;
         }),
       );
       return updated;

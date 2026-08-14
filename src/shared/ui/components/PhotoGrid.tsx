@@ -88,8 +88,9 @@ export default function PhotoGrid({
     }
 
     // Filtre : note minimum
-    if (filter.minRating !== undefined) {
-      result = result.filter((p) => (p.averageRating ?? 0) >= filter.minRating);
+    const minRating = filter.minRating;
+    if (minRating !== undefined) {
+      result = result.filter((p) => (p.averageRating ?? 0) >= minRating);
     }
 
     return result;
