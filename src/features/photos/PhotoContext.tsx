@@ -1,7 +1,11 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Photo, PhotoContextValue, CreatePhotoInput, UpdatePhotoInput } from "./types";
-import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
+import {
+  DEFAULT_SCENARIO_ID,
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/features/demo/scenarios";
 import { DEV_SCENARIO_CHANGE_EVENT } from "@/features/contests";
 
 export const PhotoContext = createContext<PhotoContextValue | null>(null);
@@ -12,12 +16,15 @@ interface IPhotoProviderProps {
 
 export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
   const { currentUser } = useCurrentUser();
+  // SSR-safe : scénario par défaut au rendu serveur, préférence appliquée après hydratation
   const [photos, setPhotos] = useState<Photo[]>(
-    () => getScenarioById(getStoredScenarioId()).photos,
+    () => getScenarioById(DEFAULT_SCENARIO_ID).photos,
   );
 
   // Le visiteur peut changer de scénario de démo à tout moment
   useEffect(() => {
+    const storedId = getStoredScenarioId();
+    if (storedId !== DEFAULT_SCENARIO_ID) setPhotos(getScenarioById(storedId).photos);
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setPhotos(getScenarioById(id).photos);
@@ -25,6 +32,7 @@ export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
     window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
     return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
   }, []);
+
 
 
   const photosByContest = useMemo(() => {

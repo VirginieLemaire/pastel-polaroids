@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useId, useRef } from "react";
 import { createPortal } from "react-dom";
 
 interface ModalProps {
@@ -21,7 +21,8 @@ const FOCUSABLE =
 const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
-  const titleId = useRef(`modal-title-${Math.random().toString(36).slice(2, 9)}`);
+  // useId : identifiant stable serveur/client
+  const titleId = `modal-title${useId().replace(/:/g, "-")}`;
 
   useEffect(() => {
     if (!open) return;
@@ -76,11 +77,11 @@ const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={titleId.current}
+        aria-labelledby={titleId}
         className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} max-h-[90vh] overflow-auto`}
       >
         <div className="flex items-center justify-between brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter">
-          <h2 id={titleId.current} className="font-mono text-lg font-bold">
+          <h2 id={titleId} className="font-mono text-lg font-bold">
             {title}
           </h2>
           <button

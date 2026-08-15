@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FlaskConical, X } from "lucide-react";
 
 import {
+  DEFAULT_SCENARIO_ID,
   DEMO_SCENARIOS,
   getStoredScenarioId,
   setStoredScenarioId,
@@ -12,8 +13,14 @@ const PANEL_ID = "demo-scenario-panel";
 
 const DemoScenarioPanel = () => {
   const [open, setOpen] = useState(false);
-  const [current, setCurrent] = useState<string>(() => getStoredScenarioId());
+  // SSR-safe : la préférence stockée est lue après hydratation
+  const [current, setCurrent] = useState<string>(DEFAULT_SCENARIO_ID);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setCurrent(getStoredScenarioId());
+  }, []);
+
 
   useEffect(() => {
     if (!open) return;

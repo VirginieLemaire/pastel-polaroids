@@ -10,7 +10,11 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
-import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
+import {
+  DEFAULT_SCENARIO_ID,
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/features/demo/scenarios";
 import type { Photo } from "@/features/photos/types";
 import { DEV_SCENARIO_CHANGE_EVENT } from "../contests";
 
@@ -18,12 +22,15 @@ export const VoteContext = createContext<VoteContextValue | null>(null);
 
 export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
+  // SSR-safe : scénario par défaut au rendu serveur, préférence appliquée après hydratation
   const [votes, setVotes] = useState<Vote[]>(
-    () => getScenarioById(getStoredScenarioId()).votes,
+    () => getScenarioById(DEFAULT_SCENARIO_ID).votes,
   );
 
   // Le visiteur peut changer de scénario de démo à tout moment
   useEffect(() => {
+    const storedId = getStoredScenarioId();
+    if (storedId !== DEFAULT_SCENARIO_ID) setVotes(getScenarioById(storedId).votes);
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setVotes(getScenarioById(id).votes);
@@ -31,6 +38,7 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
     return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
   }, []);
+
 
   const votesByPhoto = useMemo(() => {
     const map = new Map<string, Vote[]>();
