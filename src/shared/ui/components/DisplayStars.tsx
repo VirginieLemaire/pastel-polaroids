@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 
 /**
  * SVG path pour l'icône d'étoile (même que dans VoteStars)
@@ -79,7 +79,8 @@ export default function DisplayStars({
  * Composant interne pour afficher une seule étoile avec un remplissage personnalisé.
  */
 function Star({ type, fillPercent, size }: { type: string; fillPercent: number; size: number }) {
-  const starId = `star-${Math.random().toString(36).substr(2, 9)}`;
+  // useId : identifiant stable entre le rendu serveur et le client (pas d'écart d'hydratation)
+  const starId = `star${useId()}`;
   const width = size * 4;
   const height = size * 4;
   const iconSize = width;
