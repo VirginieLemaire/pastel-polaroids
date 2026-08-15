@@ -80,7 +80,7 @@ export default function DisplayStars({
  */
 function Star({ type, fillPercent, size }: { type: string; fillPercent: number; size: number }) {
   // useId : identifiant stable entre le rendu serveur et le client (pas d'écart d'hydratation)
-  const starId = `star${useId()}`;
+  const starId = `star${useId().replace(/:/g, "-")}`;
   const width = size * 4;
   const height = size * 4;
   const iconSize = width;
