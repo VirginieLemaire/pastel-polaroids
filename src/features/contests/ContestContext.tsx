@@ -1,5 +1,9 @@
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { getScenarioById, getStoredScenarioId } from "@/features/demo/scenarios";
+import {
+  DEFAULT_SCENARIO_ID,
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/features/demo/scenarios";
 import { useCurrentUser } from "@/features/user";
 import type { Contest, ContestContextValue } from "./types";
 
@@ -10,11 +14,15 @@ export const ContestContext = createContext<ContestContextValue | null>(null);
 
 export const ContestProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
+  // SSR-safe : on part toujours du scénario par défaut, la préférence stockée
+  // est appliquée après hydratation pour éviter tout écart serveur/client.
   const [contests, setContests] = useState<Contest[]>(
-    () => getScenarioById(getStoredScenarioId()).contests
+    () => getScenarioById(DEFAULT_SCENARIO_ID).contests
   );
 
   useEffect(() => {
+    const storedId = getStoredScenarioId();
+    if (storedId !== DEFAULT_SCENARIO_ID) setContests(getScenarioById(storedId).contests);
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setContests(getScenarioById(id).contests);
@@ -22,6 +30,7 @@ export const ContestProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener(DEV_SCENARIO_EVENT, handler);
     return () => window.removeEventListener(DEV_SCENARIO_EVENT, handler);
   }, []);
+
 
   const createContest: ContestContextValue["createContest"] = useCallback(
     (input) => {
