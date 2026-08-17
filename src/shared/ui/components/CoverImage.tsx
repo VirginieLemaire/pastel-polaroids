@@ -33,8 +33,10 @@ export default function CoverImage({
   className = '',
   ...props
 }: ICoverImageProps) {
-  const baseClasses = "brutal-border w-full block";
-  const aspectClass = aspectRatio ? `aspect-[${aspectRatio}]` : "";
+  // Pas de largeur forcée par défaut : sans aspectRatio, la boîte de l'image
+  // (et sa bordure) s'ajuste à la taille réellement rendue par le consommateur.
+  const baseClasses = "brutal-border block";
+  const aspectClass = aspectRatio ? `aspect-[${aspectRatio}] w-full` : "";
   
   // Smart loaoding handle (eco-conception & Perf)
   const loadingStrategy = priority ? "eager" : "lazy";

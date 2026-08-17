@@ -92,17 +92,18 @@ const PhotoDetailModal = ({
           id={imageId}
           tabIndex={-1}
           aria-label={photo.title || "Photo sans titre"}
-          className="w-full brutal-border bg-background relative outline-hidden focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
+          className="w-full flex justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2"
         >
-          <CoverImage
-            src={photo.imageUrl}
-            alt=""
-            priority={true}
-            objectFit="contain"
-            className="w-full max-h-[65vh] md:max-h-[78vh]"
-          />
-          {/* Badge gagnant sur l'image */}
-          {isWinner && <WinnerBadge className="top-2 right-2" />}
+          <div className="relative">
+            <CoverImage
+              src={photo.imageUrl}
+              alt=""
+              priority={true}
+              className="max-w-full max-h-[65vh] md:max-h-[78vh]"
+            />
+            {/* Badge gagnant sur l'image */}
+            {isWinner && <WinnerBadge className="absolute top-2 right-2" />}
+          </div>
         </div>
 
         {/* Navigation entre les photos */}
