@@ -6,13 +6,13 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
-  /** Largeur maximale : "md" (défaut) ou "lg" pour les vues photo */
+  /** Taille : "md" (défaut) ou "lg" pour les vues photo (grandit avec le viewport) */
   size?: "md" | "lg";
 }
 
 const sizeClass = {
-  md: "max-w-md",
-  lg: "max-w-md md:max-w-3xl",
+  md: "max-w-md max-h-[90vh]",
+  lg: "max-w-[min(95vw,1600px)] max-h-[95vh]",
 } as const;
 
 const FOCUSABLE =
@@ -78,7 +78,7 @@ const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} max-h-[90vh] overflow-auto`}
+        className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} overflow-auto`}
       >
         <div className="flex items-center justify-between brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter">
           <h2 id={titleId} className="font-mono text-lg font-bold">

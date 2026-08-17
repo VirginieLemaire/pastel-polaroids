@@ -35,6 +35,28 @@ export const Closed: Story = {
   },
 };
 
+export const LargeSize: Story = {
+  args: {
+    open: true,
+    onClose: () => {},
+    title: 'Large Modal',
+    size: 'lg',
+    children: (
+      <div className="space-y-4">
+        <div className="w-full h-64 bg-pastel-sky" />
+        <p>Contenu représentatif d'une vue photo agrandie.</p>
+      </div>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+    await expect(body.getByText('Large Modal')).toBeVisible();
+    const dialog = body.getByRole('dialog');
+    await expect(dialog).toHaveClass('max-w-[min(95vw,1600px)]');
+    await expect(dialog).toHaveClass('max-h-[95vh]');
+  },
+};
+
 export const WithLongContent: Story = {
   args: {
     open: true,
