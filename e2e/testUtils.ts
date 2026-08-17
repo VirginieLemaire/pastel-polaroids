@@ -1,8 +1,8 @@
 import { test as base, expect } from '@playwright/test';
-import { MOCK_SCENARIOS, type MockScenario, setStoredScenarioId, getScenarioById } from '../src/dev/mockScenarios';
+import { DEMO_SCENARIOS, type IDemoScenario, setStoredScenarioId, getScenarioById } from '../src/features/demo/scenarios';
 
 // Export all scenarios for reuse across test files
-export { MOCK_SCENARIOS, MockScenario, getScenarioById, expect };
+export { DEMO_SCENARIOS as MOCK_SCENARIOS, IDemoScenario as MockScenario, getScenarioById, expect };
 
 // Scenario IDs as const for type safety
 export const SCENARIOS = {
@@ -30,7 +30,7 @@ export const test = base.extend({
     await page.evaluate((id: string) => {
       localStorage.clear();
       sessionStorage.clear();
-      localStorage.setItem('dev:mockScenario', id);
+      localStorage.setItem('demo:scenario', id);
     }, scenarioId);
     
     // Reload to ensure scenario is applied
@@ -52,7 +52,7 @@ export async function setupScenario(page: any, scenarioId: string, path: string 
   await page.evaluate((id: string) => {
     localStorage.clear();
     sessionStorage.clear();
-    localStorage.setItem('dev:mockScenario', id);
+    localStorage.setItem('demo:scenario', id);
   }, scenarioId);
   
   // Reload to ensure scenario is applied
@@ -68,7 +68,7 @@ export async function setupScenario(page: any, scenarioId: string, path: string 
 /**
  * Helper to get a scenario's contests and votes
  */
-export function getScenario(scenarioId: string): MockScenario {
+export function getScenario(scenarioId: string): IDemoScenario {
   return getScenarioById(scenarioId);
 }
 

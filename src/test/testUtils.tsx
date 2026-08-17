@@ -11,7 +11,7 @@ import type { Contest } from '@/features/contests/types';
 import type { Photo } from '@/features/photos/types';
 import type { Vote } from '@/features/votes/types';
 // Re-export scenarios for use in tests
-import { MOCK_SCENARIOS, getScenarioById, DEFAULT_SCENARIO_ID } from '@/dev/mockScenarios';
+import { DEMO_SCENARIOS as MOCK_SCENARIOS, getScenarioById, DEFAULT_SCENARIO_ID } from '@/features/demo/scenarios';
 
 export { MOCK_SCENARIOS, getScenarioById, DEFAULT_SCENARIO_ID };
 
