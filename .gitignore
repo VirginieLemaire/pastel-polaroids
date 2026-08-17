@@ -34,3 +34,7 @@ playwright-report/
 test-results/
 playwright-show-report*
 playwright-dev-server*
+
+# TanStack Start / Nitro output
+.output/
+.wrangler/
