@@ -11,9 +11,9 @@
 
 Ce projet fictif est destiné à être présenté dans un portfolio. Afin qu'il puisse être fonctionnel sans problème de sécurité ou de surcharge serveur / BDD, toutes les données sont mockées avec utilisation du Context avec des scenarii stockés en localStorage.
 
-Il s'agit d'une adaptation d'un projet existant avec une stack Airtable / Softr qui n'apporte pas beaucoup de possiblités de personnalisations à moindre coûts.
+Il s'agit d'une adaptation d'un projet existant avecun stack Airtable / Softr qui n'apporte pas beaucoup de possiblités de personnalisations à moindre coûts.
 
-Dans un second temps, le projet sera forké pour devenir le projet réel, en production avec base de données, authentification et migration vers Next.js (à garder en ligne de mire pour avoir le moins de modifications possibles).
+Dans un second temps, le projet sera forké pour devenir le projet réél, en production avec base de données, authentification et migration ves Next.js (à garder en ligne de mire pour avoir le moins de modificaitons possibles).
 
 ---
 
@@ -29,7 +29,6 @@ Dans un second temps, le projet sera forké pour devenir le projet réel, en pro
 | **Icons** | lucide-react |
 | **Avatars** | DiceBear (@dicebear/collection + core) |
 | **Tests** | Vitest + @testing-library/react + @testing-library/user-event + @vitest/coverage-v8 + jsdom |
-| **Documentation** | Storybook 10.5 + addons (Docs, A11y, Vitest) |
 
 ---
 
@@ -45,7 +44,6 @@ Organisée en **features** (dossier `src/features/`) :
 **Autres dossiers** :
 - `src/dev/` : Menu de développement et scénarios de mock.
 - `src/public/` : Assets statiques.
-- `.storybook/` : Configuration Storybook pour la documentation des composants.
 
 ---
 
@@ -81,14 +79,7 @@ Organisée en **features** (dossier `src/features/`) :
   - `PhotoGrid` : Grille responsive pour afficher les photos.
   - `StatusBadge` : Badge indiquant le statut du concours.
   - `DisplayStars` : Affichage des étoiles pour les notes.
-  - `VoteStars` : Composant interactif pour voter avec des étoiles.
-  - `PhotoDetailModal` : Modale affichant les détails d'une photo (note, gagnant, etc.).
-  - `WinnerBadge` : Badge "Gagnant" pour les photos victorieuses.
-  - `CoverImage` : Composant pour l'image de couverture des concours.
-  - `ImagePlaceHolder` : Placeholder pour les images.
-  - `Modal` : Composant de modale réutilisable.
 - **Navigation** : Barre de navigation en bas (`BottomNav`).
-- **Documentation** : Tous les composants UI sont documentés avec des **stories Storybook** (10 stories générées).
 
 ---
 
@@ -113,21 +104,14 @@ Organisée en **features** (dossier `src/features/`) :
 
 ## 🔧 État actuel (d’après les commits)
 - **Derniers commits** :
-  - `921aa73` : `fix(Storybook): placehorlder URL and types` (12 juillet 2026)
-  - `ee0b2b3` : `doc(Storybook): add autodocs`
-  - `d71bc5e` : `fix(Storybook) : accessibility issues`
-  - `d779256` : `doc(Storybook) : generate all stories with AI (mistral Vibe)`
-  - `ff38af3` : `chore(storybook) : init empty Storybook`
-  - `020183e` : `docs: update contexte_projet.md with current test status and commits`
-  - `6e00f9f` : `fix(contests test) : remove unused imports`
+  - `6e00f9f` : `fix(contests test) : remove unused imports` (12 juillet 2026)
   - `cd3097f` : `test(votes) unit tests vote feature`
   - `4c9cfad` : `refactor(DAY_MS): another DAY_MS created by AI instead of importing it`
   - `990327c` : `fix(error on contest tests): error after modifying dateUtils - needs some modifications`
   - `1402c77` : `test(photos): unit test for photos permission, visibility and some schemas rules`
   - `9ee9468` : `test(contest): init tests and unit test contest feature`
   - `bbd0f0c` : `fix: align @vitest/coverage-v8 version with vitest@3.x`
-- **Statut** : Projet **fonctionnel** avec **149 tests** (104 tests Vitest + 45 tests Storybook) couvrant votes, concours, photos et composants UI (tout est mocké, pas de backend).
-- **Documentation** : **Storybook** configuré et opérationnel avec 10 stories documentant tous les composants UI principaux.
+- **Statut** : Projet **fonctionnel** avec **104 tests unitaires** couvrant votes, concours et photos (tout est mocké, pas de backend).
 - **Déploiement** : Configuré pour [Lovable](https://lovable.dev) (référencé dans le README).
 
 ---
@@ -140,7 +124,6 @@ Organisée en **features** (dossier `src/features/`) :
    - Gestion des ex-aequo pour les gagnants.
 3. **Accessibilité** : ARIA labels, boutons désactivés avec `title`, navigation claire.
 4. **Responsive** : Adapté mobile (barre de navigation en bas) et desktop.
-5. **Documentation complète** : Tous les composants UI sont documentés avec Storybook, incluant autodocs et tests d'accessibilité.
 
 ---
 
@@ -151,4 +134,5 @@ Organisée en **features** (dossier `src/features/`) :
   - Une API pour persister concours/photos/votes.
 - **Authentification** : Le `UserContext` utilise un utilisateur mocké (`mockUser`). Intégrer Firebase Auth ou NextAuth.
 - **Upload d’images** : Les `imageUrl` pointent vers des URLs externes (picsum). Ajouter un système d’upload (Cloudinary, Supabase Storage).
-- **Tests E2E** : Tests unitaires complets (149 tests : 104 Vitest + 45 Storybook). À compléter avec des tests E2E (Cypress, Playwright).
+- **Tests E2E** : Tests unitaires complets (104 tests Vitest). À compléter avec des tests E2E (Cypress, Playwright).
+- **Documentation composants** : Intégrer Storybook pour documenter les composants UI (PolaroidCard, BrutalButton, PhotoGrid, etc.).
