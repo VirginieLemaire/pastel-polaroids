@@ -6,6 +6,8 @@ import {
   formatDate,
   getNextStepText,
   statusCorrespondingActionText,
+  toOgImageUrl,
+  buildContestMeta,
 } from '@/features/contests/utils';
 import { DAY_MS } from '@/shared/utils/dateUtils';
 import type { Contest } from '@/features/contests/types';
@@ -148,6 +150,68 @@ describe('contests/utils', () => {
 
     it('should have correct action text for closed status', () => {
       expect(statusCorrespondingActionText.closed).toBe('Voir les photos');
+    });
+  });
+
+  describe('toOgImageUrl', () => {
+    it('should force a 1200x630 crop on an Unsplash URL', () => {
+      const url =
+        'https://images.unsplash.com/photo-123?q=80&w=1368&auto=format&fit=crop&ixlib=rb-4.1.0';
+      const result = new URL(toOgImageUrl(url));
+      expect(result.searchParams.get('w')).toBe('1200');
+      expect(result.searchParams.get('h')).toBe('630');
+      expect(result.searchParams.get('fit')).toBe('crop');
+    });
+
+    it('should leave non-Unsplash URLs untouched', () => {
+      const url = 'https://example.com/cover.jpg?w=100';
+      expect(toOgImageUrl(url)).toBe(url);
+    });
+
+    it('should return the input unchanged if it is not a valid URL', () => {
+      expect(toOgImageUrl('not-a-url')).toBe('not-a-url');
+    });
+  });
+
+  describe('buildContestMeta', () => {
+    const contest: Pick<Contest, 'name' | 'description' | 'coverImage'> = {
+      name: "Vacances d'été",
+      description: "Les meilleurs souvenirs de l'été en famille.",
+      coverImage: 'https://images.unsplash.com/photo-123?w=1368&fit=crop',
+    };
+
+    it('should return the generic fallback when no contest is given', () => {
+      const meta = buildContestMeta(null);
+      expect(meta.title).toBe('Détail du thème — Photo de Famille');
+      expect(meta.description).toContain('Découvrez le thème du concours');
+      expect(meta.image).toBeUndefined();
+    });
+
+    it('should build a title and description from the contest', () => {
+      const meta = buildContestMeta(contest);
+      expect(meta.title).toBe("Concours photo : Vacances d'été");
+      expect(meta.description).toBe("Les meilleurs souvenirs de l'été en famille.");
+    });
+
+    it('should fall back to the generic description when the contest has none', () => {
+      const meta = buildContestMeta({ ...contest, description: undefined });
+      expect(meta.description).toContain('Découvrez le thème du concours');
+    });
+
+    it('should include a cropped og:image for an http(s) cover image', () => {
+      const meta = buildContestMeta(contest);
+      expect(meta.image).toContain('images.unsplash.com');
+      expect(meta.image).toContain('h=630');
+    });
+
+    it('should omit og:image for a data: URI cover image', () => {
+      const meta = buildContestMeta({ ...contest, coverImage: 'data:image/png;base64,abc' });
+      expect(meta.image).toBeUndefined();
+    });
+
+    it('should omit og:image when there is no cover image', () => {
+      const meta = buildContestMeta({ ...contest, coverImage: undefined });
+      expect(meta.image).toBeUndefined();
     });
   });
 });

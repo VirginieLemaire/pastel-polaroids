@@ -15,7 +15,7 @@ interface IShareButtonProps {
 
 const RESET_DELAY_MS = 2000;
 
-const toShareFile = async (src: string): Promise<File | null> => {
+export const toShareFile = async (src: string): Promise<File | null> => {
   try {
     const response = await fetch(src);
     const blob = await response.blob();
