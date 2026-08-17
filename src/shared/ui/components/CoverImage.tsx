@@ -11,19 +11,29 @@ interface ICoverImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
    * If undefined, fit parent rules.
    */
   aspectRatio?: string;
+  /**
+   * Comportement de redimensionnement dans la boîte de l'image.
+   * "cover" (défaut) : rogne pour remplir la boîte.
+   * "contain" : affiche l'image en entier, ratio préservé, sans rognage.
+   */
+  objectFit?: "cover" | "contain";
 }
+
+const objectFitClass = {
+  cover: "object-cover",
+  contain: "object-contain",
+} as const;
 
 export default function CoverImage({
   src,
   alt,
   priority = false,
   aspectRatio,
+  objectFit = "cover",
   className = '',
   ...props
 }: ICoverImageProps) {
-  // dynamic classes
-  // We add object-cover by default
-  const baseClasses = "brutal-border w-full object-cover block";
+  const baseClasses = "brutal-border w-full block";
   const aspectClass = aspectRatio ? `aspect-[${aspectRatio}]` : "";
   
   // Smart loaoding handle (eco-conception & Perf)
@@ -38,7 +48,7 @@ export default function CoverImage({
       height={600}
       loading={loadingStrategy}
       decoding={decodingStrategy}
-      className={`${baseClasses} ${aspectClass} ${className}`}
+      className={`${baseClasses} ${objectFitClass[objectFit]} ${aspectClass} ${className}`}
       {...props}
     />
   );

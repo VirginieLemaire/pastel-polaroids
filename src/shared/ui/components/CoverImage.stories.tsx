@@ -43,3 +43,16 @@ export const WithCustomClass: Story = {
     className: 'rounded-lg',
   },
 };
+
+export const Contain: Story = {
+  args: {
+    src: 'https://placehold.co/600x400',
+    alt: 'Contained image',
+    objectFit: 'contain',
+  },
+  play: async ({ canvas }) => {
+    const img = canvas.getByRole('img');
+    await expect(img).toHaveClass('object-contain');
+    await expect(img).not.toHaveClass('object-cover');
+  },
+};
