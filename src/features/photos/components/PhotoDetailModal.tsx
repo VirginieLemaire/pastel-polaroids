@@ -98,7 +98,8 @@ const PhotoDetailModal = ({
             src={photo.imageUrl}
             alt=""
             priority={true}
-            className="w-full max-h-[60vh] md:max-h-[70vh]"
+            objectFit="contain"
+            className="w-full max-h-[65vh] md:max-h-[78vh]"
           />
           {/* Badge gagnant sur l'image */}
           {isWinner && <WinnerBadge className="top-2 right-2" />}
@@ -145,14 +146,20 @@ const PhotoDetailModal = ({
 
 
 
-        <dl className="font-mono text-sm space-y-2">
-          {photo.description && (
+        <dl className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-3 font-mono text-sm">
+          {/* Concours */}
+          <div>
+            <dt className="text-xs text-muted-foreground">Concours</dt>
+            <dd>{contest.name}</dd>
+          </div>
+
+          {showAuthor && (
             <div>
-              <dt className="text-xs text-muted-foreground">Description</dt>
-              <dd className="break-words whitespace-pre-wrap">{photo.description}</dd>
+              <dt className="text-xs text-muted-foreground">Auteur</dt>
+              <dd>{getUserName(photo.authorId)}</dd>
             </div>
           )}
-          
+
           {/* Note moyenne */}
           {averageRating !== undefined && (
             <div>
@@ -162,7 +169,12 @@ const PhotoDetailModal = ({
               </dd>
             </div>
           )}
-          
+
+          <div>
+            <dt className="text-xs text-muted-foreground">Soumise le</dt>
+            <dd>{formatDate(photo.createdAt)}</dd>
+          </div>
+
           {/* Badge gagnant (version texte) */}
           {isWinner && (
             <div>
@@ -173,24 +185,13 @@ const PhotoDetailModal = ({
               </dd>
             </div>
           )}
-          
-          {/* Concours */}
-          <div>
-            <dt className="text-xs text-muted-foreground">Concours</dt>
-            <dd>{contest.name}</dd>
-          </div>
-          
-          {showAuthor && (
-            <div>
-              <dt className="text-xs text-muted-foreground">Auteur</dt>
-              <dd>{getUserName(photo.authorId)}</dd>
+
+          {photo.description && (
+            <div className="sm:col-span-2 md:col-span-3">
+              <dt className="text-xs text-muted-foreground">Description</dt>
+              <dd className="break-words whitespace-pre-wrap">{photo.description}</dd>
             </div>
           )}
-          
-          <div>
-            <dt className="text-xs text-muted-foreground">Soumise le</dt>
-            <dd>{formatDate(photo.createdAt)}</dd>
-          </div>
         </dl>
       </div>
     </Modal>
