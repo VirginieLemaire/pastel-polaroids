@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+/*
+ * Design system — néo-brutalisme pastel (porté depuis src/index.css / tailwind.config.ts v3).
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-background -> bg-background, text-background).
+ */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring-offset-background: var(--background);
+
+  --color-pastel-pink: var(--pastel-pink);
+  --color-pastel-lavender: var(--pastel-lavender);
+  --color-pastel-mint: var(--pastel-mint);
+  --color-pastel-butter: var(--pastel-butter);
+  --color-pastel-sky: var(--pastel-sky);
+  --color-pastel-peach: var(--pastel-peach);
+
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+:root {
+  --background: hsl(46 100% 96%);        /* #fffaeb */
+  --foreground: hsl(0 0% 8%);
+  --card: hsl(46 100% 96%);              /* = background (v3 mapping) */
+  --muted: hsl(46 40% 90%);
+  --muted-foreground: hsl(0 0% 35%);
+  --border: hsl(0 0% 8%);
+
+  --bottom-nav-h: 4rem; /* hauteur figée de BottomNav, partagée avec le wrapper de pages */
+
+  --pastel-pink: hsl(341 65% 85%);       /* #f0c2d1 */
+  --pastel-lavender: hsl(257 50% 85%);   /* #d2c6ec */
+  --pastel-mint: hsl(159 50% 80%);       /* #b3e6d5 */
+  --pastel-butter: hsl(46 78% 85%);      /* #f7e8ba */
+  --pastel-sky: hsl(203 64% 85%);        /* #c2e0f0 */
+  --pastel-peach: hsl(18 78% 85%);       /* #f7cfba */
+
+  --shadow-brutal: 4px 4px 0px hsl(0 0% 8%);
+  --shadow-brutal-lg: 6px 6px 0px hsl(0 0% 8%);
+  --shadow-brutal-hover: 2px 2px 0px hsl(0 0% 8%);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .brutal-border { border: 3px solid var(--border); }
+  .brutal-shadow { box-shadow: var(--shadow-brutal); }
+  .brutal-shadow-lg { box-shadow: var(--shadow-brutal-lg); }
+
+  .brutal-btn {
+    font-family: "Space Mono", monospace;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border: 3px solid var(--border);
+    box-shadow: var(--shadow-brutal);
+    background-color: var(--card);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .brutal-btn:hover { transform: translate(2px, 2px); box-shadow: var(--shadow-brutal-hover); }
+  .brutal-btn:active { transform: translate(4px, 4px); box-shadow: none; }
+
+  .brutal-input {
+    width: 100%;
+    border: 3px solid var(--border);
+    background-color: var(--card);
+    padding: 0.75rem;
+    color: var(--foreground);
+    font-family: "Space Grotesk", sans-serif;
+  }
+  .brutal-input::placeholder { color: var(--muted-foreground); }
+  .brutal-input:focus { outline: none; box-shadow: 0 0 0 2px var(--foreground); }
+}

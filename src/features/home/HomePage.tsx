@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "@/lib/router-compat";
+import { X, Info } from "lucide-react";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import Modal from "@/shared/ui/components/Modal";
@@ -10,16 +11,36 @@ import { useContests } from "@/features/contests";
 import type { CreateContestInput, Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 
-const pickOpenContest = (contests: Contest[]): Contest => {
+const pickOpenContest = (contests: Contest[]): Contest | null => {
   const openContest = contests.find((c) => getContestStatus(c) !== "closed")
   return openContest ? openContest : null;
 };
 
+const DEMO_HINT_DISMISSED_KEY = "demoHintDismissed";
+
 export default function HomePage() {
   const [createOpen, setCreateOpen] = useState(false);
   const [othersOpen, setOthersOpen] = useState(false);
+  // SSR-safe : le serveur rend sans le bandeau, le client le révèle après hydratation
+  const [demoHintVisible, setDemoHintVisible] = useState(false);
+  useEffect(() => {
+    try {
+      setDemoHintVisible(localStorage.getItem(DEMO_HINT_DISMISSED_KEY) !== "true");
+    } catch {
+      setDemoHintVisible(true);
+    }
+  }, []);
   const { contests, createContest } = useContests();
   const navigate = useNavigate();
+
+  const dismissDemoHint = () => {
+    setDemoHintVisible(false);
+    try {
+      localStorage.setItem(DEMO_HINT_DISMISSED_KEY, "true");
+    } catch {
+      // ignore storage errors
+    }
+  };
   
   const currentContest = useMemo(
     () => (contests.length > 0 ? pickOpenContest(contests) : null),
@@ -58,12 +79,29 @@ export default function HomePage() {
 
   return (
     <main className="flex-1 bg-background px-6 py-12 flex flex-col">
-      <header className="text-center space-y-2 mb-10">
+      <header className="text-center space-y-2 mb-10 mt-8">
         <h1 className="font-mono text-4xl md:text-5xl font-bold">Photo de Famille</h1>
         <p className="font-mono text-sm text-muted-foreground">
           Concours photo en famille, un thème à la fois.
         </p>
       </header>
+
+      {demoHintVisible && (
+        <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
+          <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />
+          <p className="text-sm leading-snug flex-1">
+            Utilise le bouton <span className="font-bold">Mode démo</span> en haut à droite pour explorer l'application et tester toutes les fonctionnalités.
+          </p>
+          <button
+            type="button"
+            onClick={dismissDemoHint}
+            aria-label="Masquer l'astuce mode démo"
+            className="brutal-border bg-background hover:bg-pastel-peach p-1 shrink-0"
+          >
+            <X aria-hidden="true" className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <section className="flex-1 flex justify-center flex-col w-full max-w-md mx-auto">
         {currentContest ? 

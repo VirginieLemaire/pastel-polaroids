@@ -2,7 +2,7 @@
  * Tests pour les permissions des concours
  * Focus sur les 3 états réels : Submission, Vote, Closed.
  */
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { canEditContest, canDeleteContest } from '@/features/contests/permissions';
 import type { Contest } from '@/features/contests/types';
 import { isoDaysAgo } from '@/shared/utils/dateUtils';

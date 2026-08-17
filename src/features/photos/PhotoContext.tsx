@@ -1,7 +1,12 @@
-import { createContext, useCallback, useMemo, useState, type ReactNode } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Photo, PhotoContextValue, CreatePhotoInput, UpdatePhotoInput } from "./types";
-import { defaultPhotos } from "./mocks/photos.mocks";
+import {
+  DEFAULT_SCENARIO_ID,
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/features/demo/scenarios";
+import { DEV_SCENARIO_CHANGE_EVENT } from "@/features/contests";
 
 export const PhotoContext = createContext<PhotoContextValue | null>(null);
 
@@ -11,7 +16,24 @@ interface IPhotoProviderProps {
 
 export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
   const { currentUser } = useCurrentUser();
-  const [photos, setPhotos] = useState<Photo[]>(defaultPhotos);
+  // SSR-safe : scénario par défaut au rendu serveur, préférence appliquée après hydratation
+  const [photos, setPhotos] = useState<Photo[]>(
+    () => getScenarioById(DEFAULT_SCENARIO_ID).photos,
+  );
+
+  // Le visiteur peut changer de scénario de démo à tout moment
+  useEffect(() => {
+    const storedId = getStoredScenarioId();
+    if (storedId !== DEFAULT_SCENARIO_ID) setPhotos(getScenarioById(storedId).photos);
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      setPhotos(getScenarioById(id).photos);
+    };
+    window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+    return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
+  }, []);
+
+
 
   const photosByContest = useMemo(() => {
     const map = new Map<string, Photo[]>();
@@ -57,13 +79,14 @@ export const PhotoProvider = ({ children }: IPhotoProviderProps) => {
       setPhotos((prev) =>
         prev.map((p) => {
           if (p.id !== id) return p;
-          updated = {
+          const next: Photo = {
             ...p,
             title: input.title.trim(),
             description: input.description?.trim() || undefined,
             imageUrl: input.imageUrl,
           };
-          return updated;
+          updated = next;
+          return next;
         }),
       );
       return updated;

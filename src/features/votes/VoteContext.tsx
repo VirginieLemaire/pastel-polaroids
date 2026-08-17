@@ -1,7 +1,7 @@
 import { createContext, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useCurrentUser } from "@/features/user";
 import type { Vote, VoteContextValue, Rating } from "./types";
-import { defaultVotes } from "./mocks/votes.mocks";
+
 import { castVoteSchema } from "./schemas";
 import {
   NEUTRAL_RATING,
@@ -10,7 +10,11 @@ import {
   getWinners as computeWinners,
   isPhotoWinner as computeIsPhotoWinner,
 } from "./results";
-import { getScenarioById, getStoredScenarioId } from "@/dev/mockScenarios";
+import {
+  DEFAULT_SCENARIO_ID,
+  getScenarioById,
+  getStoredScenarioId,
+} from "@/features/demo/scenarios";
 import type { Photo } from "@/features/photos/types";
 import { DEV_SCENARIO_CHANGE_EVENT } from "../contests";
 
@@ -18,17 +22,15 @@ export const VoteContext = createContext<VoteContextValue | null>(null);
 
 export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const { currentUser } = useCurrentUser();
-  const [votes, setVotes] = useState<Vote[]>(() => {
-    // En mode dev, utiliser les votes du scénario actif
-    if (import.meta.env.DEV) {
-      return getScenarioById(getStoredScenarioId()).votes;
-    }
-    return defaultVotes;
-  });
+  // SSR-safe : scénario par défaut au rendu serveur, préférence appliquée après hydratation
+  const [votes, setVotes] = useState<Vote[]>(
+    () => getScenarioById(DEFAULT_SCENARIO_ID).votes,
+  );
 
-  // En mode dev, écouter les changements de scénario
+  // Le visiteur peut changer de scénario de démo à tout moment
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
+    const storedId = getStoredScenarioId();
+    if (storedId !== DEFAULT_SCENARIO_ID) setVotes(getScenarioById(storedId).votes);
     const handler = (e: Event) => {
       const id = (e as CustomEvent<string>).detail;
       setVotes(getScenarioById(id).votes);
@@ -36,6 +38,7 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
     window.addEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
     return () => window.removeEventListener(DEV_SCENARIO_CHANGE_EVENT, handler);
   }, []);
+
 
   const votesByPhoto = useMemo(() => {
     const map = new Map<string, Vote[]>();
@@ -120,28 +123,20 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
 
   const getRankedPhotos = useCallback(
     (
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
-    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
-      return computeRankedPhotos(
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    ): { photo: Photo; averageRating: number }[] => {
+      return computeRankedPhotos(photos, votes, expectedVoterIds);
     },
     [votes],
   );
 
   const getWinners = useCallback(
     (
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
-    ): { photo: { id: string; authorId: string }; averageRating: number }[] => {
-      return computeWinners(
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      ) as { photo: { id: string; authorId: string }; averageRating: number }[];
+    ): { photo: Photo; averageRating: number }[] => {
+      return computeWinners(photos, votes, expectedVoterIds);
     },
     [votes],
   );
@@ -149,15 +144,10 @@ export const VoteProvider = ({ children }: { children: ReactNode }) => {
   const isPhotoWinner = useCallback(
     (
       photoId: string,
-      photos: { id: string; authorId: string }[],
+      photos: Photo[],
       expectedVoterIds: string[],
     ): boolean => {
-      return computeIsPhotoWinner(
-        photoId,
-        photos as unknown as Photo[],
-        votes,
-        expectedVoterIds,
-      );
+      return computeIsPhotoWinner(photoId, photos, votes, expectedVoterIds);
     },
     [votes],
   );

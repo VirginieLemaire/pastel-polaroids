@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "@/lib/router-compat";
 import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
@@ -14,14 +14,18 @@ import {
   getContestStatus,
   formatDate,
   getNextStepText,
-  statusCorrespondingActionText
+  statusCorrespondingActionText,
+  buildShareText
 } from "@/features/contests";
+
 import type { UpdateContestInput } from "@/features/contests";
 import { useCurrentUser, getUserName } from "@/features/user";
 import { usePhotos } from "@/features/photos";
 import { getAvatarDataUri } from "@/shared/utils/getAvatarUri";
 import ImagePlaceHolder from "@/shared/ui/components/ImagePlaceHolder";
 import CoverImage from "@/shared/ui/components/CoverImage";
+import ShareButton from "@/shared/ui/components/ShareButton";
+
 
 export default function ContestDetailPage() {
   const { id = "" } = useParams();
@@ -58,6 +62,8 @@ export default function ContestDetailPage() {
   const authorSeed = contest.authorId;
   const contestPhotos = getPhotosByContest(contest.id);
   const photoCount = contestPhotos.length;
+  const { title: shareTitle, text: shareText } = buildShareText(contest, status);
+
 
   const handleUpdate = (data: UpdateContestInput) => {
     updateContest(contest.id, data);
@@ -140,30 +146,34 @@ export default function ContestDetailPage() {
           {statusCorrespondingActionText[status]}
         </BrutalButton>
 
-        {(canEdit || canDelete) && (
-          <div className="flex justify-end gap-2">
-            {canEdit && (
-              <BrutalButton
-                color="sky"
-                size="sm"
-                icon={<Pencil size={14} aria-hidden="true" />}
-                onClick={() => setEditOpen(true)}
-              >
-                Éditer
-              </BrutalButton>
-            )}
-            {canDelete && (
-              <BrutalButton
-                color="pink"
-                size="sm"
-                icon={<Trash2 size={14} aria-hidden="true" />}
-                onClick={handleDelete}
-              >
-                Supprimer
-              </BrutalButton>
-            )}
-          </div>
-        )}
+        <div className="flex flex-wrap justify-end gap-2">
+          <ShareButton
+            title={shareTitle}
+            text={shareText}
+            url={typeof window !== "undefined" ? window.location.href : ""}
+          />
+          {canEdit && (
+            <BrutalButton
+              color="sky"
+              size="sm"
+              icon={<Pencil size={14} aria-hidden="true" />}
+              onClick={() => setEditOpen(true)}
+            >
+              Éditer
+            </BrutalButton>
+          )}
+          {canDelete && (
+            <BrutalButton
+              color="pink"
+              size="sm"
+              icon={<Trash2 size={14} aria-hidden="true" />}
+              onClick={handleDelete}
+            >
+              Supprimer
+            </BrutalButton>
+          )}
+        </div>
+
 
         <Modal open={editOpen} onClose={() => setEditOpen(false)} title="Éditer le thème">
           <CreateContestForm

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "@/lib/router-compat";
 import { ArrowLeft, Pencil, Plus, Trash2, Filter } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
@@ -36,11 +36,7 @@ export default function PhotosPage() {
     usePhotos();
   const contest = getContest(id);
   const [form, setForm] = useState<FormState>(null);
-  const [detail, setDetail] = useState<{
-    photo: VisiblePhoto | null;
-    averageRating?: number;
-    isWinner?: boolean;
-  }>({ photo: null });
+  const [detailIndex, setDetailIndex] = useState<number | null>(null);
 
   if (!contest) {
     return (
@@ -169,6 +165,19 @@ export default function PhotosPage() {
     });
   }, [visiblePhotos, contest, currentUser.id, setForm, handleDelete]);
 
+  // Liste utilisée pour naviguer d'une photo à l'autre dans la modale de détail
+  const detailList = useMemo<{ photo: VisiblePhoto; averageRating?: number; isWinner?: boolean }[]>(() => {
+    if (status !== "closed") return visiblePhotos.map((photo) => ({ photo }));
+    return showOnlyWinners ? photosWithResults.filter((p) => p.isWinner) : photosWithResults;
+  }, [status, visiblePhotos, photosWithResults, showOnlyWinners]);
+
+  const findDetailIndex = (photoId: string) => {
+    const index = detailList.findIndex((item) => item.photo.id === photoId);
+    return index === -1 ? null : index;
+  };
+
+
+
   return (
     <main className="flex-1 bg-background px-5 py-6">
       <div className="max-w-5xl mx-auto space-y-5">
@@ -193,17 +202,21 @@ export default function PhotosPage() {
               <p className="font-mono text-sm">
                 Vos soumissions&nbsp;: <strong>{userCount}/{MAX_PHOTOS_PER_USER}</strong>
               </p>
-              <BrutalButton
-                color="butter"
-                size="sm"
-                icon={<Plus size={14} aria-hidden="true" />}
-                disabled={!canSubmit}
-                aria-disabled={!canSubmit}
-                title={canSubmit ? undefined : "Limite de 3 photos atteinte."}
-                onClick={() => setForm({ mode: "create" })}
-              >
-                Soumettre une photo
-              </BrutalButton>
+              {canSubmit ? (
+                <BrutalButton
+                  color="butter"
+                  size="sm"
+                  icon={<Plus size={14} aria-hidden="true" />}
+                  onClick={() => setForm({ mode: "create" })}
+                >
+                  Soumettre une photo
+                </BrutalButton>
+              ) : (
+                <p role="status" className="font-mono text-sm max-w-sm">
+                  Vous avez atteint la limite de {MAX_PHOTOS_PER_USER} photos.
+                  Supprimez une de vos photos pour pouvoir en proposer une autre.
+                </p>
+              )}
             </div>
           </BrutalCard>
         )}
@@ -236,16 +249,7 @@ export default function PhotosPage() {
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
-            onPhotoClick={(photo) => {
-              const found = photosWithResults.find(p => p.photo.id === photo.id);
-              if (found) {
-                setDetail({
-                  photo,
-                  averageRating: found.averageRating,
-                  isWinner: found.isWinner,
-                });
-              }
-            }}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         ) : (
           /* En phase submission/vote : afficher avec actions */
@@ -253,9 +257,10 @@ export default function PhotosPage() {
             photos={photosWithActions}
             contest={contest}
             mode={status}
-            onPhotoClick={(photo) => setDetail({ photo })}
+            onPhotoClick={(photo) => setDetailIndex(findDetailIndex(photo.id))}
           />
         )}
+
       </div>
 
       <Modal
@@ -281,12 +286,20 @@ export default function PhotosPage() {
       </Modal>
 
       <PhotoDetailModal 
-        photo={detail.photo} 
+        photo={detailIndex !== null ? detailList[detailIndex]?.photo ?? null : null} 
         contest={contest} 
-        onClose={() => setDetail({ photo: null })}
-        averageRating={detail.averageRating}
-        isWinner={detail.isWinner}
+        onClose={() => setDetailIndex(null)}
+        averageRating={detailIndex !== null ? detailList[detailIndex]?.averageRating : undefined}
+        isWinner={detailIndex !== null ? detailList[detailIndex]?.isWinner : undefined}
+        onPrev={detailIndex !== null && detailIndex > 0 ? () => setDetailIndex(detailIndex - 1) : undefined}
+        onNext={
+          detailIndex !== null && detailIndex < detailList.length - 1
+            ? () => setDetailIndex(detailIndex + 1)
+            : undefined
+        }
+        positionLabel={detailIndex !== null ? `${detailIndex + 1} / ${detailList.length}` : undefined}
       />
+
     </main>
   );
 }

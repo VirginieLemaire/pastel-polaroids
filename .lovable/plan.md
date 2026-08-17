@@ -1,47 +1,29 @@
-## Étape 1 — Fondations data `features/photos` (read-only)
+# Améliorer l'aperçu de partage sans migrer vers TanStack
 
-Note prise en compte : à l'étape 4, on réutilisera **`PolaroidCard`** existant (pas de nouveau composant `PhotoCard`). La logique d'anonymat/visibilité restera dans `visibility.ts` + au niveau de la page, `PolaroidCard` ne recevra que les props déjà filtrées.
+## Ce qui se passe aujourd'hui
 
-### Objectif
+Le titre et la description Open Graph sont bien présents dans `index.html`. Ce que vous voyez (« Internal Lovable Project », `lovableproject.com`) vient du **lien de preview** : les robots de WhatsApp/Signal ne peuvent pas charger cette URL (elle est protégée par le login Lovable), donc ils affichent le libellé générique du domaine de preview.
 
-Poser le squelette de la feature `photos` : types, mocks, Context read-only, hook, barrel. Aucun changement UI visible. App fonctionnelle et build vert après ce commit.
+C'est donc un problème d'URL partagée, pas de balises manquantes. Aucun rendu serveur n'est nécessaire pour le corriger.
 
-### Fichiers créés
+## Ce qu'on fait
 
-1. **`src/features/photos/types.ts`**
-   - `interface Photo { id; contestId; authorId; title; description?; imageUrl; createdAt }` (ISO string pour `createdAt`, cohérent avec `Contest`).
-   - `interface CreatePhotoInput { contestId; title; description?; imageUrl }` (préparé pour étape 5, pas encore utilisé).
-   - `interface PhotoContextValue { photos; getPhotosByContest(contestId); getUserPhotosCount(contestId, userId) }`.
+1. **Publier l'app** pour obtenir une URL publique (`https://pastel-polaroid.lovable.app`). C'est ce lien qu'il faudra partager : les robots y ont accès et liront les vraies balises.
+2. **Compléter le `<head>`** de `index.html` :
+   - `og:url` et `<link rel="canonical">` pointant vers le domaine publié,
+   - `og:site_name` / `og:locale` (déjà là) conservés,
+   - `theme-color` pour la couleur de la barre navigateur sur mobile,
+   - JSON-LD `WebSite` (nom + description du site).
+3. **Le bouton Partager** continue de partager `window.location.href`. Ajout d'un repli : si l'URL courante est une URL de preview interne, le lien partagé utilise le domaine publié, pour que le message envoyé en démo affiche une carte correcte au lieu du libellé générique.
 
-2. **`src/features/photos/mocks/photos.mocks.ts`**
-   - 2-3 photos rattachées à `mock-1` (auteurs variés : `user-1` et `user-2`) pour pouvoir visualiser dès l'étape 4. URLs Unsplash.
-   - Export nommé `defaultPhotos`.
+## Limite à garder en tête
 
-3. **`src/features/photos/PhotoContext.tsx`**
-   - `createContext<PhotoContextValue | null>(null)`.
-   - `PhotoProvider` : `useState<Photo[]>(defaultPhotos)`. Pour l'instant le state n'est pas muté (mutations arriveront étape 5).
-   - `getPhotosByContest` mémoïsé avec `useMemo` (groupBy léger).
-   - `getUserPhotosCount` = filter + length.
+L'image de couverture **par thème** reste impossible sans rendu serveur (les robots ne lisent que le HTML statique). En revanche, une fois l'app publiée, l'hébergement Lovable injecte automatiquement une image d'aperçu au niveau du site : la carte affichera le vrai titre, la vraie description et une vignette du site — plus de « Internal Lovable Project ».
 
-4. **`src/features/photos/usePhotos.ts`**
-   - Hook `useContext(PhotoContext)` + garde `throw new Error("usePhotos must be used within PhotoProvider")`. Cohérent avec `useCurrentUser`.
+À noter : les robots mettent l'aperçu en cache ; un lien déjà partagé peut garder l'ancienne carte pendant un moment (un débogueur d'aperçu de lien force le rafraîchissement).
 
-5. **`src/features/photos/index.ts`** (barrel)
-   - Re-export types, `PhotoProvider`, `usePhotos`.
+## Détails techniques
 
-### Fichier modifié
-
-- **`src/App.tsx`** : monter `<PhotoProvider>` à l'intérieur de `<ContestProvider>` (les photos référencent des `contestId`, donc dépendance logique).
-
-### Hors-scope (volontairement)
-
-- Aucune mutation (`submitPhoto`, `updatePhoto`, `deletePhoto`) — étapes 5/6.
-- Aucune permission ni helper de visibilité — étape 2.
-- Aucun composant ni page — étapes 3+.
-- Pas de couplage `Contest.photos` ↔ `Photo` (on garde le `photos: unknown[]` actuel ; à clarifier plus tard, possiblement à supprimer puisque le `PhotoContext` est la source de vérité).
-
-### Critère d'acceptation
-
-- Build TS OK, aucun warning.
-- `usePhotos()` accessible depuis n'importe quelle page (vérification rapide avec un `console.log` temporaire si besoin, retiré avant commit).
-- Aucune régression visuelle (HomePage, ContestDetailPage identiques).
+- `index.html` : ajout de `og:url`, `canonical`, `theme-color`, script `application/ld+json` (type `WebSite`). Pas d'`og:image` codée en dur (l'hébergement s'en charge).
+- `src/shared/ui/components/ShareButton.tsx` : la construction de l'URL partagée bascule sur le domaine publié quand `window.location.hostname` correspond à un domaine de preview Lovable. Logique extraite dans une petite fonction utilitaire, pas dans le JSX.
+- Aucune dépendance ajoutée, aucun changement de règles métier.

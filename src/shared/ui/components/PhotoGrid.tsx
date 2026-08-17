@@ -88,8 +88,9 @@ export default function PhotoGrid({
     }
 
     // Filtre : note minimum
-    if (filter.minRating !== undefined) {
-      result = result.filter((p) => (p.averageRating ?? 0) >= filter.minRating);
+    const minRating = filter.minRating;
+    if (minRating !== undefined) {
+      result = result.filter((p) => (p.averageRating ?? 0) >= minRating);
     }
 
     return result;
@@ -149,11 +150,11 @@ export default function PhotoGrid({
               rotation={getRotation(1, -1, photoId)}
               onClick={() => onPhotoClick?.(photo)}
               isWinner={showWinnerBadge && isWinner}
-              averageRating={mode === "results" || mode === "closed" ? averageRating : undefined}
+              averageRating={mode === "results" ? averageRating : undefined}
             />
 
             {/* Actions personnalisées (si fournies) - seulement en mode non-results */}
-            {actions && (mode !== "results" && mode !== "closed") && (
+            {actions && mode !== "results" && (
               <div className="flex gap-2">{actions}</div>
             )}
           </li>

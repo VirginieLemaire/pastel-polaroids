@@ -73,7 +73,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('photoId');
+      expect(result.error?.issues[0]!.path).toContain('photoId');
     });
 
     it('should reject missing photoId', () => {
@@ -84,7 +84,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('photoId');
+      expect(result.error?.issues[0]!.path).toContain('photoId');
     });
 
     it('should reject empty contestId', () => {
@@ -96,7 +96,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('contestId');
+      expect(result.error?.issues[0]!.path).toContain('contestId');
     });
 
     it('should reject missing contestId', () => {
@@ -107,7 +107,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('contestId');
+      expect(result.error?.issues[0]!.path).toContain('contestId');
     });
 
     it('should reject missing rating', () => {
@@ -118,7 +118,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('rating');
+      expect(result.error?.issues[0]!.path).toContain('rating');
     });
 
     it('should reject invalid rating values', () => {
@@ -131,7 +131,7 @@ describe('votes/schemas', () => {
         };
         const result = castVoteSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
-        expect(result.error?.issues[0].path).toContain('rating');
+        expect(result.error?.issues[0]!.path).toContain('rating');
       });
     });
 
@@ -144,7 +144,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('photoId');
+      expect(result.error?.issues[0]!.path).toContain('photoId');
     });
 
     it('should reject non-string contestId', () => {
@@ -156,7 +156,7 @@ describe('votes/schemas', () => {
       
       const result = castVoteSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      expect(result.error?.issues[0].path).toContain('contestId');
+      expect(result.error?.issues[0]!.path).toContain('contestId');
     });
 
     it('should accept all valid ratings (1-5)', () => {
@@ -170,7 +170,7 @@ describe('votes/schemas', () => {
         };
         const result = castVoteSchema.safeParse(data);
         expect(result.success).toBe(true);
-        expect(result.data.rating).toBe(rating);
+        expect(result.data!.rating).toBe(rating);
       });
     });
   });

@@ -1,3 +1,5 @@
+import type { Photo } from "@/features/photos/types";
+
 export type Rating = 1 | 2 | 3 | 4 | 5;
 
 export interface Vote {
@@ -20,16 +22,16 @@ export interface VoteContextValue {
     expectedVoterIds: string[]
   ) => number | null;
   getRankedPhotos: (
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
-  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  ) => { photo: Photo; averageRating: number }[];
   getWinners: (
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
-  ) => { photo: { id: string; authorId: string }; averageRating: number }[];
+  ) => { photo: Photo; averageRating: number }[];
   isPhotoWinner: (
     photoId: string,
-    photos: { id: string; authorId: string }[],
+    photos: Photo[],
     expectedVoterIds: string[]
   ) => boolean;
   castVote: (photoId: string, contestId: string, rating: Rating) => void;

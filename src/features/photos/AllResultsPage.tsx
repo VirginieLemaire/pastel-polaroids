@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { ArrowLeft, Filter, Trophy } from "lucide-react";
 import BrutalCard from "@/shared/ui/components/BrutalCard";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
@@ -31,12 +31,7 @@ export default function AllResultsPage() {
   const [showOnlyWinners, setShowOnlyWinners] = useState(false);
   
   // État pour la modale de détail
-  const [detail, setDetail] = useState<{
-    photo: VisiblePhoto | null;
-    contest: Contest | null;
-    averageRating?: number;
-    isWinner?: boolean;
-  }>({ photo: null, contest: null });
+  const [detailIndex, setDetailIndex] = useState<number | null>(null);
 
   // Récupérer les concours clos
   const closedContests = useMemo(() => {
@@ -84,7 +79,7 @@ export default function AllResultsPage() {
     }
 
     // Trier par note décroissante
-    return results.sort((a, b) => b.averageRating - a.averageRating);
+    return results.sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0));
   }, [photosForClosedContests, getRankedPhotos, getWinners]);
 
   // Grouper les photos par concours pour le filtre
@@ -108,6 +103,20 @@ export default function AllResultsPage() {
     if (!photo) return undefined;
     return contests.find((c) => c.id === photo.contestId);
   };
+
+  // Liste ordonnée utilisée pour naviguer d'une photo à l'autre dans la modale
+  const detailList = useMemo(
+    () =>
+      showOnlyWinners
+        ? allPhotosWithResults.filter((p) => p.isWinner)
+        : allPhotosWithResults,
+    [allPhotosWithResults, showOnlyWinners],
+  );
+
+  const current = detailIndex !== null ? detailList[detailIndex] : undefined;
+  const currentContest = current
+    ? contests.find((c) => c.id === (current.photo as Photo).contestId)
+    : undefined;
 
   // Si aucun concours clos
   if (closedContests.length === 0) {
@@ -225,36 +234,39 @@ export default function AllResultsPage() {
           <PhotoGrid
             photos={allPhotosWithResults}
             // Pour PhotoGrid, il faut un contest. On utilise le premier contest trouvé
-            contest={closedContests[0]}
+            contest={closedContests[0]!}
             mode="results"
             showWinnerBadge
             sortBy="rating"
             filter={{ onlyWinners: showOnlyWinners }}
             onPhotoClick={(photo) => {
-              // Trouver les infos de résultat pour cette photo
-              const found = allPhotosWithResults.find(p => p.photo.id === photo.id);
-              // Trouver le contest correspondant à cette photo
-              const photoContest = contests.find((c) => c.id === photo.contestId);
-              if (found && photoContest) {
-                setDetail({
-                  photo,
-                  contest: photoContest,
-                  averageRating: found.averageRating,
-                  isWinner: found.isWinner,
-                });
-              }
+              const index = detailList.findIndex((item) => item.photo.id === photo.id);
+              setDetailIndex(index === -1 ? null : index);
             }}
           />
         )}
 
         {/* Modale de détail */}
-        {detail.photo && detail.contest && (
+        {current && currentContest && (
           <PhotoDetailModal
-            photo={detail.photo}
-            contest={detail.contest}
-            onClose={() => setDetail({ photo: null, contest: null })}
-            averageRating={detail.averageRating}
-            isWinner={detail.isWinner}
+            photo={current.photo as VisiblePhoto}
+            contest={currentContest}
+            onClose={() => setDetailIndex(null)}
+            averageRating={current.averageRating}
+            isWinner={current.isWinner}
+            onPrev={
+              detailIndex !== null && detailIndex > 0
+                ? () => setDetailIndex(detailIndex - 1)
+                : undefined
+            }
+            onNext={
+              detailIndex !== null && detailIndex < detailList.length - 1
+                ? () => setDetailIndex(detailIndex + 1)
+                : undefined
+            }
+            positionLabel={
+              detailIndex !== null ? `${detailIndex + 1} / ${detailList.length}` : undefined
+            }
           />
         )}
       </div>

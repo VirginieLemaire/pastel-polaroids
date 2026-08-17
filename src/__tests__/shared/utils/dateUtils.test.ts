@@ -14,7 +14,6 @@ describe('dateUtils', () => {
     // Fixer une date de référence pour les tests
     const mockNow = new Date('2024-06-15T12:00:00.000Z');
     mockDateNow = () => mockNow.getTime();
-    // @ts-expect-error - Mock Date.now
     Date.now = mockDateNow;
   });
 
