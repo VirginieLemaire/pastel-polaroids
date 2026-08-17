@@ -151,6 +151,7 @@ export default function ContestDetailPage() {
             title={shareTitle}
             text={shareText}
             url={typeof window !== "undefined" ? window.location.href : ""}
+            imageSrc={contest.coverImage}
           />
           {canEdit && (
             <BrutalButton

@@ -7,6 +7,7 @@ interface IShareButtonProps {
   title: string;
   text: string;
   url: string;
+  imageSrc?: string;
   color?: PastelColor;
   size?: Size;
   className?: string;
@@ -14,10 +15,21 @@ interface IShareButtonProps {
 
 const RESET_DELAY_MS = 2000;
 
+export const toShareFile = async (src: string): Promise<File | null> => {
+  try {
+    const response = await fetch(src);
+    const blob = await response.blob();
+    return new File([blob], "concours.jpg", { type: blob.type });
+  } catch {
+    return null;
+  }
+};
+
 const ShareButton = ({
   title,
   text,
   url,
+  imageSrc,
   color = "lavender",
   size = "sm",
   className = "",
@@ -33,7 +45,14 @@ const ShareButton = ({
   };
 
   const shareContest = async () => {
-    const data = { title, text, url };
+    const data: ShareData = { title, text, url };
+
+    if (imageSrc) {
+      const file = await toShareFile(imageSrc);
+      if (file && navigator.canShare?.({ files: [file] })) {
+        data.files = [file];
+      }
+    }
 
     if (typeof navigator.share === "function") {
       try {

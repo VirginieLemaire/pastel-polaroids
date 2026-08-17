@@ -58,3 +58,44 @@ export const statusCorrespondingActionText: Record<ContestStatus, string> = {
   vote: "Voter",
   closed: "Voir les photos"
 };
+
+const FALLBACK_META_TITLE = "Détail du thème — Photo de Famille";
+const FALLBACK_META_DESCRIPTION =
+  "Découvrez le thème du concours en cours, sa phase, ses dates clés et le nombre de photos déjà soumises.";
+
+/** Demande à Unsplash une variante recadrée au ratio recommandé pour og:image (1200x630). */
+export const toOgImageUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname !== "images.unsplash.com") return url;
+    parsed.searchParams.set("w", "1200");
+    parsed.searchParams.set("h", "630");
+    parsed.searchParams.set("fit", "crop");
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+};
+
+export interface ContestMeta {
+  title: string;
+  description: string;
+  image?: string;
+}
+
+/** Balises de partage (titre/description/image) pour la page d'un thème, avec repli générique. */
+export const buildContestMeta = (
+  contest: Pick<Contest, "name" | "description" | "coverImage"> | null | undefined
+): ContestMeta => {
+  if (!contest) {
+    return { title: FALLBACK_META_TITLE, description: FALLBACK_META_DESCRIPTION };
+  }
+
+  const title = `Concours photo : ${contest.name}`;
+  const description = contest.description || FALLBACK_META_DESCRIPTION;
+  const image = contest.coverImage?.startsWith("http")
+    ? toOgImageUrl(contest.coverImage)
+    : undefined;
+
+  return { title, description, image };
+};

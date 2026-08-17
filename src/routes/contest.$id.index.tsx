@@ -1,18 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ContestDetailPage from "@/features/contests/ContestDetailPage";
-
-const TITLE = "Détail du thème — Photo de Famille";
-const DESCRIPTION =
-  "Découvrez le thème du concours en cours, sa phase, ses dates clés et le nombre de photos déjà soumises.";
+import { buildContestMeta } from "@/features/contests";
+import { DEFAULT_SCENARIO_ID, getScenarioById } from "@/features/demo/scenarios";
 
 export const Route = createFileRoute("/contest/$id/")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-    ],
-  }),
+  loader: ({ params }) =>
+    getScenarioById(DEFAULT_SCENARIO_ID).contests.find((c) => c.id === params.id) ?? null,
+  head: ({ loaderData }) => {
+    const { title, description, image } = buildContestMeta(loaderData);
+    const meta = [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+    ];
+    if (image) meta.push({ property: "og:image", content: image });
+
+    return { meta };
+  },
   component: ContestDetailPage,
 });
