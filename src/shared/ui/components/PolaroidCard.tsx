@@ -61,7 +61,7 @@ const PolaroidCard = ({
             src={imageUrl}
             alt={title || "Photo sans titre"}
             priority={true}
-            className="h-full"
+            className="w-full h-full"
           />
         ) : (
           <ImagePlaceHolder className="h-full" />

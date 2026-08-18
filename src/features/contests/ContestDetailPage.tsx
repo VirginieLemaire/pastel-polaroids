@@ -93,7 +93,7 @@ export default function ContestDetailPage() {
               src={contest.coverImage}
               alt={contest.name}
               priority={true} // priority load cause immediatly visible
-              className="brutal-shadow md:w-2/3"
+              className="w-full brutal-shadow md:w-2/3"
             />
           ) : (
             <ImagePlaceHolder className="brutal-shadow bg-pastel-sky/40 md:w-2/3"/>

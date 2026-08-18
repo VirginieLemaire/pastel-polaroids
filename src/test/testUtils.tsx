@@ -2,7 +2,7 @@
  * Utilitaires pour les tests
  */
 import { render, RenderOptions } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { TestRouterProvider } from './testRouter';
 import { ContestProvider } from '@/features/contests/ContestContext';
 import { PhotoProvider } from '@/features/photos/PhotoContext';
 import { VoteProvider } from '@/features/votes/VoteContext';
@@ -32,7 +32,7 @@ export const AllProviders = ({
   initialPhotos = [],
   initialVotes = [],
 }: AllProvidersProps) => (
-  <MemoryRouter>
+  <TestRouterProvider>
     <UserProvider>
       <ContestProvider>
         <PhotoProvider>
@@ -42,7 +42,7 @@ export const AllProviders = ({
         </PhotoProvider>
       </ContestProvider>
     </UserProvider>
-  </MemoryRouter>
+  </TestRouterProvider>
 );
 
 /**

@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react-vite';
 import '../src/index.css';
-import { BrowserRouter } from 'react-router-dom';
+import { TestRouterProvider } from '../src/test/testRouter';
 import { UserProvider } from '../src/features/user';
 import { ContestProvider } from '../src/features/contests';
 import { PhotoProvider } from '../src/features/photos';
@@ -13,9 +13,9 @@ const preview: Preview = {
         <ContestProvider>
           <PhotoProvider>
             <VoteProvider>
-              <BrowserRouter>
+              <TestRouterProvider>
                 <Story />
-              </BrowserRouter>
+              </TestRouterProvider>
             </VoteProvider>
           </PhotoProvider>
         </ContestProvider>
