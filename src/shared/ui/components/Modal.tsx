@@ -10,6 +10,13 @@ interface ModalProps {
   size?: "md" | "lg";
   /** Contenu affiché dans la barre de titre, entre le titre et le bouton fermer (ex. navigation) */
   headerActions?: ReactNode;
+  /**
+   * "default" (défaut) : barre de titre standard en haut.
+   * "none" : masque la barre de titre (le titre reste exposé aux lecteurs
+   * d'écran via aria-labelledby) et retire le padding du corps ; l'appelant
+   * fournit alors tout son propre chrome (fermeture, navigation…) via children.
+   */
+  header?: "default" | "none";
 }
 
 const sizeClass = {
@@ -29,6 +36,7 @@ const Modal = ({
   children,
   size = "md",
   headerActions,
+  header = "default",
 }: ModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
@@ -91,25 +99,35 @@ const Modal = ({
         aria-labelledby={titleId}
         className={`brutal-border brutal-shadow-lg bg-background w-full flex flex-col ${sizeClass[size]}`}
       >
-        <div className="flex items-center justify-between gap-3 brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter shrink-0">
-          <h2 id={titleId} className="font-mono text-lg font-bold truncate">
+        {header === "default" ? (
+          <div className="flex items-center justify-between gap-3 brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter shrink-0">
+            <h2 id={titleId} className="font-mono text-lg font-bold truncate">
+              {title}
+            </h2>
+            <div className="flex items-center gap-3 shrink-0">
+              {headerActions}
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label="Fermer"
+                className="font-mono text-2xl leading-none w-8 h-8 flex items-center justify-center brutal-border bg-background hover:bg-pastel-pink"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        ) : (
+          <h2 id={titleId} className="sr-only">
             {title}
           </h2>
-          <div className="flex items-center gap-3 shrink-0">
-            {headerActions}
-            <button
-              type="button"
-              onClick={onClose}
-              aria-label="Fermer"
-              className="font-mono text-2xl leading-none w-8 h-8 flex items-center justify-center brutal-border bg-background hover:bg-pastel-pink"
-            >
-              ×
-            </button>
-          </div>
-        </div>
+        )}
         <div
           className={
-            size === "lg" ? "flex-1 min-h-0 overflow-y-auto p-6" : "p-6"
+            header === "none"
+              ? "flex-1 min-h-0 overflow-hidden"
+              : size === "lg"
+                ? "flex-1 min-h-0 overflow-y-auto p-6"
+                : "p-6"
           }
         >
           {children}

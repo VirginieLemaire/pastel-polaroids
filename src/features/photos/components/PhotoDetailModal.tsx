@@ -2,12 +2,17 @@ import { useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Modal from "@/shared/ui/components/Modal";
 import BrutalButton from "@/shared/ui/components/BrutalButton";
+import { useMediaQuery } from "@/shared/hooks/useMediaQuery";
 import type { Contest } from "@/features/contests";
 import { getContestStatus } from "@/features/contests/contestStatus";
 import { getUserName } from "@/features/user";
 import { isAuthoredPhoto, type VisiblePhoto } from "../visibility";
 import PhotoImagePanel from "./PhotoImagePanel";
 import PhotoInfoPanel from "./PhotoInfoPanel";
+import PhotoDetailLandscapeRail from "./PhotoDetailLandscapeRail";
+
+/** Téléphone en orientation paysage : hauteur d'écran réduite, contrairement aux tablettes/desktop. */
+const MOBILE_LANDSCAPE_QUERY = "(orientation: landscape) and (max-height: 500px)";
 
 interface PhotoDetailModalProps {
   photo: VisiblePhoto | null;
@@ -35,9 +40,10 @@ const PhotoDetailModal = ({
   onNext,
   positionLabel,
 }: PhotoDetailModalProps) => {
-  const imageRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const prevPhotoIdRef = useRef<string | null>(null);
   const imageId = `photo-detail-image-${photo?.id ?? "empty"}`;
+  const isMobileLandscape = useMediaQuery(MOBILE_LANDSCAPE_QUERY);
 
   // Navigation clavier entre les photos (flèches gauche / droite)
   useEffect(() => {
@@ -80,8 +86,9 @@ const PhotoDetailModal = ({
       onClose={onClose}
       title={photo.title || "Photo"}
       size="lg"
+      header={isMobileLandscape ? "none" : "default"}
       headerActions={
-        hasNavigation ? (
+        !isMobileLandscape && hasNavigation ? (
           <nav
             aria-label="Navigation entre les photos"
             className="flex items-center gap-2"
@@ -129,16 +136,42 @@ const PhotoDetailModal = ({
         ) : undefined
       }
     >
-      <div className="flex flex-col md:h-full md:grid md:grid-cols-[2fr_1fr] gap-4 md:gap-6">
-        <PhotoImagePanel ref={imageRef} photo={photo} imageId={imageId} />
-        <PhotoInfoPanel
-          photo={photo}
-          contest={contest}
-          authorName={authorName}
-          averageRating={averageRating}
-          isWinner={isWinner}
-        />
-      </div>
+      {isMobileLandscape ? (
+        <div className="flex h-full">
+          <div className="flex flex-1 min-h-0 items-center justify-center p-2">
+            <PhotoImagePanel
+              ref={imageRef}
+              photo={photo}
+              imageId={imageId}
+              showRotateHint={false}
+              variant="fill"
+            />
+          </div>
+          <PhotoDetailLandscapeRail
+            photo={photo}
+            contest={contest}
+            authorName={authorName}
+            averageRating={averageRating}
+            isWinner={isWinner}
+            onClose={onClose}
+            onPrev={onPrev}
+            onNext={onNext}
+            positionLabel={positionLabel}
+            imageId={imageId}
+          />
+        </div>
+      ) : (
+        <div className="flex flex-col md:h-full md:grid md:grid-cols-[3fr_1fr] gap-4 md:gap-6">
+          <PhotoImagePanel ref={imageRef} photo={photo} imageId={imageId} />
+          <PhotoInfoPanel
+            photo={photo}
+            contest={contest}
+            authorName={authorName}
+            averageRating={averageRating}
+            isWinner={isWinner}
+          />
+        </div>
+      )}
     </Modal>
   );
 };
