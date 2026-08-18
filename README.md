@@ -1,73 +1,76 @@
-# Welcome to your Lovable project
+# Photo de Famille
 
-## Project info
+> Concours photo en famille, un thème à la fois.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## À propos du projet
 
-## How can I edit this code?
+**Photo de Famille** est une application de concours photo familial : on crée un thème (un seul thème en cours à la fois), chaque membre de la famille poste ses photos, le thème passe en mode vote et tout le monde vote, puis les résultats et les gagnants sont révélés.
 
-There are several ways of editing your application.
+Le souhait d'intégrer les photos sous le style de polaroîds a naturellement guidé le design system vers un style rétro mélant brutalisme couleurs pastels ave très peu d'arrondis.
 
-**Use Lovable**
+Ce projet est uniquement une **démonstration**. C'est une réécriture d'un projet existant initialement construit sur une stack Airtable / Softr, qui offrait peu de possibilités de personnalisation à moindre coût. Ici, l'application est entièrement fonctionnelle mais **sans backend** : toutes les données (concours, photos, votes, utilisateurs) sont mockées et gérées côté client via des Context React, avec la préférence de scénario de démo persistée en `localStorage`. Cela permet de présenter et de tester l'application sans risque (pas de serveur ni de base de données à maintenir) et sans qu'aucune donnée réelle ne soit collectée.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Cette application avait 2 objectifs :
+- proposer une version entièrement testable par les membres de la famille ou tout autre visiteur avant de passer à une version réelle, en production, avec une vraie base de données, une authentification et une migration de la stack, en minimisant les changements nécessaires.
+- tester des IAs pour mener à bien le projet : 
+  - il a été initié avec Lovable, 
+  - réorganisé par mes soins 
+  - puis j'ai pu testé Mistral Vibe 
+  - et enfin j'ai finalisé le projet avevc Claude Code.
+Ceci explique les différents dossiers présents dans le code ainsi que l'historique git qui manque de cohérence (un peu d'anglais, un peu de français, un peu de mélange des deux 😅).
 
-Changes made via Lovable will be committed automatically to this repo.
+L'application est testable à [pastel polaroid](pastel-polaroids.vercel.app).
 
-**Use your preferred IDE**
+## Stack technique
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Framework** : React 19 + [TanStack Start](https://tanstack.com/start) / [TanStack Router](https://tanstack.com/router)
+- **Build** : Vite 8 (config partagée via `@lovable.dev/vite-tanstack-config`), Nitro
+- **Langage** : TypeScript
+- **UI** : Tailwind CSS 4 + composants shadcn-ui personnalisés (style « brutaliste » pastel)
+- **Icônes** : lucide-react
+- **Avatars** : DiceBear (`@dicebear/collection`, `@dicebear/core`)
+- **Validation** : Zod
+- **Données serveur** : TanStack Query
+- **Tests unitaires** : Vitest, Testing Library, jsdom
+- **Tests end-to-end** : Playwright
+- **Documentation UI** : Storybook (avec addon d'accessibilité)
+- **Qualité de code** : ESLint, Prettier
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Installation
 
-Follow these steps:
+Prérequis : Node.js 20+ et [pnpm](https://pnpm.io/).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Cloner le dépôt
+git clone <URL_DU_DEPOT>
+cd pastel-polaroids
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Installer les dépendances
+pnpm install
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+# Lancer le serveur de développement
+pnpm dev
 ```
 
-**Edit a file directly in GitHub**
+L'application est ensuite accessible sur l'URL indiquée dans le terminal (par défaut `http://localhost:3000`).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Autres commandes utiles
 
-**Use GitHub Codespaces**
+| Commande | Description |
+|---|---|
+| `pnpm build` | Construit l'application pour la production |
+| `pnpm preview` | Prévisualise le build de production |
+| `pnpm test` | Lance les tests unitaires (Vitest) |
+| `pnpm test:watch` | Lance les tests unitaires en mode watch |
+| `pnpm test:coverage` | Lance les tests unitaires avec couverture de code |
+| `pnpm test:e2e` | Lance les tests end-to-end (Playwright) |
+| `pnpm storybook` | Lance Storybook sur `http://localhost:6006` |
+| `pnpm lint` | Vérifie le code avec ESLint |
+| `pnpm format` | Formate le code avec Prettier |
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## À venir
 
-## What technologies are used for this project?
+Liste des chantiers restant à mettre en place pour cette version de démo :
 
-This project is built with:
+- [ ] Page « À propos » expliquant le fonctionnement du site : le mode démo, les différents scénarios disponibles, et le fait de pouvoir tester toutes les fonctionnalités (création de thème, envoi de photos, vote...) sans aucun risque puisque rien n'est jamais réellement persisté ni partagé.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

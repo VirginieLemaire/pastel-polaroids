@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as PhotosRouteImport } from './routes/photos'
 import { Route as ContestIdIndexRouteImport } from './routes/contest.$id.index'
 import { Route as ContestIdPhotosRouteImport } from './routes/contest.$id.photos'
@@ -17,6 +18,11 @@ import { Route as ContestIdPhotosRouteImport } from './routes/contest.$id.photos
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PhotosRoute = PhotosRouteImport.update({
@@ -37,12 +43,14 @@ const ContestIdPhotosRoute = ContestIdPhotosRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/photos': typeof PhotosRoute
   '/contest/$id/photos': typeof ContestIdPhotosRoute
   '/contest/$id/': typeof ContestIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/photos': typeof PhotosRoute
   '/contest/$id/photos': typeof ContestIdPhotosRoute
   '/contest/$id': typeof ContestIdIndexRoute
@@ -50,20 +58,29 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/photos': typeof PhotosRoute
   '/contest/$id/photos': typeof ContestIdPhotosRoute
   '/contest/$id/': typeof ContestIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/photos' | '/contest/$id/photos' | '/contest/$id/'
+  fullPaths:
+    '/' | '/about' | '/photos' | '/contest/$id/photos' | '/contest/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/photos' | '/contest/$id/photos' | '/contest/$id'
-  id: '__root__' | '/' | '/photos' | '/contest/$id/photos' | '/contest/$id/'
+  to: '/' | '/about' | '/photos' | '/contest/$id/photos' | '/contest/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/photos'
+    | '/contest/$id/photos'
+    | '/contest/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   PhotosRoute: typeof PhotosRoute
   ContestIdPhotosRoute: typeof ContestIdPhotosRoute
   ContestIdIndexRoute: typeof ContestIdIndexRoute
@@ -76,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/photos': {
@@ -104,6 +128,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   PhotosRoute: PhotosRoute,
   ContestIdPhotosRoute: ContestIdPhotosRoute,
   ContestIdIndexRoute: ContestIdIndexRoute,

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@/lib/router-compat";
-import { Home, Trophy } from "lucide-react";
+import { Home, Info, Trophy } from "lucide-react";
 
 const linkClass = (isActive: boolean) =>
   `flex-1 flex flex-col items-center justify-center gap-1 font-mono text-xs font-bold ${
@@ -19,6 +19,10 @@ const BottomNav = () => {
         <Link to="/photos" className={linkClass(pathname.startsWith("/photos"))} title="photos des concours clos">
           <Trophy size={20} aria-hidden="true" />
           <span>Résultats</span>
+        </Link>
+        <Link to="/about" className={linkClass(pathname.startsWith("/about"))}>
+          <Info size={20} aria-hidden="true" />
+          <span>À propos</span>
         </Link>
       </nav>
     </footer>

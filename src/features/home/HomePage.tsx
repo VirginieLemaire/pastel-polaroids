@@ -91,7 +91,7 @@ export default function HomePage() {
         <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
           <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />
           <p className="text-sm leading-snug flex-1">
-            Utilise le bouton <span className="font-bold">Mode démo</span> en haut à droite pour explorer l'application et tester toutes les fonctionnalités.
+            Utilise le bouton <span className="font-bold">Mode démo</span> en haut à droite pour explorer l'application et tester toutes les fonctionnalités. Pour en savoir plus, rendez-vous sur "A propos" en bas de page.
           </p>
           <button
             type="button"
