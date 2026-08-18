@@ -1,5 +1,5 @@
 import type { Preview } from '@storybook/react-vite';
-import '../src/index.css';
+import '../src/styles.css';
 import { TestRouterProvider } from '../src/test/testRouter';
 import { UserProvider } from '../src/features/user';
 import { ContestProvider } from '../src/features/contests';

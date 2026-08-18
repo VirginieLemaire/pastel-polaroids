@@ -38,7 +38,7 @@ export default function ContestDetailPage() {
 
   if (!contest) {
     return (
-      <main className="flex-1 bg-background px-6 py-12">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-6 py-12">
         <div className="max-w-2xl mx-auto space-y-6">
           <Link to="/" className="font-mono text-sm underline inline-flex items-center gap-1">
             <ArrowLeft size={16} aria-hidden="true" /> Retour
@@ -77,7 +77,12 @@ export default function ContestDetailPage() {
   };
 
   return (
-    <main className="flex-1 bg-background px-5 py-6">
+    <>
+      <header className="sr-only">
+        <h1>{contest.name}</h1>
+      </header>
+
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-5 py-6">
       <div className="max-w-2xl mx-auto space-y-5">
         <Link
           to="/"
@@ -116,7 +121,7 @@ export default function ContestDetailPage() {
 
         {/* Post-it */}
         <BrutalCard color="butter" large className="-rotate-1">
-          <h1 className="font-mono text-2xl font-bold mb-2">{contest.name}</h1>
+          <h2 className="font-mono text-2xl font-bold mb-2">{contest.name}</h2>
           {contest.description && (
             <p className="font-mono text-sm mb-3 whitespace-pre-wrap">{contest.description}</p>
           )}
@@ -191,6 +196,7 @@ export default function ContestDetailPage() {
           />
         </Modal>
       </div>
-    </main>
+      </main>
+    </>
   );
 };

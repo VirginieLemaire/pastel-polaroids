@@ -40,7 +40,7 @@ export default function PhotosPage() {
 
   if (!contest) {
     return (
-      <main className="flex-1 bg-background px-6 py-12">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-6 py-12">
         <div className="max-w-2xl mx-auto space-y-6">
           <Link to="/" className="font-mono text-sm underline inline-flex items-center gap-1">
             <ArrowLeft size={16} aria-hidden="true" /> Retour
@@ -179,8 +179,8 @@ export default function PhotosPage() {
 
 
   return (
-    <main className="flex-1 bg-background px-5 py-6">
-      <div className="max-w-5xl mx-auto space-y-5">
+    <>
+      <header className="max-w-5xl mx-auto w-full px-5 pt-6 pb-5 space-y-5">
         <Link
           to={`/contest/${contest.id}`}
           className="font-mono text-sm font-bold inline-flex items-center gap-1 hover:underline"
@@ -188,14 +188,17 @@ export default function PhotosPage() {
           <ArrowLeft size={16} aria-hidden="true" /> Retour au thème
         </Link>
 
-        <header className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="font-mono text-xs text-muted-foreground">Photos du thème</p>
             <h1 className="font-mono text-2xl font-bold truncate">{contest.name}</h1>
           </div>
           <StatusBadge status={status} />
-        </header>
+        </div>
+      </header>
 
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-5 pb-6">
+      <div className="max-w-5xl mx-auto space-y-5">
         {showSubmitArea && (
           <BrutalCard color="mint">
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -300,6 +303,7 @@ export default function PhotosPage() {
         positionLabel={detailIndex !== null ? `${detailIndex + 1} / ${detailList.length}` : undefined}
       />
 
-    </main>
+      </main>
+    </>
   );
 }
