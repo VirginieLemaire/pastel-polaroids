@@ -78,14 +78,15 @@ export default function HomePage() {
   };
 
   return (
-    <main className="flex-1 bg-background px-6 py-12 flex flex-col">
-      <header className="text-center space-y-2 mb-10 mt-8">
+    <>
+      <header className="text-center space-y-2 bg-background px-6 pt-12 mt-8 mb-10">
         <h1 className="font-mono text-4xl md:text-5xl font-bold">Photo de Famille</h1>
         <p className="font-mono text-sm text-muted-foreground">
           Concours photo en famille, un thème à la fois.
         </p>
       </header>
 
+      <main className="flex-1 bg-background px-6 pb-12 flex flex-col">
       {demoHintVisible && (
         <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
           <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />
@@ -176,6 +177,7 @@ export default function HomePage() {
           ))}
         </ul>
       </Modal>
-    </main>
+      </main>
+    </>
   );
 };

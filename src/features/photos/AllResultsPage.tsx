@@ -135,8 +135,8 @@ export default function AllResultsPage() {
   }
 
   return (
-    <main className="flex-1 bg-background px-5 py-6">
-      <div className="max-w-5xl mx-auto space-y-5">
+    <>
+      <header className="max-w-5xl mx-auto w-full px-5 pt-6 pb-5 space-y-5">
         <Link
           to="/"
           className="font-mono text-sm font-bold inline-flex items-center gap-1 hover:underline"
@@ -144,13 +144,16 @@ export default function AllResultsPage() {
           <ArrowLeft size={16} aria-hidden="true" /> Retour
         </Link>
 
-        <header className="flex justify-center gap-3">
+        <div className="flex justify-center gap-3">
             <h1 className="font-mono text-3xl font-bold">Résultats</h1>
             <Trophy size={40} className="text-yellow-600" />
 
-        </header>
+        </div>
             <p className="font-mono text-s text-center text-muted-foreground">Photos de tous les concours</p>
+      </header>
 
+      <main className="flex-1 bg-background px-5 pb-6">
+      <div className="max-w-5xl mx-auto space-y-5">
         {/* Informations globales */}
         {allPhotosWithResults.length > 0 && (
           // <BrutalCard color="butter">
@@ -270,6 +273,7 @@ export default function AllResultsPage() {
           />
         )}
       </div>
-    </main>
+      </main>
+    </>
   );
 }
