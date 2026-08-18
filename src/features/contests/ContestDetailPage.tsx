@@ -38,7 +38,7 @@ export default function ContestDetailPage() {
 
   if (!contest) {
     return (
-      <main className="flex-1 bg-background px-6 py-12">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-6 py-12">
         <div className="max-w-2xl mx-auto space-y-6">
           <Link to="/" className="font-mono text-sm underline inline-flex items-center gap-1">
             <ArrowLeft size={16} aria-hidden="true" /> Retour
@@ -82,7 +82,7 @@ export default function ContestDetailPage() {
         <h1>{contest.name}</h1>
       </header>
 
-      <main className="flex-1 bg-background px-5 py-6">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-5 py-6">
       <div className="max-w-2xl mx-auto space-y-5">
         <Link
           to="/"

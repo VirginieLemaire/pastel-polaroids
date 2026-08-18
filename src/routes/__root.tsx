@@ -60,6 +60,12 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:px-4 focus:py-2 focus:bg-background focus:text-foreground focus:font-mono focus:font-bold brutal-border brutal-shadow"
+        >
+          Aller au contenu principal
+        </a>
         {children}
         <Scripts />
       </body>
@@ -90,7 +96,7 @@ function RootComponent() {
 
 function NotFound() {
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center gap-6 p-6 bg-background text-foreground">
+    <main id="main-content" tabIndex={-1} className="min-h-dvh flex flex-col items-center justify-center gap-6 p-6 bg-background text-foreground">
       <h1 className="text-2xl">Page introuvable</h1>
       <p className="text-muted-foreground">Cette page n'existe pas ou a été déplacée.</p>
       <Link to="/" className="brutal-btn">
@@ -109,7 +115,7 @@ function RootErrorComponent({ error, reset }: { error: Error; reset: () => void 
   }, [error]);
 
   return (
-    <main className="min-h-dvh flex flex-col items-center justify-center gap-6 p-6 bg-background text-foreground">
+    <main id="main-content" tabIndex={-1} className="min-h-dvh flex flex-col items-center justify-center gap-6 p-6 bg-background text-foreground">
       <h1 className="text-2xl">Cette page n'a pas pu se charger</h1>
       <p className="text-muted-foreground">Une erreur est survenue. Vous pouvez réessayer ou revenir à l'accueil.</p>
       <div className="flex gap-4">

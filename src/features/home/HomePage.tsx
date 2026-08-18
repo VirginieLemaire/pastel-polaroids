@@ -86,7 +86,7 @@ export default function HomePage() {
         </p>
       </header>
 
-      <main className="flex-1 bg-background px-6 pb-12 flex flex-col">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-6 pb-12 flex flex-col">
       {demoHintVisible && (
         <div className="w-full max-w-md mx-auto mb-6 brutal-border bg-pastel-butter p-3 flex items-start gap-3 shadow-[3px_3px_0_0_hsl(var(--foreground))]">
           <Info aria-hidden="true" className="w-5 h-5 shrink-0 mt-0.5" />

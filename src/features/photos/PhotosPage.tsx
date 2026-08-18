@@ -40,7 +40,7 @@ export default function PhotosPage() {
 
   if (!contest) {
     return (
-      <main className="flex-1 bg-background px-6 py-12">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-6 py-12">
         <div className="max-w-2xl mx-auto space-y-6">
           <Link to="/" className="font-mono text-sm underline inline-flex items-center gap-1">
             <ArrowLeft size={16} aria-hidden="true" /> Retour
@@ -197,7 +197,7 @@ export default function PhotosPage() {
         </div>
       </header>
 
-      <main className="flex-1 bg-background px-5 pb-6">
+      <main id="main-content" tabIndex={-1} className="flex-1 bg-background px-5 pb-6">
       <div className="max-w-5xl mx-auto space-y-5">
         {showSubmitArea && (
           <BrutalCard color="mint">
