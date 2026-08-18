@@ -21,6 +21,7 @@ Ceci explique les différents dossiers présents dans le code ainsi que l'histor
 
 L'application est testable à [pastel polaroid](pastel-polaroids.vercel.app).
 
+
 ## Stack technique
 
 - **Framework** : React 19 + [TanStack Start](https://tanstack.com/start) / [TanStack Router](https://tanstack.com/router)
@@ -37,6 +38,8 @@ L'application est testable à [pastel polaroid](pastel-polaroids.vercel.app).
 - **Qualité de code** : ESLint, Prettier
 
 ## Installation
+
+Petit warning : Le projet n'est pas amené à évoluer, vérifiez bien les dépendances et les alertes si vous le clonez.
 
 Prérequis : Node.js 20+ et [pnpm](https://pnpm.io/).
 
@@ -67,10 +70,3 @@ L'application est ensuite accessible sur l'URL indiquée dans le terminal (par d
 | `pnpm storybook` | Lance Storybook sur `http://localhost:6006` |
 | `pnpm lint` | Vérifie le code avec ESLint |
 | `pnpm format` | Formate le code avec Prettier |
-
-## À venir
-
-Liste des chantiers restant à mettre en place pour cette version de démo :
-
-- [ ] Page « À propos » expliquant le fonctionnement du site : le mode démo, les différents scénarios disponibles, et le fait de pouvoir tester toutes les fonctionnalités (création de thème, envoi de photos, vote...) sans aucun risque puisque rien n'est jamais réellement persisté ni partagé.
-
