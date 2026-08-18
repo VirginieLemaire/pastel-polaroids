@@ -8,17 +8,28 @@ interface ModalProps {
   children: ReactNode;
   /** Taille : "md" (défaut) ou "lg" pour les vues photo (grandit avec le viewport) */
   size?: "md" | "lg";
+  /** Contenu affiché dans la barre de titre, entre le titre et le bouton fermer (ex. navigation) */
+  headerActions?: ReactNode;
 }
 
 const sizeClass = {
-  md: "max-w-md max-h-[90vh]",
-  lg: "max-w-[min(95vw,1600px)] max-h-[95vh]",
+  md: "max-w-md max-h-[90dvh] overflow-y-auto",
+  // Hauteur fixe (pas de max-height) : la modale occupe toujours le même
+  // espace, indépendamment de la taille de la photo ou du contenu.
+  lg: "max-w-[min(95vw,1600px)] h-[95dvh] overflow-hidden",
 } as const;
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
+const Modal = ({
+  open,
+  onClose,
+  title,
+  children,
+  size = "md",
+  headerActions,
+}: ModalProps) => {
   const dialogRef = useRef<HTMLDivElement>(null);
   const previouslyFocused = useRef<HTMLElement | null>(null);
   // useId : identifiant stable serveur/client
@@ -78,25 +89,34 @@ const Modal = ({ open, onClose, title, children, size = "md" }: ModalProps) => {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`brutal-border brutal-shadow-lg bg-background w-full ${sizeClass[size]} overflow-auto`}
+        className={`brutal-border brutal-shadow-lg bg-background w-full flex flex-col ${sizeClass[size]}`}
       >
-        <div className="flex items-center justify-between brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter">
-          <h2 id={titleId} className="font-mono text-lg font-bold">
+        <div className="flex items-center justify-between gap-3 brutal-border border-x-0 border-t-0 p-4 bg-pastel-butter shrink-0">
+          <h2 id={titleId} className="font-mono text-lg font-bold truncate">
             {title}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fermer"
-            className="font-mono text-2xl leading-none w-8 h-8 flex items-center justify-center brutal-border bg-background hover:bg-pastel-pink"
-          >
-            ×
-          </button>
+          <div className="flex items-center gap-3 shrink-0">
+            {headerActions}
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Fermer"
+              className="font-mono text-2xl leading-none w-8 h-8 flex items-center justify-center brutal-border bg-background hover:bg-pastel-pink"
+            >
+              ×
+            </button>
+          </div>
         </div>
-        <div className="p-6">{children}</div>
+        <div
+          className={
+            size === "lg" ? "flex-1 min-h-0 overflow-y-auto p-6" : "p-6"
+          }
+        >
+          {children}
+        </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 
