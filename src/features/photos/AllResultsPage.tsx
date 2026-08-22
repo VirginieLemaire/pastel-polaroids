@@ -83,14 +83,15 @@ export default function AllResultsPage() {
   }, [photosForClosedContests, getRankedPhotos, getWinners]);
 
   // Grouper les photos par concours pour le filtre
+  // Le compte doit porter sur toutes les photos du concours, indépendamment
+  // de la sélection courante, sinon sélectionner un filtre remet les autres à 0.
   const contestOptions = useMemo(() => {
     return closedContests.map((contest) => ({
       id: contest.id,
       name: contest.name,
-      // Compter le nombre de photos de ce concours
-      photoCount: photosForClosedContests.filter((p) => p.contestId === contest.id).length,
+      photoCount: photos.filter((p) => p.contestId === contest.id).length,
     }));
-  }, [closedContests, photosForClosedContests]);
+  }, [closedContests, photos]);
 
   // Compter le nombre de gagnantes
   const winnerCount = useMemo(() => {
@@ -174,7 +175,7 @@ export default function AllResultsPage() {
         <div className="space-y-3">
           {/* Filtre par concours (sélection multiple) */}
           {contestOptions.length > 1 && (
-            <BrutalCard color="sky">
+            <BrutalCard color="lavender">
               <div className="space-y-2">
                 <p className="font-mono text-sm font-bold">Filtrer par concours :</p>
                 <div className="flex flex-wrap gap-2">

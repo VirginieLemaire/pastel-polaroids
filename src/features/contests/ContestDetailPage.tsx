@@ -120,7 +120,7 @@ export default function ContestDetailPage() {
         </div>
 
         {/* Post-it */}
-        <BrutalCard color="butter" large className="-rotate-1">
+        <BrutalCard color="butter" large className="-rotate-1 md:w-fit md:mx-auto">
           <h2 className="font-mono text-2xl font-bold mb-2">{contest.name}</h2>
           {contest.description && (
             <p className="font-mono text-sm mb-3 whitespace-pre-wrap">{contest.description}</p>
