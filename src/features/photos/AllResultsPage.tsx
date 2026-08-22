@@ -8,18 +8,17 @@ import PhotoDetailModal from "@/features/photos/components/PhotoDetailModal";
 import { useContests, getContestStatus } from "@/features/contests";
 import { usePhotos } from "@/features/photos";
 import { useVotes, getExpectedVoterIds } from "@/features/votes";
-import type { Contest } from "@/features/contests/types";
 import type { Photo } from "@/features/photos/types";
 import type { VisiblePhoto } from "@/features/photos";
 
 /**
  * Page affichant toutes les photos de tous les concours CLOS.
  * Accessible via /photos
- * 
+ *
  * Fonctionnalités :
  * - Affiche toutes les photos des concours terminés
  * - Filtre par concours (sélection multiple)
- * - Filtre "Gagnantes seulement"
+ * - Filtre "Voir seulement les photos gagnantes"
  */
 export default function AllResultsPage() {
   const { contests } = useContests();
@@ -98,12 +97,11 @@ export default function AllResultsPage() {
     return allPhotosWithResults.filter((p) => p.isWinner).length;
   }, [allPhotosWithResults]);
 
-  // Trouver le contest pour chaque photo (pour l'affichage)
-  const getContestForPhoto = (photoId: string): Contest | undefined => {
-    const photo = photos.find((p) => p.id === photoId);
-    if (!photo) return undefined;
-    return contests.find((c) => c.id === photo.contestId);
-  };
+    // Nombre de concours représentés dans l'affichage courant (respecte la
+  // sélection, contrairement à closedContests.length).
+  const contestsRepresentedCount =
+    selectedContestIds.length > 0 ? selectedContestIds.length : closedContests.length;
+
 
   // Liste ordonnée utilisée pour naviguer d'une photo à l'autre dans la modale
   const detailList = useMemo(
@@ -157,18 +155,39 @@ export default function AllResultsPage() {
       <div className="max-w-5xl mx-auto space-y-5">
         {/* Informations globales */}
         {allPhotosWithResults.length > 0 && (
-          // <BrutalCard color="butter">
+          <BrutalCard color="butter" className="-rotate-1 md:w-fit md:mx-auto">
             <p className="font-mono text-sm">
-              {allPhotosWithResults.length} photo{allPhotosWithResults.length > 1 ? "s" : ""} {" "}
-              répartie{allPhotosWithResults.length > 1 ? "s" : ""} dans {closedContests.length} concours terminé{closedContests.length > 1 ? "s" : ""}.
-              {winnerCount > 0 && (
+              {showOnlyWinners ? (
+                winnerCount === 1 ? (
+                  <>
+                    Affichage de la photo gagnante de {contestsRepresentedCount} concours
+                    terminé{contestsRepresentedCount > 1 ? "s" : ""}.
+                  </>
+                ) : (
+                  <>
+                    Affichage des {winnerCount} photos gagnantes de {contestsRepresentedCount} concours
+                    terminé{contestsRepresentedCount > 1 ? "s" : ""}.
+                  </>
+                )
+              ) : (
                 <>
-                  <br />
-                  <strong>{winnerCount} photo{winnerCount > 1 ? "s" : ""} gagnante{winnerCount > 1 ? "s" : ""}</strong>.
+                  Affichage de {allPhotosWithResults.length} photo{allPhotosWithResults.length > 1 ? "s" : ""}{" "}
+                  répartie{allPhotosWithResults.length > 1 ? "s" : ""} dans {contestsRepresentedCount} concours
+                  terminé{contestsRepresentedCount > 1 ? "s" : ""}
+                  {winnerCount > 0 && (
+                    <>
+                      , dont{" "}
+                      <strong>
+                        {winnerCount} photo{winnerCount > 1 ? "s" : ""} gagnante{winnerCount > 1 ? "s" : ""}
+                      </strong>
+                    </>
+                  )}
+                  .
                 </>
               )}
             </p>
-          // </BrutalCard>
+          </BrutalCard>
+
         )}
 
         {/* Filtres */}
@@ -223,7 +242,7 @@ export default function AllResultsPage() {
                 onClick={() => setShowOnlyWinners((prev) => !prev)}
                 aria-pressed={showOnlyWinners}
               >
-                {showOnlyWinners ? "Toutes les photos" : "Gagnantes seulement"}
+                {showOnlyWinners ? "Voir toutes les photos" : "Voir seulement les photos gagnantes"}
               </BrutalButton>
             </div>
           )}

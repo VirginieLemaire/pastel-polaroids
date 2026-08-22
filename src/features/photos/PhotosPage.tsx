@@ -64,7 +64,7 @@ export default function PhotosPage() {
   const canSubmit = canUserSubmit(contest, userCount);
   const showSubmitArea = status === "submission";
   
-  // État pour le filtre "gagnantes seulement" (uniquement en phase closed)
+  // État pour le filtre "Voir seulement les photos gagnantes" (uniquement en phase closed)
   const [showOnlyWinners, setShowOnlyWinners] = useState(false);
 
   // Calcul des résultats pour la phase closed
@@ -234,7 +234,7 @@ export default function PhotosPage() {
               onClick={() => setShowOnlyWinners((prev) => !prev)}
               aria-pressed={showOnlyWinners}
             >
-              {showOnlyWinners ? "Toutes les photos" : "Gagnantes seulement"}
+              {showOnlyWinners ? "Voir toutes les photos" : "Voir seulement les photos gagnantes"}
             </BrutalButton>
           </div>
         )}
