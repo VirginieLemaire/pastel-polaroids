@@ -36,16 +36,16 @@ test.describe('Results Page', () => {
   });
 
   test('should have winners only filter', async ({ page }) => {
-    const filterButton = page.getByRole('button', { name: /Gagnantes seulement/ });
+    const filterButton = page.getByRole('button', { name: /Voir seulement les photos gagnantes/ });
     await expect(filterButton).toBeVisible();
   });
 
   test('should filter to show only winners when clicking filter', async ({ page }) => {
-    const filterButton = page.getByRole('button', { name: /Gagnantes seulement/ });
+    const filterButton = page.getByRole('button', { name: /Voir seulement les photos gagnantes/ });
     await filterButton.click();
     
-    // Button text should change to "Toutes les photos"
-    await expect(page.getByRole('button', { name: 'Toutes les photos' })).toBeVisible();
+    // Button text should change to "Voir toutes les photos"
+    await expect(page.getByRole('button', { name: 'Voir toutes les photos' })).toBeVisible();
     
     // All visible photos should have winner badge
     const photoCards = page.locator('.polaroid-card');
